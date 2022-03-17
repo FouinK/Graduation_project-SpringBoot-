@@ -22,6 +22,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()           //포스트 매핑 오류 제거
                 .authorizeRequests()
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/","/users/**").permitAll()
                 .antMatchers("/admin").hasAuthority("ROLE_ADMIN");    //역할에 따라 접근 통제 가능
 //                .anyRequest().authenticated()                           //어떠한 URL로 접근하던지 인증이 필요함
@@ -41,14 +42,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()                                    //로그아웃
                 .logoutSuccessUrl("/login")
-                .invalidateHttpSession(true);               //세션 날리기(?)
+                .invalidateHttpSession(true);
+    //세션 날리기(?)
 //                .logoutRequestMatcher(new AntPathRequestMatcher("/logoutpro"));     //로그아웃
 
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/js/**", "/css/**", "/img/**");
+        web.ignoring().antMatchers("/js/**", "/css/**", "/img/**","/h2-console/**");
     }
 
     @Override
