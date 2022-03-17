@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1 th:text="'안녕하세요. ' + ${username}" ></h1>
+    <center><a href="/login">로그인 화면 가기</a></center>
+    <center><a href="/sign_up">회원가입 화면 가기</a></center>
+    <center><a type="submit" href="/logout">로그아웃</a></center>
+    <center><a type="submit" href="/User_Info">마이페이지</a></center>
+</body>
+</html>

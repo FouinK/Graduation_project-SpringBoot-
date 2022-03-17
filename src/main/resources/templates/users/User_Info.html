@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <table border="1">
+        <tr>
+            <th>회원 번호</th>
+            <th>아이디</th>
+            <th>이름</th>
+            <th>좋아요 한 목록</th>
+        </tr>
+        <tr>
+            <td th:text="${userInfo.get().getNUM()}"></td>
+            <td th:text="${userInfo.get().getID()}"></td>
+            <td th:text="${userInfo.get().getUserName()}"></td>
+            <td th:text="${userInfo.get().getLiked()}"></td>
+        </tr>
+    </table>
+</body>
+</html>
