@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1 th:text="'안녕하세요. ' + ${username}" ></h1>
+    <center><a href="/">메인 화면 가기</a></center>
+    <center><a href="login">로그인 화면 가기</a></center>
+    <form action="/sign_uppro" method="post">
+        아이디 : <input name="ID" th:value="ID"><br>
+        비밀번호 : <input name="PW" th:value="PW"><br>
+        사용자 이름 : <input name="UserName" th:value="UserName"><br>
+        좋아요 목록 : <input name="liked" th:value="liked"><br>
+        <a type="submit">회원가입</a>
+    </form>
+    <center><a type="submit" href="/logout">로그아웃</a></center>
+    <center><a type="submit" href="/User_Info">마이페이지</a></center>
+</body>
+</html>
