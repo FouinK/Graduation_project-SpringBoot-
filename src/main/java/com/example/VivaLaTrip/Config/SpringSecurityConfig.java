@@ -1,9 +1,13 @@
 package com.example.VivaLaTrip.Config;
 
 import com.example.VivaLaTrip.Service.UserService;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -11,12 +15,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+@RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserService userService;
+
+    /* 로그인 실패 핸들러 의존성 주입 */
+    private final AuthenticationFailureHandler customFailurHandler;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -36,6 +46,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/loginpro")                    //폼으로 받는 URL
 //                .usernameParameter("ID")                            //아이디 파라미터 받기
 //                .passwordParameter("PW")                           //비밀번호 파라미터 받기
+                .failureHandler(customFailurHandler) // 로그인 실패 핸들러
                 .defaultSuccessUrl("/",true)        //로그인 성공시 이동할 페이지
 //                         .failureUrl("/users/login")
 ////                         .permitAll()

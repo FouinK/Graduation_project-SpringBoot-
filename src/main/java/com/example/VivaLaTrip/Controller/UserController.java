@@ -9,8 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 
@@ -38,6 +36,7 @@ public class UserController {
         return "login";
     }
 
+    //회원가입시 중복체크
     @GetMapping("/api/overlap/usernameRegister")
     public ResponseEntity<?> mapReturn(String username) {
         HashMap<String, Object> map = userService.usernameOverlap(username);
