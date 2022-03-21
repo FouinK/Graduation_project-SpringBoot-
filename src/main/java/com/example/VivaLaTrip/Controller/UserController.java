@@ -7,10 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 public class UserController {
@@ -24,7 +28,18 @@ public class UserController {
 
     //시큐리티 회원가입(해시 함수 적용된 PW암호화)
     @PostMapping("/sign_uppro")
-    public String sign_uppro(UserForm userForm) {
+    public String sign_uppro(@Valid UserForm userForm, Errors errors, Model model) {
+        if (errors.hasErrors()) {
+            /* 회원가입 실패시 입력 데이터 값을 유지 */
+            model.addAttribute("userDto", userForm);
+            /* 유효성 통과 못한 필드와 메시지를 핸들링 */
+            Map<String, String> validatorResult = userService.validateHandling(errors);
+            for (String key : validatorResult.keySet()) {
+                model.addAttribute(key, validatorResult.get(key));
+            }
+            /* 회원가입 페이지로 다시 리턴 */
+            return "/sign_up";
+        }
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         UserInfo userInfo = new UserInfo();
         userInfo.setID(userForm.getUsername());
@@ -36,7 +51,7 @@ public class UserController {
         return "login";
     }
 
-    //회원가입시 중복체크
+    //회원가입시 아이디 중복체크
     @GetMapping("/api/overlap/usernameRegister")
     public ResponseEntity<?> mapReturn(String username) {
         HashMap<String, Object> map = userService.usernameOverlap(username);
