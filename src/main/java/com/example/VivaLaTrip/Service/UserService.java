@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,13 @@ public class UserService implements UserDetailsService {
                 .ifPresent(m -> {
                     throw new IllegalStateException("이미 존재하는 회원입니다.");
                 });
+    }
+
+    //id 중복 검사
+    public HashMap<String, Object> usernameOverlap(String username) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("result", userRepository.existsByID(username));
+        return map;
     }
 
     //데이터베이스에 새로운 회원 저장

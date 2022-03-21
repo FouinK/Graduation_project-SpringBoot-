@@ -6,24 +6,40 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class UserForm {
-    private String ID;
-    private String PW;
+    private String username;
+    private String password;
     private String UserName;
     private String liked;
 
-    public String getID() {
-        return ID;
+    public String getUsername() {
+        return username;
     }
 
-    public String getPW() {
-        return PW;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getUserName() {
         return UserName;
     }
 
+    public void setUserName(String userName) {
+        UserName = userName;
+    }
+
     public String getLiked() {
         return liked;
+    }
+
+    public void setLiked(String liked) {
+        this.liked = liked;
     }
 }
