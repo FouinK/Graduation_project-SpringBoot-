@@ -10,7 +10,10 @@
     <center><a href="sign_up">회원가입 화면 가기</a></center>
     <form action="/loginpro" method="post">
         아이디 : <input name="username"><br>
-        비밀번호 : <input name="password"><br>
+        비밀번호 : <input type="password" name="password"><br>
+        <div th:if="${param.error}">
+            <p th:text="${exception}" class="alert alert-danger"></p>
+        </div>
         <button type="submit">로그인하기</button>
     </form>
     <center><a type="submit" href="/logout">로그아웃</a></center>
