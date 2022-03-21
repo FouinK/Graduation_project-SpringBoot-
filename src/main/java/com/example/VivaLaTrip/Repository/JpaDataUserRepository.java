@@ -8,6 +8,9 @@ import java.util.Optional;
 
 public interface JpaDataUserRepository extends JpaRepository<UserInfo, Long>, UserRepository {
 
+    @Override
+    Boolean existsByID(String ID);
+
     //아이디로 회원정보 호출
     @Override
     Optional<UserInfo> findByID(String id);
