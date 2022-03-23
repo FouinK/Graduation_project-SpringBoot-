@@ -1,6 +1,8 @@
 package com.example.VivaLaTrip.Controller;
 
 import com.example.VivaLaTrip.Entity.UserInfo;
+import com.example.VivaLaTrip.Form.PlanResponseDto;
+import com.example.VivaLaTrip.Service.PlanService;
 import com.example.VivaLaTrip.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -8,19 +10,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class MainController {
     private final UserService userService;
+    private final PlanService planService;
 
     @Autowired
-    public MainController(UserService userService) {
+    public MainController(UserService userService, PlanService planService) {
         this.userService = userService;
+        this.planService = planService;
     }
 
     @GetMapping("/")
@@ -60,5 +63,23 @@ public class MainController {
             model.addAttribute("userInfo",userInfo);
         }
         return "users/User_Info";
+    }
+
+    @GetMapping("/public_plan")
+    public String index(Model model){
+        model.addAttribute("plan",planService.findAllDesc());
+        return "public_plan";//경로,확장자 자동
+    }
+
+    @GetMapping("/plan/save")
+    public String postsSave(){
+        return "plan_save";
+    }
+
+    @GetMapping("/posts/update/{id}")
+    public String postsUpdate(@PathVariable Long id, Model model){
+        PlanResponseDto dto = planService.findById(id);
+        model.addAttribute("plan",dto);
+        return "plan_update";
     }
 }

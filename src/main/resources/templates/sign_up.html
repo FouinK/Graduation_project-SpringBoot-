@@ -13,9 +13,9 @@
         아이디 : <input type="text" id="username" name="username" placeholder="아이디를 입력하세요" modelAttribute="userDto">
         <input class="btn btn-outline-primary btn-sm idCheck mx-1" type="button" id="usernameOverlay" onclick="usernameCheck()" value="중복 체크"/><p>아이디는 6~20자 영문 대 소문자, 숫자를 사용하세요.</p><br>
         <span style="display: none; color: #d92742; font-weight: bold;" th:text="${valid_username}"></span><br>
-        비밀번호 : <input id="password" name="password" type="password" placeholder="비밀번호를 입력하세요" readonly><p>비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.</p><br>
+        비밀번호 : <input id="password" name="password" type="password" placeholder="비밀번호를 입력하세요"><p>비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.</p><br>
         <span style="display: none; color: #d92742; font-weight: bold;" th:text="${valid_password}"></span><br>
-        비밀번호 확인 : <input id="password2" name="password2" type="password" placeholder="비밀번호를 한번 더 입력해주세요" readonly>
+        비밀번호 확인 : <input id="password2" name="password2" type="password" placeholder="비밀번호를 한번 더 입력해주세요">
         <input type="button" onclick="check_pw()" value="비밀번호 확인"><br>
         사용자 이름 : <input name="UserName" placeholder="이름을 입력하세요"><p>이름은 특수문자를 제외한 2~10자리여야 합니다.</p><br>
         <span style="display: none; color: #d92742; font-weight: bold;" th:text="${valid_UserName}"></span><br>
@@ -24,6 +24,7 @@
     </form>
     <center><a type="submit" href="/logout">로그아웃</a></center>
     <center><a type="submit" href="/User_Info">마이페이지</a></center>
+    <center><a type="submit" href="/public_plan">public_plan가기</a></center>
 
 <script src="/js/idcheck.js"> </script>
 </body>

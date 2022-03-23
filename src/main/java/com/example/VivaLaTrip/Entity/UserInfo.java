@@ -16,13 +16,13 @@ public class UserInfo implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
     private Long NUM;
-    @Column(name="ID")
+    @Column(name="ID",length = 500,nullable = false)
     private String ID;
-    @Column(name="PW")
+    @Column(name="PW",length = 300,nullable = false)
     private String PW;
-    @Column(name="UserName")
+    @Column(name="UserName",length = 200,nullable = false)
     private String UserName;
-    @Column(name="liked")
+    @Column(name="liked",length = 800)
     private String liked;
     @Column(name="Authority")
     private String Authority;
