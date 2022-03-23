@@ -44,7 +44,7 @@ public class UserController {
         UserInfo userInfo = new UserInfo();
         userInfo.setID(userForm.getUsername());
         userInfo.setPW(bCryptPasswordEncoder.encode(userForm.getPassword()));
-        userInfo.setUserName(userForm.getUserName());
+        userInfo.setUserName(userForm.getUserName_());
         userInfo.setLiked(userForm.getLiked());
         userInfo.setAuthority("ROLE_USER");
         userService.join(userInfo);
