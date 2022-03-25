@@ -8,6 +8,7 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 public class UserForm {
     @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{6,20}", message = "아이디는 6~20자 영문 대 소문자, 숫자를 사용하세요.")
     private String username;

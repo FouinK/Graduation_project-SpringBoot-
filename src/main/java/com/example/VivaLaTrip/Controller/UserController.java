@@ -3,6 +3,7 @@ package com.example.VivaLaTrip.Controller;
 import com.example.VivaLaTrip.Entity.UserInfo;
 import com.example.VivaLaTrip.Form.UserForm;
 import com.example.VivaLaTrip.Service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -37,8 +39,10 @@ public class UserController {
             for (String key : validatorResult.keySet()) {
             model.addAttribute(key, validatorResult.get(key));
         }
-
-        System.out.println("컨트롤러에서 받은 유저폼의 아이디"+userForm.getUsername());
+            log.info("컨트롤러에서 받은 유저폼의 아이디"+userForm.getUsername());
+            log.info("컨트롤러에서 받은 유저폼의 아이디"+userForm.getPassword());
+            log.info("컨트롤러에서 받은 유저폼의 아이디"+userForm.getUserName_());
+            log.info("컨트롤러에서 받은 유저폼의 아이디"+userForm.getLiked());
         /* 회원가입 페이지로 다시 리턴 */
         return "/sign_up";
     }
