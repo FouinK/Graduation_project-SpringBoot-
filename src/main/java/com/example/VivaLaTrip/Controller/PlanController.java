@@ -4,7 +4,6 @@ import com.example.VivaLaTrip.Form.PlanResponseDto;
 import com.example.VivaLaTrip.Form.PlanSaveRequestDto;
 import com.example.VivaLaTrip.Form.PlanUpdateRequestDto;
 import com.example.VivaLaTrip.Service.PlanService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

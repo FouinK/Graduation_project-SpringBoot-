@@ -60,6 +60,5 @@ function check_pw(){  //비밀번호 확인
     }
     if (p_cf=="") {
         document.getElementById('pw_check_msg').innerHTML = "";
-
     }
 }
