@@ -4,8 +4,10 @@ import com.example.VivaLaTrip.Entity.Plan;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Builder;
+import lombok.Setter;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class PlanSaveRequestDto {
     private String title;

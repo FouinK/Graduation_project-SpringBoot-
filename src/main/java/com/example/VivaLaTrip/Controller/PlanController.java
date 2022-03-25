@@ -20,8 +20,8 @@ public class PlanController {
     }
 
     @PostMapping("/plan_savepro")
-    public String save(@RequestParam("content")String content, @RequestParam("title")String title,@RequestParam("author")String author,@RequestParam("place_list")String place_list){
-        PlanSaveRequestDto requestDto = new PlanSaveRequestDto(title, content, author, place_list);
+    public String save(PlanSaveRequestDto requestDto){
+//        PlanSaveRequestDto requestDto = new PlanSaveRequestDto(title, content, author, place_list);
 //        System.out.println("@RequestParam으로 받은 content"+content);
         planService.save(requestDto);
         return "public_plan";
