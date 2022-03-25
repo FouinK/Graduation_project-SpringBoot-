@@ -6,12 +6,13 @@
 </head>
 <body>
     <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-    <h1 th:text="'안녕하세요. ' + ${username}" ></h1>
+    <h1 th:text="'안녕하세요. ' + ${username}"></h1>
     <center><a href="/">메인 화면 가기</a></center>
     <center><a href="login">로그인 화면 가기</a></center>
     <form action="/sign_uppro" method="post">
         아이디 : <input type="text" id="username" name="username" placeholder="아이디를 입력하세요"> <!--modelAttribute="userDto"-->
-        <input class="btn btn-outline-primary btn-sm idCheck mx-1" type="button" id="usernameOverlay" onclick="usernameCheck()" value="중복 체크"/><br>
+        <input class="btn btn-outline-primary btn-sm idCheck mx-1" type="button" id="usernameOverlay"
+               onclick="usernameCheck()" value="중복 체크"/><br>
         <span style="display: none; color: #d92742; font-weight: bold;" th:text="${valid_username}"></span><br>
         비밀번호 : <input id="password" name="password" type="password" placeholder="비밀번호를 입력하세요"><br>
         <span style="display: none; color: #d92742; font-weight: bold;" th:text="${valid_password}"></span><br>
@@ -27,7 +28,6 @@
     <center><a href="/plan/save" role="button" class="btn btn-primary">일정만들기</a></center>
     <center><a type="submit" href="/public_plan">public_plan가기</a></center>
 
-<script src="/js/idcheck.js"> </script>
+<script src="/js/idcheck.js"></script>
 </body>
-
 </html>

@@ -23,7 +23,6 @@ public class PlanSaveRequestDto {
         this.place_list=place_list;
     }
 
-
     public Plan toEntity(){
         return Plan.builder()
                 .title(title)
@@ -32,5 +31,4 @@ public class PlanSaveRequestDto {
                 .place_list(place_list)
                 .build();
     }
-
 }

@@ -4,19 +4,19 @@ import com.example.VivaLaTrip.Entity.UserInfo;
 import com.example.VivaLaTrip.Form.PlanResponseDto;
 import com.example.VivaLaTrip.Service.PlanService;
 import com.example.VivaLaTrip.Service.UserService;
+import com.fasterxml.jackson.annotation.JsonAlias;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @Controller
-
+@Slf4j
 public class MainController {
     private final UserService userService;
     private final PlanService planService;
@@ -66,11 +66,18 @@ public class MainController {
         return "users/User_Info";
     }
 
+    @GetMapping("/map")
+    public String map() {
+        return "/map";
+    }
+
+
     @GetMapping("/public_plan")
     public String public_plan(@AuthenticationPrincipal User user, Model model) {
+
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
-            model.addAttribute("userInfo",userInfo);
+            model.addAttribute("userInfo", userInfo);
         }
         model.addAttribute("plan", planService.findAllDesc());
         return "public_plan";//경로,확장자 자동
@@ -91,4 +98,5 @@ public class MainController {
         model.addAttribute("plan",dto);
         return "plan_update";
     }
+
 }
