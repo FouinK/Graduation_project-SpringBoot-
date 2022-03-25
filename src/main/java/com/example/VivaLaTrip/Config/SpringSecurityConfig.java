@@ -35,6 +35,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/","/users/**").permitAll()
                 .antMatchers("/admin").hasAuthority("ROLE_ADMIN");    //역할에 따라 접근 통제 가능
+//                .antMatchers("/users").hasAuthority("ROLE_USER");
+
 //                .anyRequest().authenticated()                           //어떠한 URL로 접근하던지 인증이 필요함
 //        http
 //                .authorizeRequests()

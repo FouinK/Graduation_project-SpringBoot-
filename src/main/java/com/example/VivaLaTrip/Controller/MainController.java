@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Optional;
 
 @Controller
+
 public class MainController {
     private final UserService userService;
     private final PlanService planService;
@@ -28,7 +29,7 @@ public class MainController {
 
     @GetMapping("/")
     public String index(@AuthenticationPrincipal User user, Model model) {
-        if (user != null) {
+        if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
             model.addAttribute("username", userInfo.get().getUserName());
         }
@@ -37,7 +38,7 @@ public class MainController {
 
     @GetMapping("/login")
     public String Login(@AuthenticationPrincipal User user, Model model, @RequestParam(value = "error", required = false)String error, @RequestParam(value = "exception", required = false)String exception) {
-        if (user != null) {
+        if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
             model.addAttribute("username", userInfo.get().getUserName());
         }
@@ -49,7 +50,7 @@ public class MainController {
 
     @GetMapping("/sign_up")
     public String Sign_up(@AuthenticationPrincipal User user, Model model) {
-        if (user != null) {
+        if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
             model.addAttribute("username", userInfo.get().getUserName());
         }
@@ -58,7 +59,7 @@ public class MainController {
 
     @GetMapping("/User_Info")
     public String User_Info(@AuthenticationPrincipal User user, Model model) {
-        if (user != null) {
+        if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
             model.addAttribute("userInfo",userInfo);
         }
@@ -66,17 +67,25 @@ public class MainController {
     }
 
     @GetMapping("/public_plan")
-    public String index(Model model){
-        model.addAttribute("plan",planService.findAllDesc());
+    public String public_plan(@AuthenticationPrincipal User user, Model model) {
+        if (user != null) {     //유저정보 보내기
+            Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
+            model.addAttribute("userInfo",userInfo);
+        }
+        model.addAttribute("plan", planService.findAllDesc());
         return "public_plan";//경로,확장자 자동
     }
 
     @GetMapping("/plan/save")
-    public String postsSave(){
+    public String postsSave(@AuthenticationPrincipal User user, Model model){
+        if (user != null) {     //유저정보 보내기
+            Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
+            model.addAttribute("userInfo",userInfo);
+        }
         return "plan_save";
     }
 
-    @GetMapping("/posts/update/{id}")
+    @GetMapping("/plan/update/{id}")
     public String postsUpdate(@PathVariable Long id, Model model){
         PlanResponseDto dto = planService.findById(id);
         model.addAttribute("plan",dto);
