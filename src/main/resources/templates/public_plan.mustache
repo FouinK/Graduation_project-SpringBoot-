@@ -1,0 +1,35 @@
+{{>layout/header}}
+<h1>스프링부트웹테스트</h1>
+<div class="col-md-12">
+    <div class="row">
+        <div class="col-md-6">
+            <!--
+            <a href="/plan/save" role="button" class="btn btn-primary">글 쓰기</a>
+            -->
+        </div>
+    </div>
+    <br>
+    <table class="table table-horizontal table-bordered">
+        <thead class="thead-strong">
+        <tr>
+            <th>게시글 번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>여행지 리스트</th>
+            <th>최종수정일</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+        {{#plan}}<!--리스트 순회 (for문)-->
+        <tr>
+            <td>{{id}}</td><!--리스트에서 가져온 객체-->
+            <td><a href="/plan/update/{{id}}">{{title}}</a></td>
+            <td>{{author}}</td>
+            <td>{{place_list}}</td>
+            <td>{{modifiedDate}}</td>
+        </tr>
+        {{/plan}}
+        </tbody>
+    </table>
+</div>
+{{>layout/footer}}

@@ -35,12 +35,14 @@ public class UserController {
             /* 유효성 통과 못한 필드와 메시지를 핸들링 */
             Map<String, String> validatorResult = userService.validateHandling(errors);
             for (String key : validatorResult.keySet()) {
-                model.addAttribute(key, validatorResult.get(key));
-            }
-            /* 회원가입 페이지로 다시 리턴 */
-            return "/sign_up";
+            model.addAttribute(key, validatorResult.get(key));
         }
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        System.out.println("컨트롤러에서 받은 유저폼의 아이디"+userForm.getUsername());
+        /* 회원가입 페이지로 다시 리턴 */
+        return "/sign_up";
+    }
+    BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         UserInfo userInfo = new UserInfo();
         userInfo.setID(userForm.getUsername());
         userInfo.setPW(bCryptPasswordEncoder.encode(userForm.getPassword()));
