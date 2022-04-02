@@ -10,5 +10,4 @@ public interface PlanRepository extends JpaRepository<Plan,Long> {
     @Query("SELECT p FROM Plan p ORDER BY p.id DESC")
     List<Plan> findAllDesc();
 
-
 }

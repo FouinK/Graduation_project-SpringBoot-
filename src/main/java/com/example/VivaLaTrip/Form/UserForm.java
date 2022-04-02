@@ -2,6 +2,7 @@ package com.example.VivaLaTrip.Form;
 
 import lombok.*;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -10,7 +11,8 @@ import javax.validation.constraints.Pattern;
 @Getter
 @Setter
 public class UserForm {
-    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{6,20}", message = "아이디는 6~20자 영문 대 소문자, 숫자를 사용하세요.")
+//    @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z]).{6,20}", message = "아이디는 6~20자 영문 대 소문자, 숫자를 사용하세요.")
+    @Email(message = "이메일 형식에 맞지 않습니다.")
     private String username;
 
     @NotBlank(message = "비밀번호 필수 입력 값입니다.")

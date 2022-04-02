@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Controller
 @Slf4j
+@Controller
 public class MainController {
     private final UserService userService;
     private final PlanService planService;
@@ -31,7 +31,7 @@ public class MainController {
     public String index(@AuthenticationPrincipal User user, Model model) {
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
-            model.addAttribute("username", userInfo.get().getUserName());
+            model.addAttribute("username", userInfo.get().getNickName());
         }
         return "index";
     }
@@ -40,7 +40,7 @@ public class MainController {
     public String Login(@AuthenticationPrincipal User user, Model model, @RequestParam(value = "error", required = false)String error, @RequestParam(value = "exception", required = false)String exception) {
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
-            model.addAttribute("username", userInfo.get().getUserName());
+            model.addAttribute("username", userInfo.get().getNickName());
         }
         model.addAttribute("error", error);
         model.addAttribute("exception", exception);
@@ -52,7 +52,7 @@ public class MainController {
     public String Sign_up(@AuthenticationPrincipal User user, Model model) {
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
-            model.addAttribute("username", userInfo.get().getUserName());
+            model.addAttribute("username", userInfo.get().getNickName());
         }
         return "sign_up";
     }
