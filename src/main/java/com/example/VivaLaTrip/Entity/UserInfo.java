@@ -1,5 +1,8 @@
 package com.example.VivaLaTrip.Entity;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,27 +12,33 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+@Data
+@Getter
+@Setter
 @Entity
 public class UserInfo implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private Long NUM;
+
     @Column(name="ID",length = 500,nullable = false)
     private String ID;
+
     @Column(name="PW",length = 300,nullable = false)
     private String PW;
-    @Column(name="UserName",length = 200,nullable = false)
-    private String UserName;
+
+    @Column(name="NickName",length = 200,nullable = false)
+    private String NickName;
+
     @Column(name="liked",length = 800)
     private String liked;
+
     @Column(name="Authority")
     private String Authority;
 
-    public String getID() {
-        return ID;
-    }
+    @Column(name = "Check_Email",length = 200)
+    private String Check_Email;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -48,38 +57,6 @@ public class UserInfo implements UserDetails {
     @Override
     public String getUsername() {
         return ID;
-    }
-
-    public Long getNUM() {
-        return NUM;
-    }
-
-    public String getUserName() {
-        return UserName;
-    }
-
-    public String getLiked() {
-        return liked;
-    }
-
-    public void setID(String ID) {
-        this.ID = ID;
-    }
-
-    public void setPW(String PW) {
-        this.PW = PW;
-    }
-
-    public void setUserName(String userName) {
-        UserName = userName;
-    }
-
-    public void setLiked(String liked) {
-        this.liked = liked;
-    }
-
-    public void setAuthority(String authority) {
-        Authority = authority;
     }
 
     @Override

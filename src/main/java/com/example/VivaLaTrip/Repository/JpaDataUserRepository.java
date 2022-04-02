@@ -22,5 +22,4 @@ public interface JpaDataUserRepository extends JpaRepository<UserInfo, Long>, Us
     //전체 검색
     @Override
     List<UserInfo> findAll();
-
 }

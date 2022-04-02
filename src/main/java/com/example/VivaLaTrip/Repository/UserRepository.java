@@ -9,7 +9,7 @@ public interface UserRepository {
 
     Boolean existsByID(String ID);
 
-    UserInfo  save(UserInfo userInfo);
+    UserInfo save(UserInfo userInfo);
 
     Optional<UserInfo> findByID(String id);
 

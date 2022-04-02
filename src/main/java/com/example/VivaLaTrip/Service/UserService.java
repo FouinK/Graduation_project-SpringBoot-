@@ -2,6 +2,10 @@ package com.example.VivaLaTrip.Service;
 
 import com.example.VivaLaTrip.Entity.UserInfo;
 import com.example.VivaLaTrip.Repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,13 +14,14 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+@Slf4j
 @Transactional
 public class UserService implements UserDetailsService {
+
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     private final UserRepository userRepository;
 
@@ -75,5 +80,52 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String insertid) throws UsernameNotFoundException {
         Optional<UserInfo> userInfo = userRepository.findByID(insertid);
         return new User(userInfo.get().getID(),userInfo.get().getPassword(),userInfo.get().getAuthorities());
+    }
+
+    //Email - 인증번호 난수 생성
+    public String GenerateCertNumber() {
+        int certNumLength = 6;
+        Random random = new Random(System.currentTimeMillis());
+        int range = (int) Math.pow(10, certNumLength);
+        int trim = (int) Math.pow(10, certNumLength - 1);
+        int result = random.nextInt(range) + trim;
+        if (result > range) {
+            result = result - trim;
+        }
+        return String.valueOf(result);
+    }
+
+    //이메일 보내기
+    public void Send_Email(String email) {
+        String send_code = GenerateCertNumber();
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+        simpleMailMessage.setTo(email);
+        simpleMailMessage.setSubject("Viva La Trip 인증 메일입니다.");
+        simpleMailMessage.setText("인증번호 "+send_code+"를 입력해주세요.");
+
+        Optional<UserInfo> userInfo = Get_UserInfo(email);          //
+        userInfo.get().setCheck_Email(send_code);                   //
+        Update_Userinfo_Check_Email(userInfo);                                  //Userinfo테이블 업데이트
+
+        javaMailSender.send(simpleMailMessage);
+        log.info("UserService에서 받은 Email 값 : " + email);
+    }
+
+    //람다식으로 UserInfo check_email 업데이트
+    public void Update_Userinfo_Check_Email(Optional<UserInfo> userinfo) {
+        userinfo.ifPresent(selectUserInfo->{
+            selectUserInfo.setCheck_Email(userinfo.get().getCheck_Email());
+//            selectUserInfo.setAuthority("ROLE_USER");
+            userRepository.save(selectUserInfo);
+        });
+    }
+
+    //람다식으로 UserInfo ROLE 업데이트
+    public void Update_Userinfo_ROLE_USER(Optional<UserInfo> userinfo) {
+        userinfo.ifPresent(selectUserInfo->{
+//            selectUserInfo.setCheck_Email(userinfo.get().getCheck_Email());
+            selectUserInfo.setAuthority("ROLE_USER");
+            userRepository.save(selectUserInfo);
+        });
     }
 }

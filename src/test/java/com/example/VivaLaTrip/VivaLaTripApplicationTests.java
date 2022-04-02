@@ -8,6 +8,13 @@ class VivaLaTripApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
+
+
+	void JSONTEST() {
+
+	}
+
 
 }

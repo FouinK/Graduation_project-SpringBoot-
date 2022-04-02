@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+    <h1 th:text="${username}+'님이 가입한 메일로 발송된 인증번호를 확인해주세요'" ></h1>
+    <form action="/Email_Checkpro" method="post">
+        <input name="Email" th:value="${username}" readonly >
+        <input name="check_email" placeholder="인증번호를 입력해주세요"><button>제출하기</button>
+    </form>
+
+</body>
+</html>

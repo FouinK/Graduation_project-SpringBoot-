@@ -1,25 +1,24 @@
 var main={
+
     init : function(){
         var _this = this;
         $('#btn-save').on('click',function(){
             _this.save();
         });
-
         $('#btn-update').on('click',function(){
             _this.update();
         });
-
         $('#btn-delete').on('click',function(){
             _this.delete();
         });
     },
+
     save:function(){
         var data={
             title:$('#title').val(),
             author:$('#author').val(),
             content:$('#content').val()
         };
-
         $.ajax({
             type:'POST',
             url:'/api/v1/posts',
@@ -35,13 +34,13 @@ var main={
     },
 
     update:function(){
+
         var data={
             title:$('#title').val(),
             content:$('#content').val()
         };
 
         var id = $('#id').val();
-
         $.ajax({
             type:'PUT',
             url:'/api/v1/posts/'+id,
@@ -71,5 +70,24 @@ var main={
             alert(JSON.stringify(error));
         });
     }
+
 };
+
 main.init();
+$.ajax({
+    url : "/kakao",
+    success : function(data){
+        alert(data.msg);
+    }
+});
+
+function IsJsonString(str) {
+
+    try {
+        var json = JSON.parse(str);
+        return (typeof json === 'object');
+    } catch (e) {
+        return false;
+    }
+
+}

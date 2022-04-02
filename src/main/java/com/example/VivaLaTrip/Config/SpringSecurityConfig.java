@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 @EnableWebSecurity
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     private UserService userService;
 

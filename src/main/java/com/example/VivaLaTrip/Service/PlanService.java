@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class PlanService {
+
     private final PlanRepository planRepository;
 
     @Transactional
