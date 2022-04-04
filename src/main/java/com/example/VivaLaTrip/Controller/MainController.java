@@ -4,7 +4,6 @@ import com.example.VivaLaTrip.Entity.UserInfo;
 import com.example.VivaLaTrip.Form.PlanResponseDto;
 import com.example.VivaLaTrip.Service.PlanService;
 import com.example.VivaLaTrip.Service.UserService;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,7 +36,7 @@ public class MainController {
     }
 
     @GetMapping("/login")
-    public String Login(@AuthenticationPrincipal User user, Model model, @RequestParam(value = "error", required = false)String error, @RequestParam(value = "exception", required = false)String exception) {
+    public String Login(@AuthenticationPrincipal User user, Model model, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "exception", required = false) String exception) {
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
             model.addAttribute("username", userInfo.get().getNickName());
@@ -61,7 +60,7 @@ public class MainController {
     public String User_Info(@AuthenticationPrincipal User user, Model model) {
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
-            model.addAttribute("userInfo",userInfo);
+            model.addAttribute("userInfo", userInfo);
         }
         return "users/User_Info";
     }
@@ -84,19 +83,28 @@ public class MainController {
     }
 
     @GetMapping("/plan/save")
-    public String postsSave(@AuthenticationPrincipal User user, Model model){
+    public String postsSave(@AuthenticationPrincipal User user, Model model) {
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
-            model.addAttribute("userInfo",userInfo);
+            model.addAttribute("userInfo", userInfo);
         }
         return "plan_save";
     }
 
     @GetMapping("/plan/update/{id}")
-    public String postsUpdate(@PathVariable Long id, Model model){
+    public String postsUpdate(@PathVariable Long id, Model model) {
         PlanResponseDto dto = planService.findById(id);
-        model.addAttribute("plan",dto);
+        model.addAttribute("plan", dto);
         return "plan_update";
     }
 
+    @GetMapping("/APItest")
+    public String APItest() {
+        return "APItest";
+    }
+
+    @GetMapping("/ajaxtest")
+    public String ajaxtest() {
+        return "ajaxTest";
+    }
 }

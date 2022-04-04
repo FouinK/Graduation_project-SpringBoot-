@@ -14,5 +14,5 @@ import java.util.List;
 @Setter
 public class KakaoGeoRes {
     private List<Documents> documents;
-    private HashMap<String, Object> meta;
+//    private HashMap<String, Object> meta;
 }

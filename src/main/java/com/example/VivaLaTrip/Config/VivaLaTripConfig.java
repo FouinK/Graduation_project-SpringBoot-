@@ -2,8 +2,10 @@ package com.example.VivaLaTrip.Config;
 
 import com.example.VivaLaTrip.Repository.PlanRepository;
 import com.example.VivaLaTrip.Repository.UserRepository;
+import com.example.VivaLaTrip.Service.MapService;
 import com.example.VivaLaTrip.Service.PlanService;
 import com.example.VivaLaTrip.Service.UserService;
+import com.example.VivaLaTrip.Service.WeatherService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -30,5 +32,15 @@ public class VivaLaTripConfig {
     @Bean
     public PlanService planService() {
         return new PlanService(planRepository);
+    }
+
+    @Bean
+    public WeatherService weatherService() {
+        return new WeatherService();
+    }
+
+    @Bean
+    public MapService mapService() {
+        return new MapService();
     }
 }
