@@ -9,17 +9,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown =true)
-class Documents {
-//    private String category_group_code;
-//    private String category_group_name;
-//    private String category_name;
-//    private String distance;
-//    private String id;
-//    private String phone;
+public class Documents {
     private String place_name;
-//    private String place_url;
     private Double x;
     private Double y;
-//    private String address_name;
-//    private String road_address_name;
 }
