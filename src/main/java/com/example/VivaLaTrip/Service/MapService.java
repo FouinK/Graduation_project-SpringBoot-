@@ -11,6 +11,8 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.UnsupportedEncodingException;
@@ -20,10 +22,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 @Slf4j
 public class MapService {
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
+    /*@JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @ResponseBody
     public Map<String, Object> MapParsing(String word) throws UnsupportedEncodingException, UnirestException, JsonProcessingException {
@@ -86,6 +90,45 @@ public class MapService {
 
         return (HashMap<String, Object>) map4;
 
+    }*/
+    public Map<String,Object> getByKeyword(String keyword) throws JsonProcessingException, UnirestException {
+        String APIKey = "KakaoAK 987e4dd94656cea7557c313bec550aee";
+        HashMap<String, Object> map = new HashMap<>(); //결과를 담을 map
+
+        String apiURL = "https://dapi.kakao.com/v2/local/search/keyword.json?query="
+                + URLEncoder.encode(keyword, UTF_8);
+
+        HttpResponse<JsonNode> response = Unirest.get(apiURL)
+                .header("Authorization", APIKey).asJson();
+
+
+        JSONObject jsonObject = response.getBody().getObject(); //json 객체만 뽑아냄
+
+        System.out.println(jsonObject); //확인
+
+        JSONArray jsonArray = (JSONArray) jsonObject.get("documents"); //documents만 뽑아냄
+
+        JSONObject tmp = (JSONObject)jsonArray.get(0);
+        String place_name = (String)tmp.get("place_name");
+        String x = (String)tmp.get("x");
+        String y = (String)tmp.get("y");
+
+        map.put("place_name",place_name);
+        map.put("x",x);
+        map.put("y",y);
+
+
+        /*ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+
+        map = objectMapper.readValue(response.getBody().toString(), HashMap.class);*/
+
+        return (Map<String, Object>) map;
     }
 
+    public void savePlace(){
+
+    }
 }
+
+
