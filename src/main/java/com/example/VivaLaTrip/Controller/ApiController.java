@@ -36,7 +36,7 @@ public class ApiController {
 
         log.info("컨트롤러 word값 : "+word);
 
-        Map<String,Object> map = mapService.getByKeyword(word);
+        Map<String,Object> map = mapService.MapParsing(word);
 
         return ResponseEntity.ok(map);
     }
