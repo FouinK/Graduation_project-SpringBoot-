@@ -110,6 +110,7 @@ public class MapService {
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 15; j++) {
+                String category_depth = splitCategory(bodyJson[i].getDocuments().get(j).getCategory_name());
                 places[j].setPlace_id(bodyJson[i].getDocuments().get(j).getId());
                 places[j].setPlace_name(bodyJson[i].getDocuments().get(j).getPlace_name());
                 places[j].setAddress_name(bodyJson[i].getDocuments().get(j).getAddress_name());
@@ -117,13 +118,22 @@ public class MapService {
                 places[j].setUrl(bodyJson[i].getDocuments().get(j).getPlace_url());
                 places[j].setX(bodyJson[i].getDocuments().get(j).getX());
                 places[j].setY(bodyJson[i].getDocuments().get(j).getY());
-                places[j].setCategory_name(bodyJson[i].getDocuments().get(j).getCategory_name());
+                places[j].setCategory_name(category_depth);
                 places[j].setIndoor("0");
                 mapRepository.save(places[j]);
             }
         }
 //        log.info("for문 적상 작동");
 //        log.info("맵 리포지토리 정상 작동");
+    }
+
+    public String splitCategory(String category){
+        if(category.length()!=10){  //3번째 이상 카테고리 있을 경우
+            return category.substring(13);
+        }
+        else{  //2번째 카테고리까지 있는 경우
+            return "";
+        }
     }
 
 /*    public Map<String,Object> getByKeyword(String keyword) throws JsonProcessingException, UnirestException {

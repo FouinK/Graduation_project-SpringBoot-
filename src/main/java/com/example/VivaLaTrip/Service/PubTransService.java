@@ -24,7 +24,7 @@ public class PubTransService {
 
         String Apikey = "Pdk5AeqchgUHkzCZXjC3WGchUKGRIMf430BlyCwf18c";
 
-        String url = "https://api.odsay.com/v1/api/searchPubTransPathT?SX=%22+sX+%22&SY=%22+sY+%22&EX=%22+eX+%22&EY=%22+eY+%22&apiKey=" +Apikey;
+        String url = "https://api.odsay.com/v1/api/searchPubTransPathT?SX="+sX+"&SY="+sY+"&EX="+eX+"&EY="+eY+"&apiKey=" +Apikey;
 
         HttpResponse<JsonNode> response = Unirest.get(url)
                 .header("Authorization", Apikey).asJson();
