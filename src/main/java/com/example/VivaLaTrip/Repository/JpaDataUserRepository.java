@@ -1,5 +1,6 @@
 package com.example.VivaLaTrip.Repository;
 
+import com.example.VivaLaTrip.Entity.Places;
 import com.example.VivaLaTrip.Entity.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -22,4 +23,5 @@ public interface JpaDataUserRepository extends JpaRepository<UserInfo, Long>, Us
     //전체 검색
     @Override
     List<UserInfo> findAll();
+
 }
