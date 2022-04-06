@@ -1,27 +1,17 @@
 package com.example.VivaLaTrip.Controller;
 
-import com.example.VivaLaTrip.Entity.KakaoGeoRes;
-import com.example.VivaLaTrip.Form.MapData;
 import com.example.VivaLaTrip.Service.MapService;
 import com.example.VivaLaTrip.Service.WeatherService;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -37,12 +27,6 @@ public class ApiController {
         this.mapService = mapService;
     }
 
-    @PostMapping
-    public void mapRequest(@RequestBody MapData[] mapData) {
-        for (int i = 0; i < mapData.length; i++) {
-            log.info("JSOM 값 확인" + mapData[i]);
-        }
-    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
