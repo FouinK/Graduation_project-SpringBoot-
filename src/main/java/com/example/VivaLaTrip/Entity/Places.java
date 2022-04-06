@@ -21,7 +21,7 @@ public class Places {
     @Column(name = "place_name", nullable = false)
     private String place_name;
 
-    @Column(name = "category_name", nullable = false)
+    @Column(name = "category_name", nullable = true)
     private String category_name;
 
     @Column(name = "y", nullable = false)
