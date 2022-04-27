@@ -27,18 +27,15 @@ public class ApiController {
         this.mapService = mapService;
     }
 
-
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @PostMapping("/kakao")
+    @PostMapping("/getData")
     public @ResponseBody
-    ResponseEntity<?> KakaoApiTest(@RequestParam("keyword") String word) throws UnirestException, UnsupportedEncodingException, JsonProcessingException {
+    ResponseEntity<?> KakaoApiTest() throws UnirestException, UnsupportedEncodingException, JsonProcessingException {
 
-        log.info("컨트롤러 word값 : "+word);
+        String tempword = "제주도 명소";
+        return ResponseEntity.ok(mapService.MapParsing(tempword));
 
-        Map<String,Object> map = mapService.MapParsing(word);
-
-        return ResponseEntity.ok(map);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -46,11 +43,23 @@ public class ApiController {
     @GetMapping("/Weather")
     public Map<String, Object> WeatherAPI(@RequestParam("Date") int date) throws IOException, UnirestException {
 
-        log.info("컨트롤러 date값 : "+date);
+        log.info("컨트롤러 date값 : " + date);
 
-        Map<String,Object> map = weatherService.WeatherParsing(date);
+        Map<String, Object> map = weatherService.WeatherParsing(date);
 
         return map;
+    }
+
+    @GetMapping("/test111")
+    public String ReactController() throws UnirestException, JsonProcessingException {
+        mapService.MapParsing2();
+
+        return "react test complete";
+    }
+
+    @GetMapping("/test222")
+    public String ReactController22() {
+        return "react test complete222";
     }
 
 }

@@ -1,18 +1,15 @@
 package com.example.VivaLaTrip;
 
-
 import com.example.VivaLaTrip.OpenWeatherDto.OpenWeather;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import org.json.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -59,6 +56,11 @@ public class VivaLaTripApplicationTests {
 
 
         System.out.println("테스트 API(날씨) 맵 값 확인 : "+map.toString());
+
+    }
+
+    @Test
+    public void search() throws UnirestException, JsonProcessingException {
 
     }
 
