@@ -1,13 +1,10 @@
 package com.example.VivaLaTrip.Config;
 
 import com.example.VivaLaTrip.Service.UserService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationDetailsSource;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -16,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -33,7 +29,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()           //포스트 매핑 오류 제거
                 .authorizeRequests()
-                .antMatchers("/h2-console/**").permitAll()
+//                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/","/users/**").permitAll()
                 .antMatchers("/admin").hasAuthority("ROLE_ADMIN");    //역할에 따라 접근 통제 가능
 //                .antMatchers("/users").hasAuthority("ROLE_USER");
@@ -46,7 +42,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                 .loginPage("/users/login")                          //로그인 페이지 호출
                 .permitAll()
-                .loginProcessingUrl("/loginpro")                    //폼으로 받는 URL
+                .loginProcessingUrl("/api/login")                    //폼으로 받는 URL
 //                .usernameParameter("ID")                            //아이디 파라미터 받기
 //                .passwordParameter("PW")                           //비밀번호 파라미터 받기
                 .failureHandler(customFailurHandler) // 로그인 실패 핸들러
@@ -59,7 +55,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true);
     //세션 날리기(?)
 //                .logoutRequestMatcher(new AntPathRequestMatcher("/logoutpro"));     //로그아웃
-
     }
 
     @Override
@@ -77,5 +72,4 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

@@ -107,4 +107,5 @@ public class MainController {
     public String ajaxtest() {
         return "ajaxTest";
     }
+
 }
