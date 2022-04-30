@@ -37,9 +37,7 @@ public class ApiController {
         String keyword = (String)map.get("keyword");        //일단 전체적인 지역 값 받아야함
 //        String tempword = "충주시 호암동";
 
-
         return ResponseEntity.ok(mapService.MapParsingDB(keyword));
-
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -53,5 +51,4 @@ public class ApiController {
 
         return map;
     }
-
 }
