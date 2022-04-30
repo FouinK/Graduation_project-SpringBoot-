@@ -13,8 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@Controller
+@RestController
 public class UserController {
     private final UserService userService;
     @Autowired
@@ -30,7 +29,25 @@ public class UserController {
         this.userService = userService;
     }
 
-    //시큐리티 회원가입(해시 함수 적용된 PW암호화)
+    @ResponseBody
+    @PostMapping("/api/register")
+    public ResponseEntity<?> register(@RequestBody HashMap<String,Object> map) {
+//        log.info("map의 id값 : "+(String)map.get("id"));
+//        log.info("클라에서 받은 값 서버에서 확인(레지스터) : " + map.toString());
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        UserInfo userInfo = new UserInfo();
+        userInfo.setID((String) map.get("id"));
+        userInfo.setPW(bCryptPasswordEncoder.encode((String) map.get("pw")));
+        userInfo.setNickName("이름모를 누군가"/*(String) map.get("username")*/);       //닉네임 값 입력 필요함
+//        userInfo.setLiked(""/*(String)map.get("liked")*/);                          //좋아요 목록은 멘토님이 말씀하신 거 처럼 따로 테이블이 필요할 듯 현재 테이블 수정 예정
+        userInfo.setAuthority("ROLE_TEMPORARY_USER");
+        userService.join(userInfo);
+
+        return ResponseEntity.ok(map);
+    }
+
+    //시큐리티 회원가입(해시 함수 적용된 PW암호화)        //리액트와 연동 시 삭제 필요
     @PostMapping("/sign_uppro")
     public String sign_uppro(@Valid UserForm userForm, Errors errors, Model model) {
         if (errors.hasErrors()) {
@@ -41,6 +58,7 @@ public class UserController {
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
             }
+            log.info("--뭔가 문제가 있을 때 아래 출력문이 뜸--");
             log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getUsername());
             log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getPassword());
             log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getUserName_());
@@ -53,7 +71,7 @@ public class UserController {
         userInfo.setID(userForm.getUsername());
         userInfo.setPW(bCryptPasswordEncoder.encode(userForm.getPassword()));
         userInfo.setNickName(userForm.getUserName_());
-        userInfo.setLiked(userForm.getLiked());
+//        userInfo.setLiked(userForm.getLiked());
         userInfo.setAuthority("ROLE_TEMPORARY_USER");
         userService.join(userInfo);
         return "login";

@@ -35,7 +35,7 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping("/login")
+/*    @GetMapping("/login")
     public String Login(@AuthenticationPrincipal User user, Model model, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "exception", required = false) String exception) {
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
@@ -45,7 +45,7 @@ public class MainController {
         model.addAttribute("exception", exception);
 
         return "login";
-    }
+    }*/
 
     @GetMapping("/sign_up")
     public String Sign_up(@AuthenticationPrincipal User user, Model model) {
@@ -97,15 +97,4 @@ public class MainController {
         model.addAttribute("plan", dto);
         return "plan_update";
     }
-
-    @GetMapping("/APItest")
-    public String APItest() {
-        return "APItest";
-    }
-
-    @GetMapping("/ajaxtest")
-    public String ajaxtest() {
-        return "ajaxTest";
-    }
-
 }

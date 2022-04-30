@@ -36,8 +36,8 @@ public class Places {
     @Column(name = "url")
     private String url;
 
-    @Column(name = "address_name", nullable = false)
-    private String address_name;
+    @Column(name = "address", nullable = false)
+    private String address;
 
     @Column(name = "indoor", nullable = false)
     private String indoor;

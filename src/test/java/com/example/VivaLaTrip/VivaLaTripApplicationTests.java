@@ -1,7 +1,9 @@
 package com.example.VivaLaTrip;
 
+import com.example.VivaLaTrip.Entity.Places;
 import com.example.VivaLaTrip.OpenWeatherDto.OpenWeather;
 
+import com.example.VivaLaTrip.Repository.MapRepository;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -19,6 +21,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 
 import java.util.HashMap;
+import java.util.List;
 
 @SpringBootTest
 @Transactional
@@ -62,6 +65,14 @@ public class VivaLaTripApplicationTests {
     @Test
     public void search() throws UnirestException, JsonProcessingException {
 
+    }
+
+    @Test
+    public void MapParsingDB() {
+        String word = "강원";
+        MapRepository mapRepository = null;
+        List<Places> bodyJson = mapRepository.findByAddressContains(word);
+        System.out.println("데베에서 뽑아온 Places값 :"+bodyJson.toString());
     }
 
 }
