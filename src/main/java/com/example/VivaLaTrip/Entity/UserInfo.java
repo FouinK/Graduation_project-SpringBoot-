@@ -30,9 +30,11 @@ public class UserInfo implements UserDetails {
 
     @Column(name="NickName",length = 200,nullable = false)
     private String NickName;
+/*
 
     @Column(name="liked",length = 800)
     private String liked;
+*/
 
     @Column(name="Authority")
     private String Authority;

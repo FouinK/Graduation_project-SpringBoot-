@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -31,10 +32,13 @@ public class ApiController {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @PostMapping("/getData")
     public @ResponseBody
-    ResponseEntity<?> KakaoApiTest() throws UnirestException, UnsupportedEncodingException, JsonProcessingException {
+    ResponseEntity<?> KakaoApiTest(@RequestBody HashMap<String,Object> map) throws UnirestException, UnsupportedEncodingException, JsonProcessingException {
 
-        String tempword = "제주도 명소";
-        return ResponseEntity.ok(mapService.MapParsing(tempword));
+        String keyword = (String)map.get("keyword");        //일단 전체적인 지역 값 받아야함
+//        String tempword = "충주시 호암동";
+
+
+        return ResponseEntity.ok(mapService.MapParsingDB(keyword));
 
     }
 
@@ -48,18 +52,6 @@ public class ApiController {
         Map<String, Object> map = weatherService.WeatherParsing(date);
 
         return map;
-    }
-
-    @GetMapping("/test111")
-    public String ReactController() throws UnirestException, JsonProcessingException {
-        mapService.MapParsing2();
-
-        return "react test complete";
-    }
-
-    @GetMapping("/test222")
-    public String ReactController22() {
-        return "react test complete222";
     }
 
 }

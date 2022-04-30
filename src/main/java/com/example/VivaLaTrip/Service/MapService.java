@@ -39,7 +39,7 @@ public class MapService {
 
 //        log.info("서비스  word값 : "+word);
 
-        String APIKey = "KakaoAK 00996a550c5152989e6ad63d03958d4f";
+        String APIKey = "KakaoAK ";
 
         HashMap<String, Object> map1 = new HashMap<>();
         HashMap<String, Object> map2 = new HashMap<>();
@@ -85,7 +85,15 @@ public class MapService {
         return result;
     }
 
-    public void Save_Places(KakaoGeoRes bodyJson[]) {
+    public List<Places> MapParsingDB(String word) {
+
+        List<Places> bodyJson = mapRepository.findByAddressContains(word);
+        log.info("데베에서 뽑아온 Places값 :"+bodyJson.toString());
+
+        return bodyJson;
+    }
+
+/*    public void Save_Places(KakaoGeoRes bodyJson[]) {
 //        log.info("세이브 메소드에서 받은 bodyJson id값 : " + bodyJson[0].getDocuments().get(0).getId());
 
         Places[] places = new Places[15];
@@ -118,7 +126,7 @@ public class MapService {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @ResponseBody
     public void MapParsing2() throws UnirestException, JsonProcessingException {
-        /*대한민국
+        *//*대한민국
         최북단 : 강원도 고성군 현내면 대강리 *38.61503025970676 128.3580969588429
         최남단 : 제주특별자치도 서귀포시 대정읍 마라리 *33.11260291103729 126.26834665821991
         최동단 : 경상북도 울릉군 울릉읍 독도리 동도 37.23981774230282 *131.8727302252229945
@@ -130,8 +138,8 @@ public class MapService {
         육지 최남동(우하단 꼭지점) : 33.11260291103729 129.5845724459377
 
         테스트용 경복궁 좌표 : 37.57740 126.97679
-        */
-        String APIKey = "KakaoAK 2e5683f5c014af78bbbc7ef82174b5c4";
+        *//*
+        String APIKey = "KakaoAK";
 //        ArrayList<String> result = new ArrayList<>();
 
         double distance = 0.01000; //1000m
@@ -222,5 +230,5 @@ public class MapService {
         }
 //        log.ifo("for문 적상 작동");
 //        log.info("맵 리포지토리 정상 작동");
-    }
+    }*/
 }
