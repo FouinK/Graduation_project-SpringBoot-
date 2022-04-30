@@ -15,8 +15,8 @@ import javax.persistence.Id;
 public class Places {
 
     @Id
-    @Column(name = "place_id", nullable = false, unique=true)
-    private String place_id;
+    @Column(name = "id", nullable = false, unique = true)
+    private String id;
 
     @Column(name = "place_name", nullable = false)
     private String place_name;
@@ -41,4 +41,7 @@ public class Places {
 
     @Column(name = "indoor", nullable = false)
     private String indoor;
+
+    @Column(name = "checked", nullable = false)
+    private boolean checked;
 }

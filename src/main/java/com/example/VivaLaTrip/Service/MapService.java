@@ -88,7 +88,7 @@ public class MapService {
     public List<Places> MapParsingDB(String word) {
 
         List<Places> bodyJson = mapRepository.findByAddressContains(word);
-        log.info("데베에서 뽑아온 Places값 :"+bodyJson.toString());
+//        log.info("데베에서 뽑아온 Places값 :"+bodyJson.toString());
 
         return bodyJson;
     }

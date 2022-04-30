@@ -74,8 +74,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService);
-
     }
+
 /*
     @Bean
     public FilterRegistrationBean corsFilter() {
