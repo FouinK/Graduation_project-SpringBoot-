@@ -66,13 +66,13 @@ public class VivaLaTripApplicationTests {
     public void search() throws UnirestException, JsonProcessingException {
 
     }
-
+/*
     @Test
     public void MapParsingDB() {
         String word = "강원";
         MapRepository mapRepository = null;
         List<Places> bodyJson = mapRepository.findByAddressContains(word);
         System.out.println("데베에서 뽑아온 Places값 :"+bodyJson.toString());
-    }
+    }*/
 
 }
