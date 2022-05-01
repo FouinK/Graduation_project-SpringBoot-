@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 @Entity
 @Data
-public class Public_Plan {
+public class PublicPlan {
 
     @Id
     @Column(name = "plan_id",nullable = false)

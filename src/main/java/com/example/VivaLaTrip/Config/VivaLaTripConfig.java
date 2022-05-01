@@ -1,8 +1,8 @@
 package com.example.VivaLaTrip.Config;
 
+import com.example.VivaLaTrip.Repository.UserRepository;
 import com.example.VivaLaTrip.Repository.MapRepository;
 import com.example.VivaLaTrip.Repository.PlanRepository;
-import com.example.VivaLaTrip.Repository.UserRepository;
 import com.example.VivaLaTrip.Service.MapService;
 import com.example.VivaLaTrip.Service.PlanService;
 import com.example.VivaLaTrip.Service.UserService;
