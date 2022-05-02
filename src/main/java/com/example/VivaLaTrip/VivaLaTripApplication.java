@@ -1,8 +1,11 @@
 package com.example.VivaLaTrip;
 
+import com.example.VivaLaTrip.Entity.Places;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
+import java.util.Arrays;
 
 @EnableJpaAuditing//Jpa 활성화
 @SpringBootApplication

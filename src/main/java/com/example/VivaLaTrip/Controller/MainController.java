@@ -3,6 +3,7 @@ package com.example.VivaLaTrip.Controller;
 import com.example.VivaLaTrip.Entity.UserInfo;
 import com.example.VivaLaTrip.Form.PlanResponseDto;
 import com.example.VivaLaTrip.Service.PlanService;
+import com.example.VivaLaTrip.Service.PublicPlanService;
 import com.example.VivaLaTrip.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,13 @@ import java.util.Optional;
 public class MainController {
     private final UserService userService;
     private final PlanService planService;
+    private final PublicPlanService publicPlanService;
 
     @Autowired
-    public MainController(UserService userService, PlanService planService) {
+    public MainController(UserService userService, PlanService planService, PublicPlanService publicPlanService) {
         this.userService = userService;
         this.planService = planService;
+        this.publicPlanService = publicPlanService;
     }
 
     @GetMapping("/")
@@ -71,7 +74,7 @@ public class MainController {
     }
 
 
-    @GetMapping("/public_plan")
+/*    @GetMapping("/public_plan")
     public String public_plan(@AuthenticationPrincipal User user, Model model) {
 
         if (user != null) {     //유저정보 보내기
@@ -80,7 +83,7 @@ public class MainController {
         }
         model.addAttribute("plan", planService.findAllDesc());
         return "public_plan";//경로,확장자 자동
-    }
+    }*/
 
     @GetMapping("/plan/save")
     public String postsSave(@AuthenticationPrincipal User user, Model model) {
@@ -96,5 +99,11 @@ public class MainController {
         PlanResponseDto dto = planService.findById(id);
         model.addAttribute("plan", dto);
         return "plan_update";
+    }
+
+    @GetMapping("/public_plan")
+    public String public_plan() {
+        publicPlanService.view_all_public();
+        return "public_plan";
     }
 }
