@@ -1,6 +1,7 @@
 package com.example.VivaLaTrip.Entity;
 
 import lombok.Data;
+import org.apache.catalina.User;
 
 import javax.persistence.*;
 
@@ -11,10 +12,10 @@ public class Liked extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long num;
 
-    @Column(name = "user_id",nullable = false)
-    private int user_id;
+    @ManyToOne
+    private UserInfo userInfo;
 
-    @Column(name = "plan_id",nullable = false)
-    private String plan_id;
+    @ManyToOne
+    private PlanTemp planTemp;
 
 }
