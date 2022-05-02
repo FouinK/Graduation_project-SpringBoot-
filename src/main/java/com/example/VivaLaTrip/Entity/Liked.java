@@ -1,7 +1,6 @@
 package com.example.VivaLaTrip.Entity;
 
 import lombok.Data;
-import org.apache.catalina.User;
 
 import javax.persistence.*;
 
@@ -16,6 +15,6 @@ public class Liked extends BaseTimeEntity{
     private UserInfo userInfo;
 
     @ManyToOne
-    private PlanTemp planTemp;
+    private Plan plan;
 
 }
