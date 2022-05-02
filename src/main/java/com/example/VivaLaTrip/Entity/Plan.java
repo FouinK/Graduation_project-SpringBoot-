@@ -1,41 +1,35 @@
 package com.example.VivaLaTrip.Entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Data;
 
 import javax.persistence.*;
 
-@Getter
-@NoArgsConstructor
+@Data
 @Entity
-public class Plan extends BaseTimeEntity {
-    @Id//테이블 pk필드
-    @GeneratedValue(strategy = GenerationType.IDENTITY)//pk생성 규칙
-    private Long id;
+public class Plan extends BaseTimeEntity{
 
-    @Column(length=500,nullable = false)//테이블 컬럼
-    private String title;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "plan_id")
+    private Long plan_id;
 
-    @Column(length = 500,nullable = false)
-    private String content;
+    @OneToOne(mappedBy = "plan")
+    private PublicPlan publicPlan;
 
-    private String author;
+    @ManyToOne
+    private UserInfo userInfo;
 
-    @Column(length = 500,nullable = false)
-    private String place_list;
+    @Column(name = "is_public",nullable = false)
+    private boolean is_public;
 
-    @Builder//빌더 패턴 클래스 생성
-    public Plan(String title, String content, String author, String place_list){
-        this.title=title;
-        this.content=content;
-        this.author=author;
-        this.place_list=place_list;
-    }
+    @Column(name = "total_count",nullable = false)
+    private int total_count;
 
-    public void update(String title,String content,String place_list){
-        this.title=title;
-        this.content=content;
-        this.place_list=place_list;
-    }
+    @Column(name = "start_date",nullable = false)
+    private String start_date;
+
+    @Column(name = "end_date",nullable = false)
+    private String end_date;
+
+
 }

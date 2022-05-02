@@ -13,7 +13,7 @@ public class PlanDetail {
     private Long num;
 
     @ManyToOne
-    private PlanTemp planTemp;
+    private Plan plan;
 
     @Column(name = "days",nullable = false)
     private int days;

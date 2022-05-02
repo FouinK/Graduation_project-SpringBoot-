@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 public class PublicPlanController {
-
+/*
     PublicPlanService publicPlanService;
 
     @Autowired
@@ -18,6 +18,6 @@ public class PublicPlanController {
 
     public void public_plan_all(){
         publicPlanService.view_all_public();
-    }
+    }*/
 
 }
