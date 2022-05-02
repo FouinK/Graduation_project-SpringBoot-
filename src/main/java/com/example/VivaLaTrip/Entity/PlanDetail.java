@@ -12,8 +12,8 @@ public class PlanDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long num;
 
-    @Column(name = "plan_id",nullable = false)
-    private int plan_id;
+    @ManyToOne
+    private PlanTemp planTemp;
 
     @Column(name = "days",nullable = false)
     private int days;

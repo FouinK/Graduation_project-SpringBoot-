@@ -12,8 +12,8 @@ public class PlanTemp extends BaseTimeEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int plan_id;
 
-    @Column(name = "user_id",nullable = false)
-    private int user_id;
+    @ManyToOne
+    private UserInfo userInfo;
 
     @Column(name = "is_public",nullable = false)
     private boolean is_public;

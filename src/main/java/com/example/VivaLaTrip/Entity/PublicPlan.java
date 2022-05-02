@@ -5,14 +5,16 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 @Entity
 @Data
-public class PublicPlan {
+public class PublicPlan implements Serializable {
 
     @Id
-    @Column(name = "plan_id",nullable = false)
-    private int plan_id;
+    @ManyToOne
+    private PlanTemp planTemp;
 
     @Column(name = "comment",nullable = false)
     private String comment;

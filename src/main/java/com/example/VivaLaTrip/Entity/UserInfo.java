@@ -20,7 +20,7 @@ public class UserInfo implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long NUM;
+    private Long UserId;
 
     @Column(name="ID",length = 500,nullable = false)
     private String ID;
