@@ -41,7 +41,7 @@ public class UserController {
         userInfo.setPW(bCryptPasswordEncoder.encode((String) map.get("pw")));
         userInfo.setNickName("이름모를 누군가"/*(String) map.get("username")*/);       //닉네임 값 입력 필요함
 //        userInfo.setLiked(""/*(String)map.get("liked")*/);                          //좋아요 목록은 멘토님이 말씀하신 거 처럼 따로 테이블이 필요할 듯 현재 테이블 수정 예정
-        userInfo.setAuthority("ROLE_TEMPORARY_USER");
+        userInfo.setAuthority("ROLE_USER");
         userService.join(userInfo);
 
         return ResponseEntity.ok(map);
@@ -72,7 +72,7 @@ public class UserController {
         userInfo.setPW(bCryptPasswordEncoder.encode(userForm.getPassword()));
         userInfo.setNickName(userForm.getUserName_());
 //        userInfo.setLiked(userForm.getLiked());
-        userInfo.setAuthority("ROLE_TEMPORARY_USER");
+        userInfo.setAuthority("ROLE_USER");
         userService.join(userInfo);
         return "login";
     }
