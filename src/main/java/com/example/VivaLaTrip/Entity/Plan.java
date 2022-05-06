@@ -11,7 +11,7 @@ public class Plan extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "plan_id")
-    private Long plan_id;
+    private Long planId;
 
     @OneToOne(mappedBy = "plan")
     private PublicPlan publicPlan;
@@ -30,6 +30,5 @@ public class Plan extends BaseTimeEntity{
 
     @Column(name = "end_date",nullable = false)
     private String end_date;
-
 
 }

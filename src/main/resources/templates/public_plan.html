@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public Plan</title>
+</head>
+<body>
+    ID로 일정 조회
+    <form action="/get_plan" method="post">
+        일정 ID : <input name="id">
+        <button type="submit">확인</button>
+    </form>
+    <br>
+    ID로 일정 공유
+    <form action="/to_public_plan" method="post">
+        일정 ID : <input name="id">
+        코멘트 : <input name="comment">
+        <button type="submit">확인</button>
+    </form>
+    <br>
+    ID로 공유일정 삭제
+    <form action="/delete_public_plan" method="post">
+        일정 ID : <input name="id">
+
+        <button type="submit">확인</button>
+    </form>
+    <br>
+    공유 일정 전체 출력
+    <form action="/get_all_public" method="post">
+        <button type="submit">확인</button>
+    </form>
+    <br>
+    공유 일정 좋아요
+    <form action="/like" method="post">
+        일정 ID : <input name="id">
+        <input type="radio" name="like" value="like">like
+        <input type="radio" name="like" value="unlike">unlike
+        <button type="submit">확인</button>
+    </form>
+
+</body>
+</html>
