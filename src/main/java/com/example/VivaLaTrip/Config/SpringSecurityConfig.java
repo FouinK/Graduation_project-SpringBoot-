@@ -38,7 +38,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()           //포스트 매핑 오류 제거
                 .authorizeRequests()
-//                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/**","/users/**").permitAll()
                 .antMatchers("/admin").hasAuthority("ROLE_ADMIN");    //역할에 따라 접근 통제 가능
 //                .antMatchers("/users").hasAuthority("ROLE_USER");
@@ -76,20 +76,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService);
     }
-
-/*
-    @Bean
-    public FilterRegistrationBean corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-        bean.setOrder(0);
-        return bean;
-    }*/
 
     @Bean
     public PasswordEncoder passwordEncoder() {

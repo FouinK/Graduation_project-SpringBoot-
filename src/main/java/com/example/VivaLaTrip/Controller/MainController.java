@@ -40,6 +40,11 @@ public class MainController {
         return ResponseEntity.ok(map);
     }
 
+    @GetMapping("/123")
+    public String index1() {
+        return "index";
+    }
+
     @GetMapping("/login")
     public String Login(@AuthenticationPrincipal User user, Model model, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "exception", required = false) String exception) {
         if (user != null) {     //유저정보 보내기
@@ -74,8 +79,6 @@ public class MainController {
     public String map() {
         return "/map";
     }
-
-
 
     @GetMapping("/public_plan")
     public String public_plan() {

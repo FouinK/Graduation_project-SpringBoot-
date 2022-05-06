@@ -1,6 +1,7 @@
 package com.example.VivaLaTrip.Service;
 
-import com.example.VivaLaTrip.OpenWeatherDto.OpenWeather;
+//import com.example.VivaLaTrip.OpenWeatherDto.OpenWeather;
+import com.example.VivaLaTrip.OpenWeatherDto.ShortOpenWeatherDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,10 +41,11 @@ public class WeatherService {
     }
 
     //날씨 파싱
+/*
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @ResponseBody
-    public Map<String, Object> WeatherParsing(int date) throws UnirestException, JsonProcessingException {
+    public Map<String, Object> LongWeatherParsing(int date) throws UnirestException, JsonProcessingException {
 
         log.info("서비스 date값 : "+date);
 
@@ -76,6 +78,44 @@ public class WeatherService {
 
         return (Map<String,Object>) map;
     }
+*/
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ResponseBody
+    public Map<String, Object> ShortWeatherParsing(int date) throws UnirestException, JsonProcessingException {
+
+        log.info("서비스 date값 : "+date);
+
+        int truedate = DateGap(date);
+
+        String ServiceKey = "c3EMGmp9ih88slfSXrMpZCf9LDM7SRCD7bP1L9Yiw9HfRj5S8V8EPpsmFYDG9jjK%2Fy%2F9OR1JyJ9EacBvsshu0w%3D%3D";
+
+        String apiURL = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey="+ ServiceKey
+                +"&pageNo=1"
+                +"&numOfRows=1000"
+                +"&dataType=JSON"
+                +"&base_date="+truedate
+                +"&base_time=0500"
+                +"&nx=55"
+                +"&ny=127";        //경복궁
+
+        HttpResponse<JsonNode> response= Unirest.get(apiURL)
+                .asJson();
 
 
+        ObjectMapper objectMapper =new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        ShortOpenWeatherDto openWeather = objectMapper.readValue(response.getBody().toString(), ShortOpenWeatherDto.class);
+
+        HashMap<String, Object> map = objectMapper.convertValue(openWeather, HashMap.class);
+//        HashMap<String, Object> map1 = objectMapper.readValue(response.getBody().toString(), HashMap.class);
+
+        log.info("맵값 확인 : "+map.toString());
+//        log.info("맵값 확인 : "+map1.toString());
+
+        return (Map<String,Object>) map;
+    }
 }
