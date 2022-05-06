@@ -44,4 +44,7 @@ public class Places {
 
     @Column(name = "checked", nullable = false)
     private boolean checked;
+
+    @Column(name = "stay")
+    private int stay;
 }

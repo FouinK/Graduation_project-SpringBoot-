@@ -9,11 +9,11 @@ import java.io.Serializable;
 @Data
 public class PublicPlan implements Serializable {
 
-    @Id
-    private Long plan_id;
+    @Id@Column(name = "plan_id")
+    private Long planId;
 
     @MapsId
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "plan_id")
     private Plan plan;
 
