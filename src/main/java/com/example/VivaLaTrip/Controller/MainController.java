@@ -5,6 +5,7 @@ import com.example.VivaLaTrip.Service.PublicPlanService;
 import com.example.VivaLaTrip.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,16 +40,7 @@ public class MainController {
         return ResponseEntity.ok(map);
     }
 
-    /*@GetMapping("/")
-    public String index(@AuthenticationPrincipal User user, Model model) {
-        if (user != null) {     //유저정보 보내기
-            Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
-            model.addAttribute("username", userInfo.get().getNickName());
-        }
-        return "index";
-    }*/
-
-/*    @GetMapping("/login")
+    @GetMapping("/login")
     public String Login(@AuthenticationPrincipal User user, Model model, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "exception", required = false) String exception) {
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
@@ -58,7 +50,7 @@ public class MainController {
         model.addAttribute("exception", exception);
 
         return "login";
-    }*/
+    }
 
     @GetMapping("/sign_up")
     public String Sign_up(@AuthenticationPrincipal User user, Model model) {
@@ -87,6 +79,7 @@ public class MainController {
 
     @GetMapping("/public_plan")
     public String public_plan() {
+       // publicPlanService.view_all_public();
         return "public_plan";
     }
 }
