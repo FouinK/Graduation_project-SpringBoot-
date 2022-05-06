@@ -1,5 +1,6 @@
 package com.example.VivaLaTrip.Config;
 
+import com.example.VivaLaTrip.Repository.PlanRepository;
 import com.example.VivaLaTrip.Repository.UserRepository;
 import com.example.VivaLaTrip.Repository.MapRepository;
 import com.example.VivaLaTrip.Service.MapService;
@@ -16,11 +17,13 @@ public class VivaLaTripConfig {
 
     private final UserRepository userRepository;
     private final MapRepository mapRepository;
+    private final PlanRepository planRepository;
 
     @Autowired
-    public VivaLaTripConfig(UserRepository userRepository, MapRepository mapRepository) {
+    public VivaLaTripConfig(UserRepository userRepository, MapRepository mapRepository, PlanRepository planRepository) {
         this.userRepository = userRepository;
         this.mapRepository = mapRepository;
+        this.planRepository = planRepository;
     }
 
     @Bean

@@ -5,12 +5,16 @@ import com.example.VivaLaTrip.Service.PublicPlanService;
 import com.example.VivaLaTrip.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -25,14 +29,24 @@ public class MainController {
         this.publicPlanService = publicPlanService;
     }
 
-    @GetMapping("/")
+    @PostMapping("/")
+    public ResponseEntity<?> index(@AuthenticationPrincipal User user) {
+        /*Object principal2 = SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();*/
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", user.getUsername());
+        log.info("컨트롤러 유저 아이디 값 :"+user.getUsername());
+        return ResponseEntity.ok(map);
+    }
+
+    /*@GetMapping("/")
     public String index(@AuthenticationPrincipal User user, Model model) {
         if (user != null) {     //유저정보 보내기
             Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
             model.addAttribute("username", userInfo.get().getNickName());
         }
         return "index";
-    }
+    }*/
 
 /*    @GetMapping("/login")
     public String Login(@AuthenticationPrincipal User user, Model model, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "exception", required = false) String exception) {
@@ -73,7 +87,6 @@ public class MainController {
 
     @GetMapping("/public_plan")
     public String public_plan() {
-       // publicPlanService.view_all_public();
         return "public_plan";
     }
 }
