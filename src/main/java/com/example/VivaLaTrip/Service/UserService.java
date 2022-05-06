@@ -55,7 +55,6 @@ public class UserService implements UserDetailsService {
         return validatorResult;
     }
 
-
     //id 중복 검사
     public HashMap<String, Object> usernameOverlap(String username) {
         HashMap<String, Object> map = new HashMap<>();
@@ -79,7 +78,6 @@ public class UserService implements UserDetailsService {
     //스프링 시큐리티 로그인 시 아이디 검사
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-
         Optional<UserInfo> userInfo = userRepository.findByID(id);
         log.info("loadsUserByUsername의 값 :" + new User(userInfo.get().getID(), userInfo.get().getPassword(), userInfo.get().getAuthorities()));
         return new User(userInfo.get().getID(), userInfo.get().getPassword(), userInfo.get().getAuthorities());

@@ -1,13 +1,14 @@
-/*
 package com.example.VivaLaTrip.OpenWeatherDto;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-public class OpenWeather {
+public class ShortOpenWeatherDto {
     private Response response;
 }
 
@@ -33,17 +34,12 @@ class Items {
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 class Item {
-    private String wf3Am;
-    private String wf3Pm;
-    private String wf4Am;
-    private String wf4Pm;
-    private String wf5Am;
-    private String wf5Pm;
-    private String wf6Am;
-    private String wf6Pm;
-    private String wf7Am;
-    private String wf7Pm;
-    private String wf8;
-    private String wf9;
-    private String wf10;
-}*/
+    private String baseDate;
+    private String baseTime;
+    private String category;
+    private String fcstDate;
+    private String fcstTime;
+    private String fcstValue;
+    private String nx;
+    private String ny;
+}
