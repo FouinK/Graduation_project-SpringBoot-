@@ -1,26 +1,13 @@
 package com.example.VivaLaTrip;
 
-import com.example.VivaLaTrip.Entity.Places;
 //import com.example.VivaLaTrip.OpenWeatherDto.OpenWeather;
 
-import com.example.VivaLaTrip.Repository.MapRepository;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.transaction.Transactional;
+        import javax.transaction.Transactional;
 
-import java.io.IOException;
-
-import java.util.*;
+        import java.util.*;
 
 @SpringBootTest
 @Transactional
@@ -35,7 +22,7 @@ public class VivaLaTripApplicationTests {
     public void RouteComputeTest5route() {                       //시계방향 5번
         Random ran = new Random();
 //        int count = ran.nextInt(50) + 10;             //10개~50개 장소 랜덤 값
-        int count = 27;             //10개~50개 장소 랜덤 값
+        int count = 25;             //10개~50개 장소 랜덤 값
 
 //        int days = ran.nextInt(10) + 2;               //2~10days 랜덤
         int days = 10;               //2~10days 랜덤
@@ -405,11 +392,11 @@ public class VivaLaTripApplicationTests {
                 arr[i].setSlope((arr[i].getY() - avgY1) / (arr[i].getX() - avgX1));
                 arr[i].setWhere("page" + whrere + "four");
                 onepage4++;
-            } else if (arr[i].getX() == avgX1 && arr[i].getY() < avgY1) {       //기울기는 없고 y절편이 -일 때
+            } else if (arr[i].getX() == avgX1 && arr[i].getY() <= avgY1) {       //기울기는 없고 y절편이 -일 때
                 arr[i].setSlope(10000000);        //3사분면에 위치하는 배열에 넣기 위해
                 arr[i].setWhere("page" + whrere + "three");
                 onepage3++;
-            } else if (arr[i].getX() == avgX1 && arr[i].getY() > avgY1) {       //기울기는 없고 y절편이 +일 때
+            } else if (arr[i].getX() == avgX1 && arr[i].getY() >= avgY1) {       //기울기는 없고 y절편이 +일 때
                 arr[i].setSlope(10000000);        //1사분면에 위치하는 배열에 넣기 위해
                 arr[i].setWhere("page" + whrere + "one");
                 onepage1++;
@@ -458,6 +445,11 @@ public class VivaLaTripApplicationTests {
             }
         }
 
+        System.out.println("one1의 배열 크기 : "+one1.length);
+        System.out.println("two1의 배열 크기 : "+two1.length);
+        System.out.println("three1의 배열 크기 : "+three1.length);
+        System.out.println("four1의 배열 크기 : "+four1.length);
+
         //내부 1~4사분면도 최대~최소 기울기 구해서 담음
         one1 = onethreeRoute(one1);
         two1 = twofourRoute(two1);
@@ -482,42 +474,47 @@ public class VivaLaTripApplicationTests {
     }
 
     @Test
-    public PlacesTest[] onethreeRoute(PlacesTest[] arr13) {      //1,3사분면 나누어 담기 > 기울기 때문에
-        //기울기 양수거나 0일 때
-        int maxid = 0;
-        for (int i = 0; i < arr13.length; i++) {
-
-            double max = arr13[0].getSlope();
-            for (int n = i; n < arr13.length; n++) {
-                if (max < arr13[n].getSlope()) {
-                    max = arr13[n].getSlope();
-                    maxid = n;
+    public PlacesTest[] onethreeRoute(PlacesTest[] arr13) {      //1,4사분면 나누어 담기
+        if (arr13.length == 0) {
+            return arr13;
+        } else {
+            //기울기 양수거나 0일 때
+//            int maxid = 0;
+//            double max = arr13[0].getSlope();
+            for (int i = 0; i < arr13.length; i++) {
+                for (int n = i; n < arr13.length; n++) {
+                    if (arr13[i].getSlope() < arr13[n].getSlope()) {
+                        PlacesTest temp = arr13[i];
+                        arr13[i] = arr13[n];
+                        arr13[n] = temp;
+                    }
                 }
+
             }
-            PlacesTest temp = arr13[i];
-            arr13[i] = arr13[maxid];
-            arr13[maxid] = temp;
+            return arr13;
         }
-        return arr13;
     }
 
     @Test
-    public PlacesTest[] twofourRoute(PlacesTest[] arr24) {      //2,4사분면 나누어 담기 > 기울기 때문에
-        //기울기 음수 일 때
-        int minid = 0;
-        for (int i = 0; i < arr24.length; i++) {
-            double min = arr24[0].getSlope();
-            for (int n = i; n < arr24.length; n++) {
-                if (min > arr24[n].getSlope()) {
-                    min = arr24[n].getSlope();
-                    minid = n;
+    public PlacesTest[] twofourRoute(PlacesTest[] arr24) {      //2,3사분면 나누어 담기
+        if (arr24.length == 0) {
+            return arr24;
+        } else {
+            //기울기 음수 일 때
+            int minid = 0;
+//            double min = arr24[0].getSlope();
+            for (int i = 0; i < arr24.length; i++) {
+                for (int n = i; n < arr24.length; n++) {
+                    if (arr24[i].getSlope() < arr24[n].getSlope()) {
+                        PlacesTest temp = arr24[i];
+                        arr24[i] = arr24[n];
+                        arr24[n] = temp;
+                    }
                 }
+
             }
-            PlacesTest temp = arr24[i];
-            arr24[i] = arr24[minid];
-            arr24[minid] = temp;
+            return arr24;
         }
-        return arr24;
     }
 
     @Test
@@ -539,6 +536,7 @@ public class VivaLaTripApplicationTests {
         return arr;
     }
 
+/*
     @Test
     public void RouteComputeTest_clock1route()  {                               //시계방향 1번
         Random ran = new Random();
@@ -833,6 +831,7 @@ public class VivaLaTripApplicationTests {
         System.out.println("test good!!");
 
     }
+*/
 
 /*
     @JsonIgnoreProperties(ignoreUnknown = true)
