@@ -47,7 +47,8 @@ public class ApiController {
 
         log.info("컨트롤러 date값 : " + date);
 
-        Map<String, Object> map = weatherService.WeatherParsing(date);
+//        Map<String, Object> map = weatherService.LongWeatherParsing(date);
+        Map<String, Object> map = weatherService.ShortWeatherParsing(date);
 
         return map;
     }

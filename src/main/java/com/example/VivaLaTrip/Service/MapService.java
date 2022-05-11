@@ -93,6 +93,33 @@ public class MapService {
         return bodyJson;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ResponseBody
+    public List<Documents> HotelPasrsingTest() throws UnirestException, JsonProcessingException {
+
+        String APIKey = "KakaoAK 00996a550c5152989e6ad63d03958d4f";
+        String apiURL ="https://dapi.kakao.com/v2/local/search/category.json?page=1&category_group_code=AD5&x=126.97679&y=37.57740&radius=20000";
+
+        HttpResponse<JsonNode> response = Unirest.get(apiURL)
+                .header("Authorization", APIKey)
+                .asJson();
+
+
+        ObjectMapper objectMapper =new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+
+        KakaoGeoRes bodyJson = objectMapper.readValue(response.getBody().toString(), KakaoGeoRes.class);        //카카오 매핑
+        List<Documents> result = new ArrayList<>();     //어레이 리스트로 도큐먼츠만 파싱
+        result.addAll(bodyJson.getDocuments());
+
+        log.info("중심좌표 호텔 20키로 값 : "+result.toString());
+
+        return result;
+    }
+
+
+
 /*    public void Save_Places(KakaoGeoRes bodyJson[]) {
 //        log.info("세이브 메소드에서 받은 bodyJson id값 : " + bodyJson[0].getDocuments().get(0).getId());
 
