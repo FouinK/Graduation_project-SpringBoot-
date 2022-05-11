@@ -27,12 +27,6 @@ public class PublicPlanService {
     private final UserRepository userRepository;
 
     public List<PublicPlan> viewAllPublic() {
-
-        /*for (PublicPlan publicPlan : publicPlans) {
-            log.info(publicPlan.getPlanId().toString());
-            log.info(publicPlan.getComment());
-            log.info(String.valueOf(publicPlan.getLike_count()));
-        }*/
         return publicPlanRepository.findAll();
     }
 

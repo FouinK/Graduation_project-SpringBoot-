@@ -25,17 +25,7 @@ public class PublicPlanController {
     @GetMapping("/api/publicPageList")
     public @ResponseBody
     ResponseEntity<?> getAllPublic(){
-        /*List<PublicPlan> plans = publicPlanService.viewAllPublic();*/
-
-        /*for (PublicPlan publicPlan : plans) {
-            log.info("일정 ID : " + publicPlan.getPlanId().toString() +
-                    ", 일정 코멘트 : " + publicPlan.getComment() +
-                    ", 일정 Like : " + String.valueOf(publicPlan.getLike_count()));
-        }*/
         List<PlanListDTO> plans = publicPlanService.matchPlans();
-
-
-
         return ResponseEntity.ok(plans);
     }
 
