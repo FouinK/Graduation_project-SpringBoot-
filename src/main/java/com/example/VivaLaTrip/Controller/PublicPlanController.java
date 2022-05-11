@@ -1,14 +1,13 @@
 package com.example.VivaLaTrip.Controller;
 
-import com.example.VivaLaTrip.Entity.PublicPlan;
+import com.example.VivaLaTrip.Form.PlanListDTO;
 import com.example.VivaLaTrip.Service.PublicPlanService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,16 +22,21 @@ public class PublicPlanController {
         this.publicPlanService = publicPlanService;
     }
 
-    @PostMapping("/get_all_public")
-    public void getAllPublic(){
-        List<PublicPlan> plans = publicPlanService.viewAllPublic();
+    @GetMapping("/api/publicPageList")
+    public @ResponseBody
+    ResponseEntity<?> getAllPublic(){
+        /*List<PublicPlan> plans = publicPlanService.viewAllPublic();*/
 
-        for (PublicPlan publicPlan : plans) {
+        /*for (PublicPlan publicPlan : plans) {
             log.info("일정 ID : " + publicPlan.getPlanId().toString() +
                     ", 일정 코멘트 : " + publicPlan.getComment() +
                     ", 일정 Like : " + String.valueOf(publicPlan.getLike_count()));
-        }
+        }*/
+        List<PlanListDTO> plans = publicPlanService.matchPlans();
 
+
+
+        return ResponseEntity.ok(plans);
     }
 
     @PostMapping("/get_plan")
