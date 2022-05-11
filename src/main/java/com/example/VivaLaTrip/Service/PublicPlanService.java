@@ -4,6 +4,7 @@ import com.example.VivaLaTrip.Entity.Liked;
 import com.example.VivaLaTrip.Entity.Plan;
 import com.example.VivaLaTrip.Entity.PublicPlan;
 import com.example.VivaLaTrip.Entity.UserInfo;
+import com.example.VivaLaTrip.Form.PlanListDTO;
 import com.example.VivaLaTrip.Repository.LikedRepository;
 import com.example.VivaLaTrip.Repository.PlanRepository;
 import com.example.VivaLaTrip.Repository.PublicPlanRepository;
@@ -13,8 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Transactional
@@ -27,14 +27,13 @@ public class PublicPlanService {
     private final UserRepository userRepository;
 
     public List<PublicPlan> viewAllPublic() {
-        List<PublicPlan> publicPlans = publicPlanRepository.findAll();
 
         /*for (PublicPlan publicPlan : publicPlans) {
             log.info(publicPlan.getPlanId().toString());
             log.info(publicPlan.getComment());
             log.info(String.valueOf(publicPlan.getLike_count()));
         }*/
-        return publicPlans;
+        return publicPlanRepository.findAll();
     }
 
     public Plan findPlan(Long plan_id) {
@@ -48,6 +47,30 @@ public class PublicPlanService {
         log.info("끝날 : "+plan.getEnd_date().toString());
 
         return plan;
+    }
+
+    public List<PlanListDTO> matchPlans(){
+
+        List<PlanListDTO> listDTO = new ArrayList<>();
+        List<PublicPlan> publicPlan = publicPlanRepository.findAll();
+        for (PublicPlan pp : publicPlan){
+            Plan plan = planRepository.findByPlanId(pp.getPlanId());
+
+            PlanListDTO publicPlanListItem = PlanListDTO.builder()
+                    .userId(plan.getUserInfo().getUserId().toString())
+                    .start_date(plan.getStart_date())
+                    .end_date(plan.getEnd_date())
+                    .plan_id(plan.getPlanId().toString())
+                    .title(pp.getComment())
+                    .place_num(plan.getTotal_count())
+                    .liked(pp.getLike_count())
+                    .build();
+
+            listDTO.add(publicPlanListItem);
+
+        }
+
+        return listDTO;
     }
 
     public void toPublic(Long plan_id, String comment, User user) {
@@ -72,13 +95,14 @@ public class PublicPlanService {
         }else {
             log.info("해당 일정은 니꺼 아님");
         }
-
-
     }
 
     public void toPrivate(long plan_id, User user) {
 
         Plan plan = findPlan(plan_id);
+
+        //좋아요 테이블 비워야함
+        boolean isLiked = likedRepository.existsByPlan_PlanId(plan_id);
 
         if (user.getUsername().equals(plan.getUserInfo().getUsername())){
             if(plan.is_public()){
@@ -87,13 +111,17 @@ public class PublicPlanService {
                 publicPlan.setPlan(null);   //참조키 관계 파괴-안하면 plan도 같이 삭제됨
                 publicPlanRepository.delete(publicPlan);
                 log.info(plan_id+"번 일정 공유 취소");
+                if (isLiked){   //좋아요 테이블 비우기
+                    List<Liked> liked = likedRepository.findLikedsByPlan_PlanId(plan_id);
+                    likedRepository.deleteAll(liked);
+                    log.info(plan_id+"번 일정 좋아요 모두 삭제");
+                }
             }else {
                 log.info("해당 일정을 찾을 수 없음");
             }
         }else {
             log.info("해당 일정은 니꺼 아님");
         }
-
     }
 
     public void addLike(Long plan_id, String like, User user){
