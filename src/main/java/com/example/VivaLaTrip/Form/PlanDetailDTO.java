@@ -1,6 +1,4 @@
 package com.example.VivaLaTrip.Form;
-
-
 import lombok.*;
 
 @Data @Builder @NoArgsConstructor

@@ -1,9 +1,7 @@
 package com.example.VivaLaTrip.Repository;
 
-import com.example.VivaLaTrip.Entity.PlanDetail;
 import com.example.VivaLaTrip.Entity.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
 import java.util.Optional;
