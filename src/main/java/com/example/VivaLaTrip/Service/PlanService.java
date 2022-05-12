@@ -24,7 +24,6 @@ import java.util.Optional;
 public class PlanService {
     private final PublicPlanRepository publicPlanRepository;
     private final PlanRepository planRepository;
-    private final PlanDetailRepository planDetailRepository;
     private final LikedRepository likedRepository;
     private final UserRepository userRepository;
 
@@ -48,7 +47,7 @@ public class PlanService {
 
         planRepository.save(plan);//메소드 이용하여 저장
 
-        savePlanDetail(map, user, plan);
+        //savePlanDetail(map, user, plan);
     }
 
     public List<PlanListDTO> mypage_planlist(User user) {
@@ -99,7 +98,7 @@ public class PlanService {
         return listDTO;
     }
 
-    public void savePlanDetail(List<Places> map, User user, Plan plan){
+    /*public void savePlanDetail(List<Places> map, User user, Plan plan){
         PlanDetail planDetail = new PlanDetail();
         List<PlanDetailDTO> planDetailDTO = new ArrayList<>();  //임시 생성-나중에 매개변수로 받을거
 
@@ -130,5 +129,5 @@ public class PlanService {
             }
         }
 
-    }
+    }*/
 }

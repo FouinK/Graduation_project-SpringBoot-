@@ -35,4 +35,10 @@ public class MainController {
        // publicPlanService.view_all_public();
         return "public_plan";
     }*/
+    @GetMapping("/")
+    public String toIndex() {
+    // publicPlanService.view_all_public();
+    return "index";
+}
+
 }
