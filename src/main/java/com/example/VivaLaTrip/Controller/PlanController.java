@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -43,17 +40,14 @@ public class PlanController {
 
     @GetMapping("/api/myPageList")
     public @ResponseBody
-    ResponseEntity<?> plan_view(@AuthenticationPrincipal User user, @CookieValue(name = "JSESSIONID", required = false) String jsid, HttpSession httpSession) {
-        log.info("요청 세션 값 : " + jsid);
-        log.info("서버 서블릿 세션 값 : " + httpSession.getId());
-        if (jsid.equals(httpSession.getId())) {
-            return ResponseEntity.ok(planService.mypage_planlist(user));
-        } else {
-            throw new IllegalStateException("계정 정보가 일치하지 않습니다.");
-        }
+    ResponseEntity<?> plan_view(@AuthenticationPrincipal User user)
+    {
+        return ResponseEntity.ok(planService.mypage_planlist(user));
     }
+
     /*@GetMapping("/api/myplan/{plan.plan}")
     public plan_detail()
     {
+
     }*/
 }

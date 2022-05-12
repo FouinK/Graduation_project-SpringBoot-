@@ -18,7 +18,6 @@ public class VivaLaTripConfig {
     private final UserRepository userRepository;
     private final MapRepository mapRepository;
     private final PlanRepository planRepository;
-
     @Autowired
     public VivaLaTripConfig(UserRepository userRepository, MapRepository mapRepository, PlanRepository planRepository) {
         this.userRepository = userRepository;

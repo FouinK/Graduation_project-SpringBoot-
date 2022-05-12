@@ -6,7 +6,6 @@ import com.example.VivaLaTrip.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,27 +24,9 @@ import java.util.Optional;
 @RestController
 public class UserController {
     private final UserService userService;
-    UserInfo userInfo = new UserInfo();
-
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @PostMapping("/loginSuccess")
-    public ResponseEntity<?> LoginSuccess(@AuthenticationPrincipal User user) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("loginSuccess", true);
-        map.put("id", user.getUsername());
-        return ResponseEntity.ok(map);
-    }
-
-    @GetMapping("/logoutSuccess")
-    public ResponseEntity<?> LogoutSuccess() {
-        log.info("로그아웃 성공");
-        Map<String, Object> map = new HashMap<>();
-        map.put("loginSuccess", true);
-        return ResponseEntity.ok(map);
     }
 
     @ResponseBody
@@ -69,31 +49,14 @@ public class UserController {
         return ResponseEntity.ok(jsonMap);
     }
 
-    @ResponseBody
-    @PostMapping("/api/register/email")
-    public ResponseEntity<?> ConfirmationEmail(@RequestBody HashMap<String,Object> map) {
-        Map<String, Object> jsonMap = new HashMap<>();
-        Optional<UserInfo> userinfo1 = userService.Get_UserInfo(userInfo.getID());
-        if (userinfo1.get().getCheck_Email().equals((String)map.get("authNum"))) {
-//            userService.Update_Userinfo_ROLE_USER(Optional.ofNullable(userInfo));
-            jsonMap.put("success",true);
-        } else if (!userinfo1.get().getCheck_Email().equals((String)map.get("authNum"))) {
-            jsonMap.put("success", false);
-        }
-        return ResponseEntity.ok(jsonMap);
-    }
-/*
+
     //시큐리티 회원가입(해시 함수 적용된 PW암호화)        //리액트와 연동 시 삭제 필요
     @PostMapping("/sign_uppro")
     public String sign_uppro(@Valid UserForm userForm, Errors errors, Model model) {
         if (errors.hasErrors()) {
-            */
-/* 회원가입 실패시 입력 데이터 값을 유지 *//*
-
+            /* 회원가입 실패시 입력 데이터 값을 유지 */
             model.addAttribute("userDto", userForm);
-            */
-/* 유효성 통과 못한 필드와 메시지를 핸들링 *//*
-
+            /* 유효성 통과 못한 필드와 메시지를 핸들링 */
             Map<String, String> validatorResult = userService.validateHandling(errors);
             for (String key : validatorResult.keySet()) {
                 model.addAttribute(key, validatorResult.get(key));
@@ -103,9 +66,7 @@ public class UserController {
             log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getPassword());
             log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getUserName_());
             log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getLiked());
-            */
-/* 회원가입 페이지로 다시 리턴 *//*
-
+            /* 회원가입 페이지로 다시 리턴 */
             return "/sign_up";
         }
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
@@ -118,16 +79,13 @@ public class UserController {
         userService.join(userInfo);
         return "login";
     }
-*/
 
     //회원가입시 아이디 중복체크
-/*
     @GetMapping("/api/overlap/usernameRegister")
     public ResponseEntity<?> mapReturn(String username) {
-
+        HashMap<String, Object> map = userService.usernameOverlap(username);
         return ResponseEntity.ok(map);
     }
-*/
 
     @PostMapping("/Email_Check")
     public String Email_Check(@AuthenticationPrincipal User user, Model model) {
