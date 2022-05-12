@@ -1,6 +1,7 @@
 package com.example.VivaLaTrip.Repository;
 
 import com.example.VivaLaTrip.Entity.Plan;
+import com.example.VivaLaTrip.Entity.PlanDetail;
 import com.example.VivaLaTrip.Entity.PublicPlan;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -17,5 +18,9 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     Plan findByPlanId(Long plan_id);
 
     Plan save(Plan plan);
+
+
+    List<Plan> findAllByPlanId(Long planid);
+
 
 }
