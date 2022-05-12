@@ -2,7 +2,9 @@ package com.example.VivaLaTrip.Controller;
 
 import com.example.VivaLaTrip.Entity.Places;
 import com.example.VivaLaTrip.Entity.Plan;
+import com.example.VivaLaTrip.Entity.PlanDetail;
 import com.example.VivaLaTrip.Entity.UserInfo;
+import com.example.VivaLaTrip.Repository.PlanDetailRepository;
 import com.example.VivaLaTrip.Repository.PlanRepository;
 import com.example.VivaLaTrip.Repository.UserRepository;
 import com.example.VivaLaTrip.Service.PlanService;
@@ -26,12 +28,16 @@ public class PlanController {
     @Autowired //의존성 주입
     private PlanRepository planRepository;
 
+    @Autowired
+    private PlanDetailRepository planDetailRepository;
+
     private final PlanService planService;
     private final UserRepository userRepository;
 
-    public PlanController(PlanService planService, UserRepository userRepository) {
+    public PlanController(PlanService planService, UserRepository userRepository,PlanDetailRepository planDetailRepository) {
         this.planService = planService;
         this.userRepository = userRepository;
+        this.planDetailRepository = planDetailRepository;
     }
 
     @PostMapping("/api/makeSchedule")
@@ -52,8 +58,4 @@ public class PlanController {
             throw new IllegalStateException("계정 정보가 일치하지 않습니다.");
         }
     }
-    /*@GetMapping("/api/myplan/{plan.plan}")
-    public plan_detail()
-    {
-    }*/
 }
