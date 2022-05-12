@@ -55,13 +55,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("id")                            //아이디 파라미터 받기
                 .passwordParameter("pw")                           //비밀번호 파라미터 받기
                 .failureHandler(customFailurHandler) // 로그인 실패 핸들러
-                .successForwardUrl("/")
+                .successForwardUrl("/loginSuccess")
 //                .defaultSuccessUrl("/",true)        //로그인 성공시 이동할 페이지
 //                         .failureUrl("/users/login")
 ////                         .permitAll()
                 .and()
                 .logout()                                    //로그아웃
-                .logoutSuccessUrl("/login")
+                .logoutSuccessUrl("/logoutSuccess")
                 .invalidateHttpSession(true);
     //세션 날리기(?)
 //                .logoutRequestMatcher(new AntPathRequestMatcher("/logoutpro"));     //로그아웃
