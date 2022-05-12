@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 
 @RequiredArgsConstructor
@@ -31,39 +33,46 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserService userService;
     /* 로그인 실패 핸들러 의존성 주입 */
     private final AuthenticationFailureHandler customFailurHandler;
+/*
+    @Autowired
+    HttpSession httpSession;
+*/
 
     @Override
     @ResponseBody
     public void configure(HttpSecurity http) throws Exception {
         http
+
                 .csrf().disable()           //포스트 매핑 오류 제거
                 .authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/**","/users/**").permitAll()
-                .antMatchers("/admin").hasAuthority("ROLE_ADMIN");    //역할에 따라 접근 통제 가능
+                .antMatchers("/admin").hasAuthority("ROLE_ADMIN")    //역할에 따라 접근 통제 가능
 //                .antMatchers("/users").hasAuthority("ROLE_USER");
 
 //                .anyRequest().authenticated()                           //어떠한 URL로 접근하던지 인증이 필요함
 //        http
 //                .authorizeRequests()
 //                .anyRequest().authenticated();
-        http
-                .formLogin()
-//                .loginPage("/api/login")                          //로그인 페이지 호출
-                .permitAll()
-                .loginProcessingUrl("/api/login")                   //폼으로 받는 URL
-                .usernameParameter("id")                            //아이디 파라미터 받기
-                .passwordParameter("pw")                           //비밀번호 파라미터 받기
-                .failureHandler(customFailurHandler) // 로그인 실패 핸들러
-                .successForwardUrl("/")
+                .and()
+                    .formLogin()
+                    .loginPage("/api/login")                          //로그인 페이지 호출
+                    .permitAll()
+    //                .loginProcessingUrl("/api/login")                   //폼으로 받는 URL
+                    .usernameParameter("id")                            //아이디 파라미터 받기
+                    .passwordParameter("pw")                           //비밀번호 파라미터 받기
+                    .failureHandler(customFailurHandler) // 로그인 실패 핸들러
+                    .successForwardUrl("/loginSuccess")
 //                .defaultSuccessUrl("/",true)        //로그인 성공시 이동할 페이지
 //                         .failureUrl("/users/login")
 ////                         .permitAll()
                 .and()
                 .logout()                                    //로그아웃
-                .logoutSuccessUrl("/login")
-                .invalidateHttpSession(true);
-    //세션 날리기(?)
+                .logoutUrl("/api/logout")
+                .logoutSuccessUrl("/logoutSuccess")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID");               //세션 날리기
+
 //                .logoutRequestMatcher(new AntPathRequestMatcher("/logoutpro"));     //로그아웃
     }
 

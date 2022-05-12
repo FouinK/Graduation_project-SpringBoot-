@@ -13,4 +13,3 @@ public interface PlanDetailRepository extends JpaRepository<PlanDetail, Long> {
 
     PlanDetail save(PlanDetail planDetail);
 }
-

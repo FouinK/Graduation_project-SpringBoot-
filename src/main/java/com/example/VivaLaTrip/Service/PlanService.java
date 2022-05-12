@@ -24,6 +24,7 @@ import java.util.Optional;
 public class PlanService {
     private final PublicPlanRepository publicPlanRepository;
     private final PlanRepository planRepository;
+    private final PlanDetailRepository planDetailRepository;
     private final LikedRepository likedRepository;
     private final UserRepository userRepository;
     private final PlanDetailRepository planDetailRepository;
@@ -47,6 +48,8 @@ public class PlanService {
         //log.info("user id" + userInfo);
 
         planRepository.save(plan);//메소드 이용하여 저장
+
+        savePlanDetail(map, user, plan);
     }
 
     public List<PlanDetailDTO> setPlan_detail(User user, String planid) {
@@ -141,5 +144,38 @@ public class PlanService {
             }
         }
         return listDTO;
+    }
+
+    public void savePlanDetail(List<Places> map, User user, Plan plan){
+        PlanDetail planDetail = new PlanDetail();
+        List<PlanDetailDTO> planDetailDTO = new ArrayList<>();  //임시 생성-나중에 매개변수로 받을거
+
+        int size = planDetailDTO.size();   //마지막 장소 저장을 위해 크기 구하기
+        int dayIndex = 1;
+        String placeIdsOfDay = "";    //place_id 문자열
+        planDetail.setPlan(plan);     //매개변수로 받은 plan이 plan_id 가지고있는지 테스트해야함
+
+        for (int i=0;i<size;i++){
+
+            if (planDetailDTO.get(i).getDay() != dayIndex){  //day가 올라가면
+
+                planDetail.setPlace_id(placeIdsOfDay);
+                planDetail.setDays(dayIndex);
+                planDetailRepository.save(planDetail);
+
+                placeIdsOfDay = "";
+                dayIndex++;
+            }
+            //문자열 뒤에 붙이기
+            //문자열 마지막에 ,가 들어가는데 지워야하나-보류
+            placeIdsOfDay=placeIdsOfDay+planDetailDTO.get(i).getId()+",";
+
+            if (i+1==size){  //마지막 인덱스
+                planDetail.setPlace_id(placeIdsOfDay);
+                planDetail.setDays(dayIndex);
+                planDetailRepository.save(planDetail);
+            }
+        }
+
     }
 }
