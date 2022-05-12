@@ -1,13 +1,8 @@
 package com.example.VivaLaTrip.Form;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@Builder
-@NoArgsConstructor
+@Data @Builder @NoArgsConstructor
 @AllArgsConstructor
 public class PlanListDTO {
     private String userId;
@@ -18,4 +13,5 @@ public class PlanListDTO {
     private int place_num;
     private int liked;
 }
+
 

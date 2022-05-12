@@ -22,15 +22,15 @@ public class VivaLaTripApplicationTests {
     public void RouteComputeTest5route() {                       //시계방향 5번
         Random ran = new Random();
 //        int count = ran.nextInt(50) + 10;             //10개~50개 장소 랜덤 값
-        int count = 25;             //10개~50개 장소 랜덤 값
+        int total_count = 200;             //10개~50개 장소 랜덤 값
 
 //        int days = ran.nextInt(10) + 2;               //2~10days 랜덤
-        int days = 10;               //2~10days 랜덤
+        int total_days = 100;               //2~10days 랜덤
 
-        System.out.println("장소 개수 :" + count);
-        System.out.println("데이수 :" + days);
+        System.out.println("장소 개수 :" + total_count);
+        System.out.println("데이수 :" + total_days);
 
-        PlacesTest placesTest[] = new PlacesTest[count];        //장소 개수에 맞게 클래스 배여 선언
+        PlacesTest placesTest[] = new PlacesTest[total_count];        //장소 개수에 맞게 클래스 배여 선언
         for (int i = 0; i < placesTest.length; i++) {           //초기화
             placesTest[i] = new PlacesTest();
         }
@@ -55,7 +55,7 @@ public class VivaLaTripApplicationTests {
 //        placesTest = Avg("전체",placesTest,count);
 
         System.out.println("전체 장소 머물 시간 :" + sumStay);
-        float dayStayAvg = sumStay / days;
+        float dayStayAvg = sumStay / total_days;
 
         //일 평균 시간을 구해서 구할 수 있는지 없는지 판별
 
@@ -90,9 +90,9 @@ public class VivaLaTripApplicationTests {
         }
         System.out.println();
 
-        double avgX = sumX / count;         //x값 평균 구하기 -> 중심 x좌표 (전체)
+        double avgX = sumX / total_count;         //x값 평균 구하기 -> 중심 x좌표 (전체)
         System.out.println("전체의 x값 평균 : " + avgX);
-        double avgY = sumY / count;         //y값 평균 구하기 -> 중심 y좌표 (전체)
+        double avgY = sumY / total_count;         //y값 평균 구하기 -> 중심 y좌표 (전체)
         System.out.println("전체의 y값 평균 : " + avgY);
 
         int page1 = 0;
@@ -172,8 +172,8 @@ public class VivaLaTripApplicationTests {
         //------------------------------------------------------
         double sumX1 = 0;
         double sumY1 = 0;
-        double avgX1 = 0;
-        double avgY1 = 0;
+        double avgX1;
+        double avgY1;
         System.out.print("1사분면 : ");
         for (int i = 0; i < one.length; i++) {
             System.out.println(one[i].toString());
@@ -186,6 +186,9 @@ public class VivaLaTripApplicationTests {
         System.out.println("1사분면 y값 평균 : " + avgY1);
 
         List<PlacesTest> oneList = avgSlope(one, avgX1, avgY1, avgX, avgY, "one", 1);
+
+
+        oneList = nearPlaceFirst(oneList, avgX, avgY);
 
         //------------------------------------------------------
 
@@ -206,6 +209,8 @@ public class VivaLaTripApplicationTests {
 
         List<PlacesTest> twoList = avgSlope(two, avgX2, avgY2, avgX, avgY, "two", 2);
 
+        twoList = nearPlaceFirst(twoList, avgX, avgY);
+
         //------------------------------------------------------
 
         double sumX3 = 0;
@@ -224,6 +229,8 @@ public class VivaLaTripApplicationTests {
         System.out.println("3사분면 y값 평균 : " + avgY3);
 
         List<PlacesTest> threeList = avgSlope(three, avgX3, avgY3, avgX, avgY, "three", 3);
+
+        threeList = nearPlaceFirst(threeList, avgX, avgY);
 
         //------------------------------------------------------
 
@@ -244,6 +251,11 @@ public class VivaLaTripApplicationTests {
 
         List<PlacesTest> fourList = avgSlope(four, avgX4, avgY4, avgX, avgY, "four", 4);
 
+        fourList = nearPlaceFirst(fourList, avgX, avgY);
+
+
+        //------------------------------------------------------
+
         List<PlacesTest> placesTests = new ArrayList<>();       //최종적으로 담을 리스트 선언
 
         placesTests.addAll(oneList);
@@ -256,7 +268,7 @@ public class VivaLaTripApplicationTests {
             System.out.println("[" + placesTests.get(i).toString() + "]");
         }
 
-        List<PlacesTest> finalPlacesTest = divideDays(placesTests, dayStayAvg, days, count);     //날짜 나누어 담기
+        List<PlacesTest> finalPlacesTest = divideDays(placesTests, dayStayAvg, total_days, total_count);     //날짜 나누어 담기
 
         int maxid = 0;
         System.out.println("마지막 날 다를 때 한칸 씩 앞으로 땡기기 테스트 전 : ");
@@ -265,10 +277,10 @@ public class VivaLaTripApplicationTests {
         }
 
 
-        while (finalPlacesTest.get(count - 1).getDays() != days) {                                                               //마지막날이 days랑 다를 때
+        while (finalPlacesTest.get(total_count - 1).getDays() != total_days) {                                                               //마지막날이 days랑 다를 때
 
             System.out.println("마지막 날 이랑 days랑 다를 때 실행 됏음");
-            int sumStayDays[] = new int[finalPlacesTest.get(count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
+            int sumStayDays[] = new int[finalPlacesTest.get(total_count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
             int maxStay = sumStayDays[0];
             for (int i = 0; i < sumStayDays.length; i++) {
                 for (int j = 0; j < finalPlacesTest.size(); j++) {
@@ -286,11 +298,11 @@ public class VivaLaTripApplicationTests {
                 }
             }
 
-            if (maxid == finalPlacesTest.get(count - 1).getDays()) {
-                finalPlacesTest.get(count - 1).setDays(finalPlacesTest.get(count - 2).getDays() + 1);    //마지막 데이의 스테이 합이 최대일 때 다음데이 넣고              //모든 데이가 일평균을 넘지 못할 수도 있음
+            if (maxid == finalPlacesTest.get(total_count - 1).getDays()) {
+                finalPlacesTest.get(total_count - 1).setDays(finalPlacesTest.get(total_count - 2).getDays() + 1);    //마지막 데이의 스테이 합이 최대일 때 다음데이 넣고              //모든 데이가 일평균을 넘지 못할 수도 있음
                 continue;                                                                               //반복문의 맨 처음으로
             }
-            if (days == maxid) {                                                                        //마지막 days가 들어갔을 때
+            if (total_days == maxid) {                                                                        //마지막 days가 들어갔을 때
                 break;                                                                                  //반복문 빠져나가기
             }
 
@@ -302,7 +314,7 @@ public class VivaLaTripApplicationTests {
             }
             System.out.println("데이 줄이기 시작할 인덱스 부분 : " + startid);
             for (int i = startid; i < finalPlacesTest.size(); i++) {
-                if (i == count - 1) {                                                        //제일 마지막일 경우 리턴
+                if (i == total_count - 1) {                                                        //제일 마지막일 경우 리턴
                     break;
                 } else {
                     finalPlacesTest.get(i).setDays(finalPlacesTest.get(i + 1).getDays());       //데이를 한칸씩 앞으로 땡김
@@ -315,10 +327,10 @@ public class VivaLaTripApplicationTests {
             System.out.println("[" + finalPlacesTest.get(i).toString() + "]");
         }
 
-        while (finalPlacesTest.get(count - 1).getDays() == days) {                                                               //마지막날이 days랑 다를 때
+        while (finalPlacesTest.get(total_count - 1).getDays() == total_days) {                                                               //마지막날이 days랑 다를 때
 
             System.out.println("마지막 날 이랑 days랑 같을 때 실행 됏음");
-            int sumStayDays[] = new int[finalPlacesTest.get(count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
+            int sumStayDays[] = new int[finalPlacesTest.get(total_count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
             int maxStay = sumStayDays[0];
             for (int i = 0; i < sumStayDays.length; i++) {
                 for (int j = 0; j < finalPlacesTest.size(); j++) {
@@ -336,7 +348,7 @@ public class VivaLaTripApplicationTests {
                 }
             }
 
-            if (sumStayDays[days-1] >= dayStayAvg/2) {                                                 //마지막 데이의 스테이 합이 평균 보다 1/2클 때
+            if (sumStayDays[total_days-1] >= dayStayAvg/2) {                                                 //마지막 데이의 스테이 합이 평균 보다 1/2클 때
                 break;                                                                                 //반복문 종료
             }
 
@@ -349,7 +361,7 @@ public class VivaLaTripApplicationTests {
             }
             System.out.println("데이 줄이기 시작할 인덱스 부분 : " + startid);
             for (int i = startid; i < finalPlacesTest.size(); i++) {
-                if (i == count - 1) {                                                        //제일 마지막일 경우 리턴
+                if (i == total_count - 1) {                                                        //제일 마지막일 경우 리턴
                     break;
                 } else {
                     finalPlacesTest.get(i).setDays(finalPlacesTest.get(i + 1).getDays());       //데이를 한칸씩 앞으로 땡김
@@ -358,14 +370,49 @@ public class VivaLaTripApplicationTests {
         }
 
 
-        System.out.println("데이즈 값 :" + days);
+        System.out.println("데이즈 값 :" + total_days);
         System.out.println("마지막 테스트 : ");
         for (int i = 0; i < placesTests.size(); i++) {
             System.out.println("[" + finalPlacesTest.get(i).toString() + "]");
         }
 
+        for (PlacesTest a : finalPlacesTest){
+            System.out.print(a.getX()+",");
+        }
+        System.out.println(" ");
+        for (PlacesTest a : finalPlacesTest){
+            System.out.print(a.getY()+",");
+        }
         System.out.println("test good!!");
 
+    }
+
+    @Test
+    public List<PlacesTest> nearPlaceFirst(List<PlacesTest> oneList, double avgX, double avgY){
+
+        double minDistance = 999999999;
+        int index = 0;
+        int minDistanceIndex=0;
+
+        for (PlacesTest places:oneList){
+
+            double distance = (avgX-places.getX()) * (avgX-places.getX())
+                    + (avgY-places.getY()) * (avgY-places.getY());   //x^2+y^2=d^2
+            if (minDistance>distance){
+                minDistance = distance;
+                minDistanceIndex = index;
+            }
+            index++;
+        }
+        System.out.println("최소거리 : "+minDistance);
+        System.out.println("최소거리 인덱스 : "+minDistanceIndex);
+
+        List<PlacesTest> tempList = new ArrayList<>();
+
+        tempList.addAll(oneList.subList(minDistanceIndex,oneList.size()));
+        tempList.addAll(oneList.subList(0,minDistanceIndex));
+
+        return tempList;
     }
 
     @Test
