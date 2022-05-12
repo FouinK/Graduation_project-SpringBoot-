@@ -1,15 +1,10 @@
 package com.example.VivaLaTrip.Service;
 
-import com.example.VivaLaTrip.Entity.Places;
-import com.example.VivaLaTrip.Entity.Plan;
-import com.example.VivaLaTrip.Entity.PublicPlan;
-import com.example.VivaLaTrip.Entity.UserInfo;
+import com.example.VivaLaTrip.Entity.*;
+import com.example.VivaLaTrip.Form.PlanDetailDTO;
 import com.example.VivaLaTrip.Form.PlanListDTO;
 import com.example.VivaLaTrip.Form.PlanRequestDto;
-import com.example.VivaLaTrip.Repository.LikedRepository;
-import com.example.VivaLaTrip.Repository.PlanRepository;
-import com.example.VivaLaTrip.Repository.PublicPlanRepository;
-import com.example.VivaLaTrip.Repository.UserRepository;
+import com.example.VivaLaTrip.Repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,6 +26,7 @@ public class PlanService {
     private final PlanRepository planRepository;
     private final LikedRepository likedRepository;
     private final UserRepository userRepository;
+    private final PlanDetailRepository planDetailRepository;
 
 
     public void setPlan_list(List<Places> map, User user) {
@@ -53,6 +49,53 @@ public class PlanService {
         planRepository.save(plan);//메소드 이용하여 저장
     }
 
+    public List<PlanDetailDTO> setPlan_detail(User user, String planid) {
+        PlanDetail planDetail = new PlanDetail();
+
+        Plan plan = planRepository.findByPlanId(Long.valueOf(planid));
+        //planId가 있는 plan을 찾음
+
+        Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
+        //로그인 한 user객체에서 userId(1,2,3,...)값 가져와서 리포지토리 아이디 찾는 메소드 호출
+
+        List<Plan> userplan = planRepository.findAllByPlanId(userInfo.get().getUserId());
+        //userinfo에서 userId값 가져와서
+
+        List<PlanDetailDTO> detailDTO = new ArrayList<>();
+        //결과를 담을 DTO list 선언(front로 보내줄 거)
+
+        log.info("플랜아이디"+userplan.get(0).getPlanId().toString());
+        log.info("플랜아이디"+planid);
+
+        log.info("가보자궁"+plan.getPlanId().toString());
+
+        /*planDetail.setPlan(userplan.get(0));
+        planDetail.setDays();
+        planDetail.setPlace_id();
+        planDetail.setplan(planList.getPlanId());*/
+
+        for(Plan a: userplan){//Plan이 있으면 반복
+            /*if(a.is_public())//공유여부 참일 때
+            {*/
+                PlanDetailDTO planDetailItem = PlanDetailDTO.builder()//DTO객체에 저장
+                        .id(a.getPlanId().toString())//planId갖고오고
+                        //.place_id()//어디서 가져오지..
+                        //.day()
+                        .build();
+
+                detailDTO.add(planDetailItem);
+
+            }
+
+
+       planDetailRepository.save(planDetail);
+
+       return detailDTO;
+
+    }
+
+
+
     public List<PlanListDTO> mypage_planlist(User user) {
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
         //로그인 한 사람의 정보를 userInfo에 넣음
@@ -63,7 +106,6 @@ public class PlanService {
         List<Plan> user_plan = planRepository.findAllByUserInfo_UserId(userInfo.get().getUserId());
         //userinfo에서 id값 가져온거 plan리포지토리 userId에서 찾음= plan이 있는 값 가져옴
 
-        List<PublicPlan> publicPlan = new ArrayList<>();
 
         for(Plan a: user_plan){//Plan이 있으면 반복
             if(a.is_public())//공유여부 참일 때
