@@ -9,15 +9,8 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +22,6 @@ public class ApiController {
     WeatherService weatherService;
     MapService mapService;
 
-
     @Autowired
     public ApiController(WeatherService weatherService, MapService mapService) {
         this.weatherService = weatherService;
@@ -40,13 +32,13 @@ public class ApiController {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @PostMapping("/getData")
     public @ResponseBody
-    ResponseEntity<?> KakaoApiTest(@RequestBody HashMap<String, Object> map) throws UnirestException, UnsupportedEncodingException, JsonProcessingException {
+    ResponseEntity<?> KakaoApiTest(@RequestBody HashMap<String,Object> map) throws UnirestException, UnsupportedEncodingException, JsonProcessingException {
 
-        String keyword = (String) map.get("keyword");        //일단 전체적인 지역 값 받아야함
+        String keyword = (String)map.get("keyword");        //일단 전체적인 지역 값 받아야함
+//        String tempword = "충주시 호암동";
 
         return ResponseEntity.ok(mapService.MapParsingDB(keyword));
     }
-
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @ResponseBody
@@ -60,6 +52,4 @@ public class ApiController {
 
         return map;
     }
-
-
 }
