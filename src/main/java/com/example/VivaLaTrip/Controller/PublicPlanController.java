@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @Slf4j
@@ -40,7 +39,7 @@ public class PublicPlanController {
     @PostMapping("/to_public_plan")
     public String makePublicPlanById(
             @RequestParam("id") Long plan_id,
-            @RequestParam("comment") String comment,
+            @RequestParam String comment,
             @AuthenticationPrincipal User user){
 
         log.info("입력받은 일정 ID : "+plan_id.toString());
