@@ -31,21 +31,24 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/api/register")
-    public ResponseEntity<?> register(@RequestBody HashMap<String,Object> map) {
-//        log.info("map의 id값 : "+(String)map.get("id"));
-//        log.info("클라에서 받은 값 서버에서 확인(레지스터) : " + map.toString());
-
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        UserInfo userInfo = new UserInfo();
-        userInfo.setID((String) map.get("id"));
-        userInfo.setPW(bCryptPasswordEncoder.encode((String) map.get("pw")));
-        userInfo.setNickName("이름모를 누군가"/*(String) map.get("username")*/);       //닉네임 값 입력 필요함
-//        userInfo.setLiked(""/*(String)map.get("liked")*/);                          //좋아요 목록은 멘토님이 말씀하신 거 처럼 따로 테이블이 필요할 듯 현재 테이블 수정 예정
-        userInfo.setAuthority("ROLE_USER");
-        userService.join(userInfo);
-
-        return ResponseEntity.ok(map);
+    public ResponseEntity<?> SignUp(@RequestBody HashMap<String,Object> map) {
+        boolean overlapEmail = userService.usernameOverlap((String) map.get("id"));     //중복 회원검사
+        Map<String, Object> jsonMap = new HashMap<>();
+        if (overlapEmail == true) {
+            jsonMap.put("success","usedId");                               //제이슨에 중복 아이디 담기
+        } else if (overlapEmail == false) {
+            jsonMap.put("success","success");                                           //제이슨에 성공 담기
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            userInfo.setID((String) map.get("id"));
+            userInfo.setPW(bCryptPasswordEncoder.encode((String) map.get("pw")));
+            userInfo.setNickName("이름모를 누군가"/*(String) map.get("username")*/);       //닉네임 값 입력 필요함
+            userInfo.setAuthority("ROLE_USER");
+            userService.join(userInfo);
+            userService.Send_Email(userInfo.getID());
+        }
+        return ResponseEntity.ok(jsonMap);
     }
+
 
     //시큐리티 회원가입(해시 함수 적용된 PW암호화)        //리액트와 연동 시 삭제 필요
     @PostMapping("/sign_uppro")
