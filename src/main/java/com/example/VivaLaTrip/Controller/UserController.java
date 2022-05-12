@@ -55,7 +55,7 @@ public class UserController {
         boolean overlapEmail = userService.usernameOverlap((String) map.get("id"));     //중복 회원검사
         Map<String, Object> jsonMap = new HashMap<>();
         if (overlapEmail == true) {
-            jsonMap.put("success",(String) map.get("id"));                               //제이슨에 중복 아이디 담기
+            jsonMap.put("success","usedId");                               //제이슨에 중복 아이디 담기
         } else if (overlapEmail == false) {
             jsonMap.put("success","success");                                           //제이슨에 성공 담기
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
