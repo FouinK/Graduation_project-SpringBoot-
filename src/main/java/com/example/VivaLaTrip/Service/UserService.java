@@ -56,8 +56,10 @@ public class UserService implements UserDetailsService {
     }
 
     //id 중복 검사
-    public boolean usernameOverlap(String username) {
-        return userRepository.existsByID(username);                 //false가 회원 없음 있으면 true
+    public HashMap<String, Object> usernameOverlap(String username) {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("result", userRepository.existsByID(username));
+        return map;
     }
 
     //데이터베이스에 새로운 회원 저장
@@ -67,7 +69,7 @@ public class UserService implements UserDetailsService {
         return userInfo.getUsername();
     }
 
-    //회원정보 불러오기
+    //회원정보 불러오기 (000님 안녕하세요. ID말고 이름 출력 위해서)
     public Optional<UserInfo> Get_UserInfo(String id) {
         Optional<UserInfo> userInfo = userRepository.findByID(id);
         return userInfo;
