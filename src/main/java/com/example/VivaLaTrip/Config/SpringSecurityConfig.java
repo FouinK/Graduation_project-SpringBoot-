@@ -2,9 +2,7 @@ package com.example.VivaLaTrip.Config;
 
 import com.example.VivaLaTrip.Service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.filters.CorsFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,12 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-
-import java.util.HashMap;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -60,7 +53,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 //                         .failureUrl("/users/login")
 ////                         .permitAll()
                 .and()
-                .logout()                                    //로그아웃
+                .logout()
+                .logoutUrl("/api/logout")
                 .logoutSuccessUrl("/logoutSuccess")
                 .invalidateHttpSession(true);
     //세션 날리기(?)

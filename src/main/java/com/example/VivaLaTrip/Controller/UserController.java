@@ -42,7 +42,8 @@ public class UserController {
         return ResponseEntity.ok(map);
     }
 
-    @GetMapping("/logoutSuccess")
+    @ResponseBody
+    @PostMapping("/logoutSuccess")
     public ResponseEntity<?> LogoutSuccess() {
         log.info("로그아웃 성공");
         Map<String, Object> map = new HashMap<>();
