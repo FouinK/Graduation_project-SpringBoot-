@@ -6,5 +6,4 @@ import lombok.*;
 public class PlanDetailDTO {
     String id;
     int day;
-
 }

@@ -110,7 +110,7 @@ public class PlanService {
 
         for (int i=0;i<size;i++){
 
-            if (planDetailDTO.get(i).getDay() != dayIndex){  //day가 올라가면
+            if (planDetailDTO.get(i).getDay() != dayIndex){  //place의 day가 올라가면
 
                 planDetail.setPlace_id(placeIdsOfDay);
                 planDetail.setDays(dayIndex);

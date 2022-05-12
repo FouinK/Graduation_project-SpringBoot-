@@ -35,7 +35,6 @@ public class PlanController {
     public void plan_save(@RequestBody List<Places> map,@AuthenticationPrincipal User user)
     {
         planService.setPlan_list(map,user);
-
     }
 
     @GetMapping("/api/myPageList")
