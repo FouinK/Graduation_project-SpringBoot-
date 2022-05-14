@@ -19,10 +19,10 @@ public class Places {
     private String id;
 
     @Column(name = "place_name", nullable = false)
-    private String place_name;
+    private String placeName;
 
     @Column(name = "category_name", nullable = true)
-    private String category_name;
+    private String categoryName;
 
     @Column(name = "y", nullable = false)
     private String y;
@@ -36,8 +36,8 @@ public class Places {
     @Column(name = "url")
     private String url;
 
-    @Column(name = "address", nullable = false)
-    private String address;
+    @Column(name = "address_name", nullable = false)
+    private String addressName;
 
     @Column(name = "indoor", nullable = false)
     private String indoor;
@@ -47,4 +47,7 @@ public class Places {
 
     @Column(name = "stay")
     private int stay;
+
+    @Column(name = "popularity")
+    private int popularity;
 }

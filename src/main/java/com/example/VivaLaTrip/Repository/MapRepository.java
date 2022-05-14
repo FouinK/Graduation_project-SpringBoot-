@@ -9,7 +9,7 @@ public interface MapRepository extends JpaRepository<Places,Long>{
 
 
 //    @Override
-    List<Places> findByAddressContains(String word);
+    List<Places> findByAddressNameContains(String word);
 
 //    @Override
     Places save(Places places);
