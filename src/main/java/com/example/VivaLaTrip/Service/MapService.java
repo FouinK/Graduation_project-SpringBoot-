@@ -14,14 +14,12 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public class MapService {
@@ -87,9 +85,15 @@ public class MapService {
 
     public List<Places> MapParsingDB(String word) {
 
-        List<Places> bodyJson = mapRepository.findByAddressNameContains(word);
-//        log.info("데베에서 뽑아온 Places값 :"+bodyJson.toString());
+        List<Places> bodyJson = mapRepository.findByAddressNameContains(word, Sort.by(Sort.Order.desc("popularity")));
 
+        log.info("데베에서 뽑아온 Places값 :"+bodyJson.toString());
+
+
+        if (bodyJson.size() > 100) {
+            List<Places> cutbodyJson = bodyJson.subList(0, 100);
+            return cutbodyJson;
+        }
         return bodyJson;
     }
 

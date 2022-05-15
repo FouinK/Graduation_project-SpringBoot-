@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Comparator;
 
 @Entity
 @Data
@@ -15,14 +16,14 @@ import javax.persistence.Id;
 public class Places {
 
     @Id
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(name = "place_id", nullable = false, unique = true)
     private String id;
 
     @Column(name = "place_name", nullable = false)
-    private String placeName;
+    private String place_name;
 
     @Column(name = "category_name", nullable = true)
-    private String categoryName;
+    private String category_name;
 
     @Column(name = "y", nullable = false)
     private String y;
@@ -34,7 +35,7 @@ public class Places {
     private String phone;
 
     @Column(name = "url")
-    private String url;
+    private String place_url;
 
     @Column(name = "address_name", nullable = false)
     private String addressName;
@@ -42,8 +43,10 @@ public class Places {
     @Column(name = "indoor", nullable = false)
     private String indoor;
 
+/*
     @Column(name = "checked", nullable = false)
     private boolean checked;
+*/
 
     @Column(name = "stay")
     private int stay;

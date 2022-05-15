@@ -1,5 +1,6 @@
 package com.example.VivaLaTrip.Controller;
 
+import com.example.VivaLaTrip.Entity.Places;
 import com.example.VivaLaTrip.Service.MapService;
 import com.example.VivaLaTrip.Service.WeatherService;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -32,7 +34,7 @@ public class ApiController {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @PostMapping("/getData")
     public @ResponseBody
-    ResponseEntity<?> KakaoApiTest(@RequestBody HashMap<String,Object> map) throws UnirestException, UnsupportedEncodingException, JsonProcessingException {
+    ResponseEntity<List<Places>> KakaoApiTest(@RequestBody HashMap<String,Object> map) {
 
         String keyword = (String)map.get("keyword");        //일단 전체적인 지역 값 받아야함
 //        String tempword = "충주시 호암동";
