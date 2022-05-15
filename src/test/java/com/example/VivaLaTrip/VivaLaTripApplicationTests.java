@@ -776,7 +776,7 @@ public class VivaLaTripApplicationTests {
         }
 
 
-        while (finalPlacesTest.get(count - 1).getDays() != days) {                                                               //마지막날이 days랑 다를 때
+        while (finalPlacesTest.get(total_count - 1).getDays() != total_days) {                                                               //마지막날이 days랑 다를 때
 
             System.out.println("마지막 날 이랑 days랑 다를 때 실행 됏음");
             int sumStayDays[] = new int[finalPlacesTest.get(count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
@@ -797,11 +797,11 @@ public class VivaLaTripApplicationTests {
                 }
             }
 
-            if (maxid == finalPlacesTest.get(count - 1).getDays()) {
-                finalPlacesTest.get(count - 1).setDays(finalPlacesTest.get(count - 2).getDays() + 1);    //마지막 데이의 스테이 합이 최대일 때 다음데이 넣고              //모든 데이가 일평균을 넘지 못할 수도 있음
+            if (maxid == finalPlacesTest.get(total_count - 1).getDays()) {
+                finalPlacesTest.get(total_count - 1).setDays(finalPlacesTest.get(total_count - 2).getDays() + 1);    //마지막 데이의 스테이 합이 최대일 때 다음데이 넣고              //모든 데이가 일평균을 넘지 못할 수도 있음
                 continue;                                                                               //반복문의 맨 처음으로
             }
-            if (days == maxid) {                                                                        //마지막 days가 들어갔을 때
+            if (total_days == maxid) {                                                                        //마지막 days가 들어갔을 때
                 break;                                                                                  //반복문 빠져나가기
             }
 
@@ -813,7 +813,7 @@ public class VivaLaTripApplicationTests {
             }
             System.out.println("데이 줄이기 시작할 인덱스 부분 : " + startid);
             for (int i = startid; i < finalPlacesTest.size(); i++) {
-                if (i == count - 1) {                                                        //제일 마지막일 경우 리턴
+                if (i == total_count - 1) {                                                        //제일 마지막일 경우 리턴
                     break;
                 } else {
                     finalPlacesTest.get(i).setDays(finalPlacesTest.get(i + 1).getDays());       //데이를 한칸씩 앞으로 땡김
@@ -826,7 +826,7 @@ public class VivaLaTripApplicationTests {
             System.out.println("[" + finalPlacesTest.get(i).toString() + "]");
         }
 
-        while (finalPlacesTest.get(count - 1).getDays() == days) {                                                               //마지막날이 days랑 다를 때
+        while (finalPlacesTest.get(total_count - 1).getDays() == total_days) {                                                               //마지막날이 days랑 다를 때
 
             System.out.println("마지막 날 이랑 days랑 같을 때 실행 됏음");
             int sumStayDays[] = new int[finalPlacesTest.get(count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
@@ -847,7 +847,7 @@ public class VivaLaTripApplicationTests {
                 }
             }
 
-            if (sumStayDays[days-1] >= dayStayAvg/2) {                                                 //마지막 데이의 스테이 합이 평균 보다 1/2클 때
+            if (sumStayDays[total_days-1] >= dayStayAvg/2) {                                                 //마지막 데이의 스테이 합이 평균 보다 1/2클 때
                 break;                                                                                 //반복문 종료
             }
 
@@ -860,7 +860,7 @@ public class VivaLaTripApplicationTests {
             }
             System.out.println("데이 줄이기 시작할 인덱스 부분 : " + startid);
             for (int i = startid; i < finalPlacesTest.size(); i++) {
-                if (i == count - 1) {                                                        //제일 마지막일 경우 리턴
+                if (i == total_count - 1) {                                                        //제일 마지막일 경우 리턴
                     break;
                 } else {
                     finalPlacesTest.get(i).setDays(finalPlacesTest.get(i + 1).getDays());       //데이를 한칸씩 앞으로 땡김
@@ -869,7 +869,7 @@ public class VivaLaTripApplicationTests {
         }
 
 
-        System.out.println("데이즈 값 :" + days);
+        System.out.println("데이즈 값 :" + total_days);
         System.out.println("마지막 테스트 : ");
         for (int i = 0; i < placesTests.size(); i++) {
             System.out.println("[" + finalPlacesTest.get(i).toString() + "]");
