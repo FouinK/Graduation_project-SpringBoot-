@@ -51,6 +51,7 @@ public class UserController {
         return ResponseEntity.ok(map);
     }
 
+
     @ResponseBody
     @PostMapping("/api/register")
     public ResponseEntity<?> SignUp(@RequestBody HashMap<String,Object> map) {
