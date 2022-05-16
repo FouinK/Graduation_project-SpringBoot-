@@ -36,20 +36,13 @@ public class PlanService {
         //planRequestDto.toEntity().setUserInfo(planRequestDto.toEntity().getUserInfo());
         //PlanRequestDto planRequestDto = new PlanRequestDto();
 
-        String start_date;
-        start_date = map.getStart_date().substring(0,4);
-        start_date += map.getStart_date().substring(5,7);
-        start_date += map.getStart_date().substring(8,10);
-        String end_date;
-        end_date = map.getEnd_date().substring(0,4);
-        end_date += map.getEnd_date().substring(5,7);
-        end_date += map.getEnd_date().substring(8,10);
+
 
         plan.setUserInfo(userInfo.get());
         plan.set_public(map.is_public());
         plan.setTotal_count(map.getCheckedPlace().size());
-        plan.setStart_date(start_date);
-        plan.setEnd_date(end_date);
+        plan.setStart_date(map.getStart_date());
+        plan.setEnd_date(map.getEnd_date());
         //plan 객체에 필요한 값들 설정
 
         //log.info("user id" + userInfo);
