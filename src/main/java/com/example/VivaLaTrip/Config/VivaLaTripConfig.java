@@ -1,11 +1,10 @@
 package com.example.VivaLaTrip.Config;
 
+import com.example.VivaLaTrip.Repository.PlanDetailRepository;
 import com.example.VivaLaTrip.Repository.PlanRepository;
 import com.example.VivaLaTrip.Repository.UserRepository;
 import com.example.VivaLaTrip.Repository.MapRepository;
-import com.example.VivaLaTrip.Service.MapService;
-import com.example.VivaLaTrip.Service.UserService;
-import com.example.VivaLaTrip.Service.WeatherService;
+import com.example.VivaLaTrip.Service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +17,14 @@ public class VivaLaTripConfig {
     private final UserRepository userRepository;
     private final MapRepository mapRepository;
     private final PlanRepository planRepository;
+    private final PlanDetailRepository planDetailRepository;
+
     @Autowired
-    public VivaLaTripConfig(UserRepository userRepository, MapRepository mapRepository, PlanRepository planRepository) {
+    public VivaLaTripConfig(UserRepository userRepository, MapRepository mapRepository, PlanRepository planRepository, PlanDetailRepository planDetailRepository) {
         this.userRepository = userRepository;
         this.mapRepository = mapRepository;
         this.planRepository = planRepository;
+        this.planDetailRepository = planDetailRepository;
     }
 
     @Bean
@@ -39,4 +41,5 @@ public class VivaLaTripConfig {
     public MapService mapService() {
         return new MapService(mapRepository);
     }
+
 }

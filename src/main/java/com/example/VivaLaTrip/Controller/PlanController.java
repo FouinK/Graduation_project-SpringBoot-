@@ -1,11 +1,8 @@
 package com.example.VivaLaTrip.Controller;
 
 import com.example.VivaLaTrip.Entity.Places;
-import com.example.VivaLaTrip.Entity.Plan;
-import com.example.VivaLaTrip.Entity.UserInfo;
 import com.example.VivaLaTrip.Form.PlaceComputeDTO;
-import com.example.VivaLaTrip.Repository.PlanRepository;
-import com.example.VivaLaTrip.Repository.UserRepository;
+import com.example.VivaLaTrip.Form.PlanSaveDTO;
 import com.example.VivaLaTrip.Service.PlanDetailService;
 import com.example.VivaLaTrip.Service.PlanService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +11,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -33,27 +27,28 @@ public class PlanController {
     }
 
     @PostMapping("/api/makeSchedule")
-    public void plan_save(
-            @RequestBody List<Places> map,
-            @AuthenticationPrincipal User user,
-            @RequestParam("start_date") String start_date,
-            @RequestParam("end_date") String end_date)
-    {
-        List<PlaceComputeDTO> listDTO = new ArrayList<>();
-        log.info(start_date+end_date);
-        /*for (Places a: map){
+    public void plan_save(@RequestBody PlanSaveDTO map, @AuthenticationPrincipal User user) {
+
+        log.info(String.valueOf(map));
+        log.info(map.getCheckedPlace().get(0).toString());
+
+        List<PlaceComputeDTO> placeComputeDTO = new ArrayList<>();
+
+        for (Places place : map.getCheckedPlace()){
             PlaceComputeDTO placeItem = PlaceComputeDTO.builder()
-                    .x(Double.parseDouble(a.getX()))
-                    .y(Double.parseDouble(a.getY()))
-                    .stay(2)
-                    .days(map.size())
+                    .id(place.getId())
+                    .x(Double.parseDouble(place.getX()))
+                    .y(Double.parseDouble(place.getY()))
+                    .stay(place.getStay())
+                    .days(0)
                     .slope(0)
                     .where("")
                     .build();
-            listDTO.add(placeItem);
+            placeComputeDTO.add(placeItem);
         }
-        planService.setPlan_list(map,user);
-        planDetailService.routeCompute(listDTO);*/
+        placeComputeDTO = planDetailService.routeCompute(placeComputeDTO);
+        planService.setPlan_list(map,user, placeComputeDTO);
+
     }
 
     @GetMapping("/api/myPageList")

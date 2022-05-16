@@ -1,17 +1,22 @@
 package com.example.VivaLaTrip.Service;
 
-import com.example.VivaLaTrip.Entity.Places;
+import com.example.VivaLaTrip.Entity.PlanDetail;
 import com.example.VivaLaTrip.Form.PlaceComputeDTO;
+import com.example.VivaLaTrip.Form.PlanDetailDTO;
+import com.example.VivaLaTrip.Repository.PlanDetailRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Transactional
 @Slf4j
 @Service
 public class PlanDetailService {
+
 
     public List<PlaceComputeDTO> routeCompute(List<PlaceComputeDTO> places){
 
@@ -76,6 +81,7 @@ public class PlanDetailService {
         sortedPlaces.addAll(quadrantTwo);
 
         places = divideDays(sortedPlaces, avgStayOfDays);
+
         int maxid = 0;
         while (places.get(total_count - 1).getDays() != total_day) {                                                               //마지막날이 days랑 다를 때
 
@@ -83,9 +89,9 @@ public class PlanDetailService {
             int[] sumStayDays = new int[places.get(total_count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
             int maxStay = sumStayDays[0];
             for (int i = 0; i < sumStayDays.length; i++) {
-                for (int j = 0; j < places.size(); j++) {
-                    if (i + 1 == places.get(j).getDays()) {
-                        sumStayDays[i] += places.get(j).getStay();                 //days별로 스테이의 합을 구함 최대값을 구하기 위해
+                for (PlaceComputeDTO place : places) {
+                    if (i + 1 == place.getDays()) {
+                        sumStayDays[i] += place.getStay();                 //days별로 스테이의 합을 구함 최대값을 구하기 위해
                     }
                 }
                 System.out.println("각 스테이의 합 : " + sumStayDays[i]);
@@ -123,8 +129,8 @@ public class PlanDetailService {
         }
 
         System.out.println("마지막 데이가 같을 때까지 넣은 후 : ");
-        for (int i = 0; i < places.size(); i++) {
-            System.out.println("[" + places.get(i).toString() + "]");
+        for (PlaceComputeDTO place : places) {
+            System.out.println("[" + place.toString() + "]");
         }
 
         while (places.get(total_count - 1).getDays() == total_day) {                                                               //마지막날이 days랑 다를 때
@@ -133,9 +139,9 @@ public class PlanDetailService {
             int sumStayDays[] = new int[places.get(total_count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
             int maxStay = sumStayDays[0];
             for (int i = 0; i < sumStayDays.length; i++) {
-                for (int j = 0; j < places.size(); j++) {
-                    if (i + 1 == places.get(j).getDays()) {
-                        sumStayDays[i] += places.get(j).getStay();                 //days별로 스테이의 합을 구함 최대값을 구하기 위해
+                for (PlaceComputeDTO place : places) {
+                    if (i + 1 == place.getDays()) {
+                        sumStayDays[i] += place.getStay();                 //days별로 스테이의 합을 구함 최대값을 구하기 위해
                     }
                 }
                 System.out.println("각 스테이의 합 : " + sumStayDays[i]);
