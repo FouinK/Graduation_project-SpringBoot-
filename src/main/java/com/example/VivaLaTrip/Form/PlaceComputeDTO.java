@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PlaceComputeDTO implements Comparable<PlaceComputeDTO> {
 
+    String id;
     int stay;
     int days;
     double x;

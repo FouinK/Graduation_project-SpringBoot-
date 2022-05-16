@@ -1,9 +1,7 @@
 package com.example.VivaLaTrip.Service;
 
 import com.example.VivaLaTrip.Entity.*;
-import com.example.VivaLaTrip.Form.PlanDetailDTO;
-import com.example.VivaLaTrip.Form.PlanListDTO;
-import com.example.VivaLaTrip.Form.PlanRequestDto;
+import com.example.VivaLaTrip.Form.*;
 import com.example.VivaLaTrip.Repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,16 +17,18 @@ import java.util.Optional;
 
 @Transactional
 @Slf4j
+@Service
 @RequiredArgsConstructor
-@Service //스프링빈 컨테이너에 등록
 public class PlanService {
     private final PublicPlanRepository publicPlanRepository;
     private final PlanRepository planRepository;
     private final LikedRepository likedRepository;
     private final UserRepository userRepository;
+    private final PlanDetailRepository planDetailRepository;
 
 
-    public void setPlan_list(List<Places> map, User user) {
+
+    public void setPlan_list(PlanSaveDTO map, User user, List<PlaceComputeDTO> computeDTO) {
         Plan plan = new Plan();
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
         //로그인 한 user객체에서 userId(1,2,3,...)값 가져와서 리포지토리 아이디 찾는 메소드 호출
@@ -36,18 +36,27 @@ public class PlanService {
         //planRequestDto.toEntity().setUserInfo(planRequestDto.toEntity().getUserInfo());
         //PlanRequestDto planRequestDto = new PlanRequestDto();
 
+        String start_date;
+        start_date = map.getStart_date().substring(0,4);
+        start_date += map.getStart_date().substring(5,7);
+        start_date += map.getStart_date().substring(8,10);
+        String end_date;
+        end_date = map.getEnd_date().substring(0,4);
+        end_date += map.getEnd_date().substring(5,7);
+        end_date += map.getEnd_date().substring(8,10);
+
         plan.setUserInfo(userInfo.get());
-        plan.set_public(false);
-        plan.setTotal_count(map.size());
-        plan.setStart_date("20200101");
-        plan.setEnd_date("20200110");
+        plan.set_public(map.is_public());
+        plan.setTotal_count(map.getCheckedPlace().size());
+        plan.setStart_date(start_date);
+        plan.setEnd_date(end_date);
         //plan 객체에 필요한 값들 설정
 
         //log.info("user id" + userInfo);
 
         planRepository.save(plan);//메소드 이용하여 저장
 
-        //savePlanDetail(map, user, plan);
+        savePlanDetail(computeDTO, user, plan);
     }
 
     public List<PlanListDTO> mypage_planlist(User user) {
@@ -98,36 +107,46 @@ public class PlanService {
         return listDTO;
     }
 
-    /*public void savePlanDetail(List<Places> map, User user, Plan plan){
-        PlanDetail planDetail = new PlanDetail();
+    public void savePlanDetail(List<PlaceComputeDTO> map, User user, Plan plan){
+
         List<PlanDetailDTO> planDetailDTO = new ArrayList<>();  //임시 생성-나중에 매개변수로 받을거
+
+        for (PlaceComputeDTO computeDTO : map){
+            PlanDetailDTO planDetailItem = PlanDetailDTO.builder()
+                    .id(computeDTO.getId())
+                    .day(computeDTO.getDays())
+                    .build();
+            planDetailDTO.add(planDetailItem);
+        }
 
         int size = planDetailDTO.size();   //마지막 장소 저장을 위해 크기 구하기
         int dayIndex = 1;
         String placeIdsOfDay = "";    //place_id 문자열
-        planDetail.setPlan(plan);     //매개변수로 받은 plan이 plan_id 가지고있는지 테스트해야함
-
+             //매개변수로 받은 plan이 plan_id 가지고있는지 테스트해야함
+        PlanDetail planDetail = new PlanDetail();
         for (int i=0;i<size;i++){
 
-            if (planDetailDTO.get(i).getDay() != dayIndex){  //day가 올라가면
 
+            if (planDetailDTO.get(i).getDay() != dayIndex){  //day가 올라가면
+                planDetail.setPlan(plan);
                 planDetail.setPlace_id(placeIdsOfDay);
                 planDetail.setDays(dayIndex);
                 planDetailRepository.save(planDetail);
-
+                planDetail = new PlanDetail();
                 placeIdsOfDay = "";
                 dayIndex++;
             }
             //문자열 뒤에 붙이기
             //문자열 마지막에 ,가 들어가는데 지워야하나-보류
-            placeIdsOfDay=placeIdsOfDay+planDetailDTO.get(i).getId()+",";
+            placeIdsOfDay+=planDetailDTO.get(i).getId()+",";
 
             if (i+1==size){  //마지막 인덱스
+                planDetail.setPlan(plan);
                 planDetail.setPlace_id(placeIdsOfDay);
                 planDetail.setDays(dayIndex);
                 planDetailRepository.save(planDetail);
             }
         }
 
-    }*/
+    }
 }

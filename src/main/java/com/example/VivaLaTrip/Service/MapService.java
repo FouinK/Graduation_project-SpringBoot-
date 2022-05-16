@@ -24,7 +24,7 @@ import java.util.*;
 @Slf4j
 public class MapService {
 
-    private MapRepository mapRepository;
+    private final MapRepository mapRepository;
 
     public MapService(MapRepository mapRepository) {
         this.mapRepository = mapRepository;
