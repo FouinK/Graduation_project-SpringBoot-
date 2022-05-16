@@ -18,12 +18,11 @@ import java.util.List;
 public class PlanDetailService {
 
 
-    public List<PlaceComputeDTO> routeCompute(List<PlaceComputeDTO> places){
+    public List<PlaceComputeDTO> routeCompute(List<PlaceComputeDTO> places, int total_day){
 
         double sumOfX = 0;
         double sumOfY = 0;
         double sumOfStay = 0;
-        int total_day = 10;
         int total_count = places.size();
 
         for (PlaceComputeDTO place : places){

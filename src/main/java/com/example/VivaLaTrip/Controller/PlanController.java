@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Slf4j
@@ -27,10 +30,27 @@ public class PlanController {
     }
 
     @PostMapping("/api/makeSchedule")
-    public void plan_save(@RequestBody PlanSaveDTO map, @AuthenticationPrincipal User user) {
+    public void plan_save(@RequestBody PlanSaveDTO map, @AuthenticationPrincipal User user) throws ParseException {
 
-        log.info(String.valueOf(map));
-        log.info(map.getCheckedPlace().get(0).toString());
+        /*log.info(String.valueOf(map));
+        log.info(map.getCheckedPlace().get(0).toString());*/
+
+        String start_date;
+        start_date = map.getStart_date().substring(0,4);
+        start_date += map.getStart_date().substring(5,7);
+        start_date += map.getStart_date().substring(8,10);
+        String end_date;
+        end_date = map.getEnd_date().substring(0,4);
+        end_date += map.getEnd_date().substring(5,7);
+        end_date += map.getEnd_date().substring(8,10);
+
+        map.setStart_date(start_date);
+        map.setEnd_date(end_date);
+
+        Date format1 = new SimpleDateFormat("yyyyMMdd").parse(start_date);
+        Date format2 = new SimpleDateFormat("yyyyMMdd").parse(end_date);
+        long diffSec = (format1.getTime() - format2.getTime()) / 1000;
+        long total_day = diffSec / (24*60*60)+1;
 
         List<PlaceComputeDTO> placeComputeDTO = new ArrayList<>();
 
@@ -46,7 +66,7 @@ public class PlanController {
                     .build();
             placeComputeDTO.add(placeItem);
         }
-        placeComputeDTO = planDetailService.routeCompute(placeComputeDTO);
+        placeComputeDTO = planDetailService.routeCompute(placeComputeDTO, (int) total_day);
         planService.setPlan_list(map,user, placeComputeDTO);
 
     }
