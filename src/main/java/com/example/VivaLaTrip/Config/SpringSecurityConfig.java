@@ -15,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
+
 @RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
@@ -23,6 +25,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserService userService;
     /* 로그인 실패 핸들러 의존성 주입 */
+    @Autowired
+    HttpSession httpSession;
     private final AuthenticationFailureHandler customFailurHandler;
 
     @Override
