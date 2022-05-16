@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -30,8 +31,12 @@ public class PlanController {
     }
 
     @PostMapping("/api/makeSchedule")
-    public void plan_save(@RequestBody PlanSaveDTO map, @AuthenticationPrincipal User user) throws ParseException {
-
+    public void plan_save(@RequestBody PlanSaveDTO map, @AuthenticationPrincipal User user,@CookieValue(name = "JSESSIONID", required = false) String JSESSIONID, HttpSession httpSession) throws ParseException {
+        if (!httpSession.getId().equals(JSESSIONID)) {
+            log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
+            log.info("서버 세션 값: " + httpSession.getId());
+            throw new IllegalStateException("회원정보가 일치하지 않습니다.");
+        }
         /*log.info(String.valueOf(map));
         log.info(map.getCheckedPlace().get(0).toString());*/
 
@@ -49,7 +54,7 @@ public class PlanController {
 
         Date format1 = new SimpleDateFormat("yyyyMMdd").parse(start_date);
         Date format2 = new SimpleDateFormat("yyyyMMdd").parse(end_date);
-        long diffSec = (format1.getTime() - format2.getTime()) / 1000;
+        long diffSec = (format2.getTime()- format1.getTime()) / 1000;
         long total_day = diffSec / (24*60*60)+1;
 
         List<PlaceComputeDTO> placeComputeDTO = new ArrayList<>();
@@ -73,8 +78,14 @@ public class PlanController {
 
     @GetMapping("/api/myPageList")
     public @ResponseBody
-    ResponseEntity<?> plan_view(@AuthenticationPrincipal User user)
-    {
+    ResponseEntity<?> plan_view(@CookieValue(name = "JSESSIONID", required = false) String JSESSIONID, @AuthenticationPrincipal User user, HttpSession httpSession) {
+        if (!httpSession.getId().equals(JSESSIONID)) {
+            log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
+            log.info("서버 세션 값: " + httpSession.getId());
+            throw new IllegalStateException("회원정보가 일치하지 않습니다.");
+        }
+        log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
+        log.info("서버 세션 값: " + httpSession.getId());
         return ResponseEntity.ok(planService.mypage_planlist(user));
     }
 
