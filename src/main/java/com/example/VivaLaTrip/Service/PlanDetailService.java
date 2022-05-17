@@ -52,19 +52,15 @@ public class PlanDetailService {
         List<PlaceComputeDTO> quadrantFour = new ArrayList<>();
 
         for (PlaceComputeDTO place : places) {
-            if (place.getX() >= avgX && place.getY() > avgY) {      //1사분면에 위치하거나 기울기가 0일 때(x값이 중심x 값보다 큼)
+            if (place.getX() >= avgX && place.getY() >= avgY) {//1사분면
                 quadrantOne.add(place);
-            } else if (place.getX() < avgX && place.getY() > avgY) {       //2사분면에 위치할 때
+            } else if (place.getX() < avgX && place.getY() >= avgY) {//2사분면
                 quadrantTwo.add(place);
-            } else if (place.getX() <= avgX && place.getY() < avgY) {         //3사분면에 위치하거나 기울기가 0일 때(x값이 중심x 값보다 작음)
+            } else if (place.getX() <= avgX && place.getY() < avgY) {//3사분면
                 quadrantThree.add(place);
-            } else if (place.getX() > avgX && place.getY() < avgY) {        //4사분면에 위치할 때
+            } else if (place.getX() > avgX && place.getY() < avgY) {//4사분면
                 quadrantFour.add(place);
-            } else if (place.getX() == avgX && place.getY() < avgY) {       //기울기는 없고 y절편이 -일 때
-                quadrantThree.add(place);
-            } else if (place.getX() == avgX && place.getY() > avgY) {       //기울기는 없고 y절편이 +일 때
-                quadrantOne.add(place);
-            }//원점일때 구해야함
+            }
         }
 
         quadrantOne = nearPlaceFirst(sortPlaces(quadrantOne), avgX, avgY);
@@ -187,6 +183,11 @@ public class PlanDetailService {
                 place.setWhere("left");
             }else if(place.getX() == avgX){
                 place.setSlope(999999);
+                if (place.getY() >= avgY){
+                    place.setWhere("right");
+                }else {
+                    place.setWhere("left");
+                }
             }
         }
         return places;
@@ -255,6 +256,7 @@ public class PlanDetailService {
 
         int stayOfDay=0;
         int day = 1;
+
         for (PlaceComputeDTO place : places) {
             if (stayOfDay < avgStayOfDays) {
                 place.setDays(day);
