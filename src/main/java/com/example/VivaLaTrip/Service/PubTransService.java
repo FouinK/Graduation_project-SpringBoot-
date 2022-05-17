@@ -13,14 +13,14 @@ import java.util.Map;
 
 @Service
 public class PubTransService {
-    public void getPubTransPath(ArrayList<Map> arrayList) throws UnirestException {
+    public void getPubTransPath() throws UnirestException {
 
-        System.out.println(arrayList.get(0).get("place_name")+"에서 " +arrayList.get(1).get("place_name"));
-        String sX = (String) arrayList.get(0).get("x");
-        String sY = (String) arrayList.get(0).get("y");
+        //System.out.println(arrayList.get(0).get("place_name")+"에서 " +arrayList.get(1).get("place_name"));
+        String sX = "127.09806349478795";
+        String sY = "37.51131985755065";
 
-        String eX = (String) arrayList.get(1).get("x");
-        String eY = (String) arrayList.get(1).get("y");
+        String eX = "126.92766444856224";
+        String eY = "37.38030121417301";
 
         String Apikey = "Pdk5AeqchgUHkzCZXjC3WGchUKGRIMf430BlyCwf18c";
 
@@ -29,7 +29,9 @@ public class PubTransService {
         HttpResponse<JsonNode> response = Unirest.get(url)
                 .header("Authorization", Apikey).asJson();
 
+        System.out.println(response.getBody());
         JSONObject result = (JSONObject) response.getBody().getObject().get("result"); //json 객체만 뽑아냄
+        System.out.println("결과출력 : "+result);
         JSONArray path = (JSONArray) result.get("path");
         JSONObject recommendedRoute = (JSONObject) path.get(0);
         JSONObject info = (JSONObject) recommendedRoute.get("info");

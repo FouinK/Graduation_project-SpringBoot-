@@ -1,33 +1,26 @@
 package com.example.VivaLaTrip.Controller;
 
-import com.example.VivaLaTrip.Entity.UserInfo;
+import com.example.VivaLaTrip.Service.PubTransService;
 import com.example.VivaLaTrip.Service.PublicPlanService;
 import com.example.VivaLaTrip.Service.UserService;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @Controller
 public class MainController {
     private final UserService userService;
     private final PublicPlanService publicPlanService;
+    private final PubTransService pubTransService;
 
     @Autowired
-    public MainController(UserService userService, PublicPlanService publicPlanService) {
+    public MainController(UserService userService, PublicPlanService publicPlanService, PubTransService pubTransService) {
         this.userService = userService;
         this.publicPlanService = publicPlanService;
+        this.pubTransService = pubTransService;
     }
 
 /*    @GetMapping("/public_plan")
@@ -36,8 +29,9 @@ public class MainController {
         return "public_plan";
     }*/
     @GetMapping("/")
-    public String toIndex() {
+    public String toIndex() throws UnirestException {
     // publicPlanService.view_all_public();
+        pubTransService.getPubTransPath();
     return "index";
 }
 
