@@ -36,9 +36,9 @@ public class PublicPlanService {
 
         log.info("일정 ID : "+plan.getPlanId().toString());
         log.info("유저 ID : "+plan.getUserInfo().getUserId().toString());
-        log.info("총 장소 : "+String.valueOf(plan.getTotal_count()));
-        log.info("시작날 : "+plan.getStart_date().toString());
-        log.info("끝날 : "+plan.getEnd_date().toString());
+        log.info("총 장소 : "+ plan.getTotal_count());
+        log.info("시작날 : "+ plan.getStart_date());
+        log.info("끝날 : "+ plan.getEnd_date());
 
         return plan;
     }
@@ -95,7 +95,6 @@ public class PublicPlanService {
 
         Plan plan = findPlan(plan_id);
 
-        //좋아요 테이블 비워야함
         boolean isLiked = likedRepository.existsByPlan_PlanId(plan_id);
 
         if (user.getUsername().equals(plan.getUserInfo().getUsername())){

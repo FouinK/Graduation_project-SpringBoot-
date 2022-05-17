@@ -13,5 +13,4 @@ public interface MapRepository extends JpaRepository<Places,Long>{
     List<Places> findByAddressNameContains(String word, Sort sort);
 
     Places save(Places places);
-
 }
