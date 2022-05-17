@@ -31,26 +31,28 @@ public class PlanController {
     }
 
     @PostMapping("/api/makeSchedule")
-    public void plan_save(@RequestBody PlanSaveDTO map, @AuthenticationPrincipal User user,@CookieValue(name = "JSESSIONID", required = false) String JSESSIONID, HttpSession httpSession) throws ParseException {
+    public void plan_save(@RequestBody PlanSaveDTO request,
+                          @AuthenticationPrincipal User user,
+                          @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
+                          HttpSession httpSession) throws ParseException {
+
         if (!httpSession.getId().equals(JSESSIONID)) {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
             log.info("서버 세션 값: " + httpSession.getId());
             throw new IllegalStateException("회원정보가 일치하지 않습니다.");
         }
-        /*log.info(String.valueOf(map));
-        log.info(map.getCheckedPlace().get(0).toString());*/
 
         String start_date;
-        start_date = map.getStart_date().substring(0,4);
-        start_date += map.getStart_date().substring(5,7);
-        start_date += map.getStart_date().substring(8,10);
+        start_date = request.getStart_date().substring(0,4);
+        start_date += request.getStart_date().substring(5,7);
+        start_date += request.getStart_date().substring(8,10);
         String end_date;
-        end_date = map.getEnd_date().substring(0,4);
-        end_date += map.getEnd_date().substring(5,7);
-        end_date += map.getEnd_date().substring(8,10);
+        end_date = request.getEnd_date().substring(0,4);
+        end_date += request.getEnd_date().substring(5,7);
+        end_date += request.getEnd_date().substring(8,10);
 
-        map.setStart_date(start_date);
-        map.setEnd_date(end_date);
+        request.setStart_date(start_date);
+        request.setEnd_date(end_date);
 
         Date format1 = new SimpleDateFormat("yyyyMMdd").parse(start_date);
         Date format2 = new SimpleDateFormat("yyyyMMdd").parse(end_date);
@@ -59,7 +61,7 @@ public class PlanController {
 
         List<PlaceComputeDTO> placeComputeDTO = new ArrayList<>();
 
-        for (Places place : map.getCheckedPlace()){
+        for (Places place : request.getCheckedPlace()){
             PlaceComputeDTO placeItem = PlaceComputeDTO.builder()
                     .id(place.getId())
                     .x(Double.parseDouble(place.getX()))
@@ -72,7 +74,7 @@ public class PlanController {
             placeComputeDTO.add(placeItem);
         }
         placeComputeDTO = planDetailService.routeCompute(placeComputeDTO, (int) total_day);
-        planService.setPlan_list(map,user, placeComputeDTO);
+        planService.setPlan_list(request,user, placeComputeDTO);
 
     }
 
