@@ -7,6 +7,8 @@ import com.example.VivaLaTrip.Form.LoginSuccessPlanListDTO;
 import com.example.VivaLaTrip.Service.PlanDetailService;
 import com.example.VivaLaTrip.Service.PlanService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +36,13 @@ public class PlanController {
     @ResponseBody
     @PostMapping("/api/makeSchedule")
     public ResponseEntity<?> plan_save(@RequestBody PlanSaveDTO request,
-                          @AuthenticationPrincipal User user,
-                          @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
-                          HttpSession httpSession) throws ParseException {
+                                       @AuthenticationPrincipal User user,
+                                       @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
+                                       HttpSession httpSession) throws ParseException {
 
         Map<String, Object> map = new HashMap<>();
         //로그인 확인 결과를 담을 Map
+        log.info("컨트롤러 리퀘스트 이즈퍼블릭 값 : " + request.isPublic());
 
         if (!httpSession.getId().equals(JSESSIONID)||user==null) {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
@@ -48,6 +51,7 @@ public class PlanController {
             //로그인 되어있지 않거나 세션값 만료 시 success에 false리턴
             return ResponseEntity.ok(map);
         }
+
 
         String start_date;
         start_date = request.getStart_date().substring(0,4);
@@ -92,11 +96,14 @@ public class PlanController {
     @GetMapping("/api/myPageList")
     public @ResponseBody
     ResponseEntity<?> plan_view(@CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
+                                @PageableDefault(size = 10) Pageable pageable,
                                 @AuthenticationPrincipal User user,
                                 HttpSession httpSession) {
 
         LoginSuccessPlanListDTO loginSuccessPlanListDTO = new LoginSuccessPlanListDTO();
         //로그인 확인 결과를 담을 SuccessPlanListDTO
+
+        log.info("페이지에이블 값 확인"+pageable.toString());
 
         if (!httpSession.getId().equals(JSESSIONID) || user == null) {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
@@ -106,8 +113,7 @@ public class PlanController {
             return ResponseEntity.ok(loginSuccessPlanListDTO);
         }
 
-        loginSuccessPlanListDTO.setLoginSuccess(true);
-        loginSuccessPlanListDTO.setPlanListDTOList(planService.mypage_planlist(user));
+        loginSuccessPlanListDTO = planService.mypage_planlist(user,pageable);
         //로그인 되어있을 시 PlanList와 success값 트루 리턴 (석세스가 한겹 더 위에 있음)
         return ResponseEntity.ok(loginSuccessPlanListDTO);
     }

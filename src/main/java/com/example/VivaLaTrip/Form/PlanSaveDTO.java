@@ -1,10 +1,14 @@
 package com.example.VivaLaTrip.Form;
 
 import com.example.VivaLaTrip.Entity.Places;
-import lombok.Data;
+import lombok.*;
+
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PlanSaveDTO {
     private boolean isPublic;
     private String title;
