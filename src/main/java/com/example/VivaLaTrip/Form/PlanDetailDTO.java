@@ -5,5 +5,9 @@ import lombok.*;
 @AllArgsConstructor
 public class PlanDetailDTO {
     String id;
+    String place_name;
+    double x;
+    double y;
+    boolean checked;
     int day;
 }

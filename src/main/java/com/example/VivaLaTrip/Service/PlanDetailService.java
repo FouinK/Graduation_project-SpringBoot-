@@ -1,12 +1,9 @@
 package com.example.VivaLaTrip.Service;
 
-import com.example.VivaLaTrip.Entity.PlanDetail;
+
 import com.example.VivaLaTrip.Form.PlaceComputeDTO;
-import com.example.VivaLaTrip.Form.PlanDetailDTO;
-import com.example.VivaLaTrip.Repository.PlanDetailRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
