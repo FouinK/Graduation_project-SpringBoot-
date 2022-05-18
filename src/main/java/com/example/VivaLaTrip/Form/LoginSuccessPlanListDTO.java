@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class LoginSuccessPlanListDTO {
     private boolean loginSuccess;
-    private List<PlanListDTO> planListDTOList;
+    private int totalPage;
+    private List<PlanListDTO> myPlans;
 }
