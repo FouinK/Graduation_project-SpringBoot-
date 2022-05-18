@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,21 +60,21 @@ public class PlanService {
         List<Plan> user_plan = planRepository.findAllByUserInfo_UserId(userInfo.get().getUserId());      //파인드바이유저아이디말고 파인드올 쓴 이유는?
         //userinfo에서 id값 가져온거 plan리포지토리 userId에서 찾음= plan이 있는 값 가져옴
 
-        List<PublicPlan> publicPlan = new ArrayList<>();
-
         for(Plan a: user_plan){//Plan이 있으면 반복
             if(a.is_public())//공유여부 참일 때
             {
                 //publicPlan.add(publicPlanRepository.findByPlanId(a.getPlanId()));
                 //plan이 있는 id값 가져와서 -> repository publicplan 객체에서 id 찾아와서 저장
+                PublicPlan publicPlan = publicPlanRepository.findByPlanId(a.getPlanId());
+
                 PlanListDTO planListItem = PlanListDTO.builder()//DTO객체에 저장
                         .userId(a.getUserInfo().getUserId().toString())
                         .start_date(a.getStart_date())
                         .end_date(a.getEnd_date())
                         .plan_id(a.getPlanId().toString())
-                        .title(publicPlanRepository.findByPlanId(a.getPlanId()).getComment())
+                        .title(publicPlan.getComment())
                         .place_num(a.getTotal_count())
-                        .liked(publicPlanRepository.findByPlanId(a.getPlanId()).getLike_count())
+                        .liked(publicPlan.getLike_count())
                         .build();
 
                 listDTO.add(planListItem);
@@ -147,6 +148,53 @@ public class PlanService {
                 planDetailRepository.save(planDetail);
             }
         }
+    }
 
+    public PlanDetailResponseDTO getPlanDetail(Long planId){
+
+        Plan plan = planRepository.findByPlanId(planId);
+        PublicPlan publicPlan = publicPlanRepository.findByPlanId(planId);
+        List<PlanDetail> planDetail = planDetailRepository.findAllByPlan_PlanId(planId);
+
+        PlanDetailResponseDTO planDetailResponseDTO = new PlanDetailResponseDTO();
+        List<PlanDetailDTO> places = new ArrayList<>();
+
+        if (plan.is_public()){
+            planDetailResponseDTO.setTitle(publicPlan.getComment());
+            planDetailResponseDTO.setLiked(publicPlan.getLike_count());
+        }else {
+            planDetailResponseDTO.setTitle("");
+            planDetailResponseDTO.setLiked(0);
+        }
+
+        planDetailResponseDTO.setUserId(plan.getUserInfo().getUserId());
+        planDetailResponseDTO.setStart_date(plan.getStart_date());
+        planDetailResponseDTO.setEnd_date(plan.getEnd_date());
+        planDetailResponseDTO.setPlan_id(plan.getPlanId());
+        planDetailResponseDTO.setPlace_num(plan.getTotal_count());
+
+        for (PlanDetail planDetailDay : planDetail){
+
+            String[] placeIdList = planDetailDay.getPlace_id().split(",");
+            for (String aaa : placeIdList){
+                PlanDetailDTO place = new PlanDetailDTO();
+                place.setId(aaa);
+                place.setDay(planDetailDay.getDays());
+                places.add(place);
+            }
+        }
+
+        for (PlanDetailDTO place : places){
+            Places p = mapRepository.findById(place.getId());
+
+            place.setPlace_name(p.getPlace_name());
+            place.setX(Double.parseDouble(p.getX()));
+            place.setY(Double.parseDouble(p.getY()));
+            place.setChecked(true);
+        }
+
+        planDetailResponseDTO.setPlaces(places);
+
+        return planDetailResponseDTO;
     }
 }

@@ -2,6 +2,7 @@ package com.example.VivaLaTrip.Controller;
 
 import com.example.VivaLaTrip.Entity.Places;
 import com.example.VivaLaTrip.Form.PlaceComputeDTO;
+import com.example.VivaLaTrip.Form.PlanDetailResponseDTO;
 import com.example.VivaLaTrip.Form.PlanSaveDTO;
 import com.example.VivaLaTrip.Form.LoginSuccessPlanListDTO;
 import com.example.VivaLaTrip.Service.PlanDetailService;
@@ -40,6 +41,8 @@ public class PlanController {
 
         Map<String, Object> map = new HashMap<>();
         //로그인 확인 결과를 담을 Map
+
+        log.info("컨트롤러에서 받자마자 공유 여부 확인 : "+ request.isPublic());
 
         if (!httpSession.getId().equals(JSESSIONID)||user==null) {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
@@ -110,6 +113,16 @@ public class PlanController {
         loginSuccessPlanListDTO.setPlanListDTOList(planService.mypage_planlist(user));
         //로그인 되어있을 시 PlanList와 success값 트루 리턴 (석세스가 한겹 더 위에 있음)
         return ResponseEntity.ok(loginSuccessPlanListDTO);
+    }
+
+
+    @GetMapping( "/api/myPlan")
+    public @ResponseBody
+    ResponseEntity<?> responsePlanDetail(@RequestParam("planId") Long planId) {
+        log.info(planId + "번 plan 요청받음");
+        PlanDetailResponseDTO response = planService.getPlanDetail(planId);
+
+        return ResponseEntity.ok(response);
     }
 
     /*@GetMapping("/api/myplan/{plan.planId}")
