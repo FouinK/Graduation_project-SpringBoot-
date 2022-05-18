@@ -13,5 +13,3 @@ public class PlanListDTO {
     private int place_num;
     private int liked;
 }
-
-

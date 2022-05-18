@@ -47,6 +47,7 @@ public class PublicPlanService {
 
         List<PlanListDTO> listDTO = new ArrayList<>();
         List<PublicPlan> publicPlan = publicPlanRepository.findAll();
+
         for (PublicPlan pp : publicPlan){
             Plan plan = planRepository.findByPlanId(pp.getPlanId());
 

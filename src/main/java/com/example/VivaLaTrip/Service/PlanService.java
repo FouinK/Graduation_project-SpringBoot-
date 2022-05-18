@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-
 @Transactional
 @Slf4j
 @Service
@@ -23,6 +22,7 @@ public class PlanService {
     private final PlanRepository planRepository;
     private final UserRepository userRepository;
     private final PlanDetailRepository planDetailRepository;
+    private final MapRepository mapRepository;
 
     PublicPlanService publicPlanService;
 
@@ -40,7 +40,9 @@ public class PlanService {
 
         planRepository.save(plan);//메소드 이용하여 저장
 
-        if(request.is_public()){
+        log.info("리퀘스트 이즈퍼블릭 값 : " + request.isPublic());
+        if(request.isPublic()){
+            log.info("request.이즈퍼블릭 작동 ?");
             publicPlanService.toPublic(plan.getPlanId(), request.getTitle(), user);
         }
 
@@ -54,7 +56,7 @@ public class PlanService {
         List<PlanListDTO> listDTO = new ArrayList<>();
         //결과를 담을 DTO list 선언(front로 보내줄 거)
 
-        List<Plan> user_plan = planRepository.findAllByUserInfo_UserId(userInfo.get().getUserId());
+        List<Plan> user_plan = planRepository.findAllByUserInfo_UserId(userInfo.get().getUserId());      //파인드바이유저아이디말고 파인드올 쓴 이유는?
         //userinfo에서 id값 가져온거 plan리포지토리 userId에서 찾음= plan이 있는 값 가져옴
 
         List<PublicPlan> publicPlan = new ArrayList<>();
@@ -64,7 +66,6 @@ public class PlanService {
             {
                 //publicPlan.add(publicPlanRepository.findByPlanId(a.getPlanId()));
                 //plan이 있는 id값 가져와서 -> repository publicplan 객체에서 id 찾아와서 저장
-
                 PlanListDTO planListItem = PlanListDTO.builder()//DTO객체에 저장
                         .userId(a.getUserInfo().getUserId().toString())
                         .start_date(a.getStart_date())
@@ -78,7 +79,7 @@ public class PlanService {
                 listDTO.add(planListItem);
             }
             else
-            {//is public이 false일 때 title과 comment는 아무것도 없음
+            {//is public이 false일 때 title과 comment는 아무것도 없음          //title(전 comment)과 liked가 없음
                 PlanListDTO planListItem = PlanListDTO.builder()
                         .userId(a.getUserInfo().getUserId().toString())
                         .start_date(a.getStart_date())
@@ -95,25 +96,32 @@ public class PlanService {
         return listDTO;
     }
 
-    public void savePlanDetail(List<PlaceComputeDTO> map, User user, Plan plan){
+    public void savePlanDetail(List<PlaceComputeDTO> placeComputeDTOList, User user, Plan plan){
 
-        List<PlanDetailDTO> planDetailDTO = new ArrayList<>();
+//        List<PlanDetailDTO> map = new ArrayList<>();
 
-        for (PlaceComputeDTO computeDTO : map){
+
+        Places places = new Places();
+        //플레이스의 popularity를 +1담기위한 객체
+
+/*
+        for (PlaceComputeDTO computeDTO : placeComputeDTOList){
+            //단순히 복사하는 부분이라 필요 없을 것
             PlanDetailDTO planDetailItem = PlanDetailDTO.builder()
                     .id(computeDTO.getId())
                     .day(computeDTO.getDays())
                     .build();
             planDetailDTO.add(planDetailItem);
         }
+*/
 
-        int size = planDetailDTO.size();   //마지막 장소 저장을 위해 크기 구하기
+        int size = placeComputeDTOList.size();   //마지막 장소 저장을 위해 크기 구하기       //컴퓨트 디티오로 변경
         int dayIndex = 1;
         String placeIdsOfDay = "";    //place_id 문자열
         PlanDetail planDetail = new PlanDetail();
 
         for (int i=0;i<size;i++){
-            if (planDetailDTO.get(i).getDay() != dayIndex){  //day가 올라가면
+            if (placeComputeDTOList.get(i).getDays() != dayIndex){  //day가 올라가면
                 planDetail.setPlan(plan);
                 planDetail.setPlace_id(placeIdsOfDay);
                 planDetail.setDays(dayIndex);
@@ -122,7 +130,15 @@ public class PlanService {
                 placeIdsOfDay = "";
                 dayIndex++;
             }
-            placeIdsOfDay+=planDetailDTO.get(i).getId()+",";
+
+            places = mapRepository.findById(placeComputeDTOList.get(i).getId());
+            //PlanDetailDTO에 담긴 places의 Id값을 검사해서 places객체 하나를 DB에서 뽑아옴
+            places.setPopularity(places.getPopularity()+1);
+            //해당 places의 popularity에 +1을 해주고
+            mapRepository.save(places);
+            //places업데이트
+
+            placeIdsOfDay+=placeComputeDTOList.get(i).getId()+",";
 
             if (i+1==size){  //마지막 인덱스
                 planDetail.setPlan(plan);
