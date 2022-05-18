@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class PlanSaveDTO {
-    private boolean is_public;
+    private boolean isPublic;
     private String title;
     private List<Places> checkedPlace;
     private String start_date;

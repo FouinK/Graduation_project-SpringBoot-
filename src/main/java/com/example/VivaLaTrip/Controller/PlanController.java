@@ -3,6 +3,7 @@ package com.example.VivaLaTrip.Controller;
 import com.example.VivaLaTrip.Entity.Places;
 import com.example.VivaLaTrip.Form.PlaceComputeDTO;
 import com.example.VivaLaTrip.Form.PlanSaveDTO;
+import com.example.VivaLaTrip.Form.LoginSuccessPlanListDTO;
 import com.example.VivaLaTrip.Service.PlanDetailService;
 import com.example.VivaLaTrip.Service.PlanService;
 import lombok.extern.slf4j.Slf4j;
@@ -30,16 +31,22 @@ public class PlanController {
         this.planService = planService;
     }
 
+    @ResponseBody
     @PostMapping("/api/makeSchedule")
-    public void plan_save(@RequestBody PlanSaveDTO request,
+    public ResponseEntity<?> plan_save(@RequestBody PlanSaveDTO request,
                           @AuthenticationPrincipal User user,
                           @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
                           HttpSession httpSession) throws ParseException {
 
-        if (!httpSession.getId().equals(JSESSIONID)) {
+        Map<String, Object> map = new HashMap<>();
+        //로그인 확인 결과를 담을 Map
+
+        if (!httpSession.getId().equals(JSESSIONID)||user==null) {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
             log.info("서버 세션 값: " + httpSession.getId());
-            throw new IllegalStateException("회원정보가 일치하지 않습니다.");
+            map.put("success", false);
+            //로그인 되어있지 않거나 세션값 만료 시 success에 false리턴
+            return ResponseEntity.ok(map);
         }
 
         String start_date;
@@ -76,19 +83,33 @@ public class PlanController {
         placeComputeDTO = planDetailService.routeCompute(placeComputeDTO, (int) total_day);
         planService.setPlan_list(request,user, placeComputeDTO);
 
+        map.put("success", true);
+        //로그인 되어있을 때 true리턴
+
+        return ResponseEntity.ok(map);
     }
 
     @GetMapping("/api/myPageList")
     public @ResponseBody
-    ResponseEntity<?> plan_view(@CookieValue(name = "JSESSIONID", required = false) String JSESSIONID, @AuthenticationPrincipal User user, HttpSession httpSession) {
-        if (!httpSession.getId().equals(JSESSIONID)) {
+    ResponseEntity<?> plan_view(@CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
+                                @AuthenticationPrincipal User user,
+                                HttpSession httpSession) {
+
+        LoginSuccessPlanListDTO loginSuccessPlanListDTO = new LoginSuccessPlanListDTO();
+        //로그인 확인 결과를 담을 SuccessPlanListDTO
+
+        if (!httpSession.getId().equals(JSESSIONID) || user == null) {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
             log.info("서버 세션 값: " + httpSession.getId());
-            throw new IllegalStateException("회원정보가 일치하지 않습니다.");
+            loginSuccessPlanListDTO.setLoginSuccess(false);
+            //로그인 되어있지 않거나 세션값 만료 시 success에 false리턴
+            return ResponseEntity.ok(loginSuccessPlanListDTO);
         }
-        log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
-        log.info("서버 세션 값: " + httpSession.getId());
-        return ResponseEntity.ok(planService.mypage_planlist(user));
+
+        loginSuccessPlanListDTO.setLoginSuccess(true);
+        loginSuccessPlanListDTO.setPlanListDTOList(planService.mypage_planlist(user));
+        //로그인 되어있을 시 PlanList와 success값 트루 리턴 (석세스가 한겹 더 위에 있음)
+        return ResponseEntity.ok(loginSuccessPlanListDTO);
     }
 
     /*@GetMapping("/api/myplan/{plan.planId}")
