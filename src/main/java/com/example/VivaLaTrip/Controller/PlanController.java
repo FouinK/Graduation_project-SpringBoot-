@@ -1,10 +1,7 @@
 package com.example.VivaLaTrip.Controller;
 
 import com.example.VivaLaTrip.Entity.Places;
-import com.example.VivaLaTrip.Form.PlaceComputeDTO;
-import com.example.VivaLaTrip.Form.PlanDetailResponseDTO;
-import com.example.VivaLaTrip.Form.PlanSaveDTO;
-import com.example.VivaLaTrip.Form.LoginSuccessPlanListDTO;
+import com.example.VivaLaTrip.Form.*;
 import com.example.VivaLaTrip.Service.PlanDetailService;
 import com.example.VivaLaTrip.Service.PlanService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,9 +40,9 @@ public class PlanController {
 
         Map<String, Object> map = new HashMap<>();
         //로그인 확인 결과를 담을 Map
-        log.info("컨트롤러 리퀘스트 이즈퍼블릭 값 : " + request.isPublic());
+        log.info("컨트롤러 리퀘스트 이즈퍼블릭 값 : " + request.getsPublic());
 
-        log.info("컨트롤러에서 받자마자 공유 여부 확인 : "+ request.isPublic());
+        log.info("컨트롤러에서 받자마자 공유 여부 확인 : "+ request.getsPublic());
 
         if (!httpSession.getId().equals(JSESSIONID)||user==null) {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
@@ -124,10 +121,26 @@ public class PlanController {
 
     @GetMapping( "/api/myPlan")
     public @ResponseBody
-    ResponseEntity<?> responsePlanDetail(@RequestParam("planId") Long planId) {
+    ResponseEntity<?> responsePlanDetail(@RequestParam("planId") Long planId,
+                                         @AuthenticationPrincipal User user,
+                                         @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
+                                         HttpSession httpSession) {
+
+        Map<String, Object> map = new HashMap<>();
+        //로그인 확인 결과를 담을 Map
+
+        if (!httpSession.getId().equals(JSESSIONID) || user == null) {
+            log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
+            log.info("서버 세션 값: " + httpSession.getId());
+            map.put("loginSuccess",false);
+            //로그인 되어있지 않거나 세션값 만료 시 success에 false리턴
+            return ResponseEntity.ok(map);
+        }
         log.info(planId + "번 plan 요청받음");
         PlanDetailResponseDTO response = planService.getPlanDetail(planId);
+        response.setLoginSuccess(true);
 
+        //Detail과 로그인 Success true로 리턴
         return ResponseEntity.ok(response);
     }
 

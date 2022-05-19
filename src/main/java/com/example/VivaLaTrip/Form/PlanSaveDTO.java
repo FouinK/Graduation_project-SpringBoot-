@@ -5,8 +5,7 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlanSaveDTO {
@@ -15,4 +14,5 @@ public class PlanSaveDTO {
     private List<Places> checkedPlace;
     private String start_date;
     private String end_date;
+
 }
