@@ -4,6 +4,7 @@ import com.example.VivaLaTrip.Entity.Liked;
 import com.example.VivaLaTrip.Entity.Plan;
 import com.example.VivaLaTrip.Entity.PublicPlan;
 import com.example.VivaLaTrip.Entity.UserInfo;
+import com.example.VivaLaTrip.Form.PagePublicPlanListDTO;
 import com.example.VivaLaTrip.Form.PlanListDTO;
 import com.example.VivaLaTrip.Repository.LikedRepository;
 import com.example.VivaLaTrip.Repository.PlanRepository;
@@ -11,6 +12,8 @@ import com.example.VivaLaTrip.Repository.PublicPlanRepository;
 import com.example.VivaLaTrip.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
@@ -43,10 +46,12 @@ public class PublicPlanService {
         return plan;
     }
 
-    public List<PlanListDTO> matchPlans(){
+    public PagePublicPlanListDTO matchPlans(Pageable pageable){
 
         List<PlanListDTO> listDTO = new ArrayList<>();
-        List<PublicPlan> publicPlan = publicPlanRepository.findAll();
+        //전체 페이지 개수 안에 플랜 리스트 담기 위해
+        Page<PublicPlan> publicPlan = publicPlanRepository.findAll(pageable);
+        //페이지 담기 위해
 
         for (PublicPlan pp : publicPlan){
             Plan plan = planRepository.findByPlanId(pp.getPlanId());
@@ -65,7 +70,12 @@ public class PublicPlanService {
 
         }
 
-        return listDTO;
+        PagePublicPlanListDTO loginSuccessPlanListDTO = new PagePublicPlanListDTO();
+        loginSuccessPlanListDTO.setTotalPage(publicPlan.getTotalPages());
+        //총 페이지 개수 담음
+        loginSuccessPlanListDTO.setOthersPlans(listDTO);
+        //플랜리스트 담음
+        return loginSuccessPlanListDTO;
     }
 
     public void toPublic(Long plan_id, String comment) {
