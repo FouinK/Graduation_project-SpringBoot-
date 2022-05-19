@@ -44,7 +44,7 @@ public class PublicPlanController {
             @AuthenticationPrincipal User user){
 
         log.info("입력받은 일정 ID : "+plan_id.toString());
-        publicPlanService.toPublic(plan_id, comment, user);
+        //publicPlanService.toPublic(plan_id, comment, user);
         return "";
     }
 

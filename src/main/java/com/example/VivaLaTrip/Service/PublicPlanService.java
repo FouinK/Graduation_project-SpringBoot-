@@ -68,20 +68,30 @@ public class PublicPlanService {
         return listDTO;
     }
 
-    public void toPublic(Long plan_id, String comment, User user) {
-
+    public void toPublic(Long plan_id, String comment) {
+        log.info("ssd");
         Plan plan = findPlan(plan_id);
         PublicPlan publicPlan = new PublicPlan();
 
-        if (user.getUsername().equals(plan.getUserInfo().getUsername())){  //해당일정이 자신것인지 확인
-            if (!plan.is_public()){  //공유되어있지 않음
+        publicPlan.setPlan(plan);
+        publicPlan.setPlanId(plan_id);
+        publicPlan.setComment(comment);
+        publicPlan.setLike_count(0);
+        publicPlanRepository.save(publicPlan);
+
+        plan.setIs_public(true);
+        planRepository.save(plan);
+        log.info(plan_id+"번 일정 공유");
+
+        /*if (user.getUsername().equals(plan.getUserInfo().getUsername())){  //해당일정이 자신것인지 확인
+            if (!plan.getIs_public()){  //공유되어있지 않음
                 publicPlan.setPlan(plan);
                 publicPlan.setPlanId(plan_id);
                 publicPlan.setComment(comment);
                 publicPlan.setLike_count(0);
                 publicPlanRepository.save(publicPlan);
 
-                plan.set_public(true);
+                plan.setIs_public(true);
                 planRepository.save(plan);
                 log.info(plan_id+"번 일정 공유");
             }else {
@@ -89,7 +99,7 @@ public class PublicPlanService {
             }
         }else {
             log.info("해당 일정은 니꺼 아님");
-        }
+        }*/
     }
 
     public void toPrivate(long plan_id, User user) {
@@ -99,8 +109,8 @@ public class PublicPlanService {
         boolean isLiked = likedRepository.existsByPlan_PlanId(plan_id);
 
         if (user.getUsername().equals(plan.getUserInfo().getUsername())){
-            if(plan.is_public()){
-                plan.set_public(false);
+            if(plan.getIs_public()){
+                plan.setIs_public(false);
                 PublicPlan publicPlan = publicPlanRepository.findByPlanId(plan_id);
                 publicPlan.setPlan(null);   //참조키 관계 파괴-안하면 plan도 같이 삭제됨
                 publicPlanRepository.delete(publicPlan);
