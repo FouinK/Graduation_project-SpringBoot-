@@ -5,6 +5,7 @@ import com.example.VivaLaTrip.Form.*;
 import com.example.VivaLaTrip.Repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,25 +28,29 @@ public class PlanService {
     private final PlanDetailRepository planDetailRepository;
     private final MapRepository mapRepository;
 
+    @Autowired
     PublicPlanService publicPlanService;
 
     public void setPlan_list(PlanSaveDTO request, User user, List<PlaceComputeDTO> computeDTO) {
+
         Plan plan = new Plan();
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
         //로그인 한 user객체에서 userId(1,2,3,...)값 가져와서 리포지토리 아이디 찾는 메소드 호출
 
         plan.setUserInfo(userInfo.get());
-        plan.set_public(false);
+        plan.setIs_public(false);
         plan.setTotal_count(request.getCheckedPlace().size());
         plan.setStart_date(request.getStart_date());
         plan.setEnd_date(request.getEnd_date());
         //plan 객체에 필요한 값들 설정
 
-        planRepository.save(plan);//메소드 이용하여 저장
+        planRepository.save(plan);
 
-        if(request.getsPublic()){
-            log.info("request.이즈퍼블릭 작동 ?");
-            publicPlanService.toPublic(plan.getPlanId(), request.getTitle(), user);
+        if(request.getIsPublic()){
+            log.info(plan.getPlanId().toString());
+            log.info(request.getTitle());
+            log.info(user.getUsername());
+            publicPlanService.toPublic(plan.getPlanId(), request.getTitle());
         }
 
         savePlanDetail(computeDTO, user, plan);
@@ -65,7 +71,7 @@ public class PlanService {
         log.info("getTotalElements() 확인 : " + user_plan.getTotalElements());
 
         for(Plan a: user_plan){//Plan이 있으면 반복
-            if(a.is_public())//공유여부 참일 때
+            if(a.getIs_public())//공유여부 참일 때
             {
                 //publicPlan.add(publicPlanRepository.findByPlanId(a.getPlanId()));
                 //plan이 있는 id값 가져와서 -> repository publicplan 객체에서 id 찾아와서 저장
@@ -161,6 +167,8 @@ public class PlanService {
 
     public PlanDetailResponseDTO getPlanDetail(Long planId){
 
+        Long before = System.currentTimeMillis();
+
         Plan plan = planRepository.findByPlanId(planId);
         PublicPlan publicPlan = publicPlanRepository.findByPlanId(planId);
         List<PlanDetail> planDetail = planDetailRepository.findAllByPlan_PlanId(planId);
@@ -168,7 +176,7 @@ public class PlanService {
         PlanDetailResponseDTO planDetailResponseDTO = new PlanDetailResponseDTO();
         List<PlanDetailDTO> places = new ArrayList<>();
 
-        if (plan.is_public()){
+        if (plan.getIs_public()){
             planDetailResponseDTO.setTitle(publicPlan.getComment());
             planDetailResponseDTO.setLiked(publicPlan.getLike_count());
         }else {
@@ -203,6 +211,9 @@ public class PlanService {
         }
 
         planDetailResponseDTO.setPlaces(places);
+
+        Long after = System.currentTimeMillis();
+        System.out.println("getPlanDetail : "+(after - before) +"ms 소요");
 
         return planDetailResponseDTO;
     }

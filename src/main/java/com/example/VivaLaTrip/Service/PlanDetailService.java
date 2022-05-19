@@ -14,7 +14,6 @@ import java.util.List;
 @Service
 public class PlanDetailService {
 
-
     public List<PlaceComputeDTO> routeCompute(List<PlaceComputeDTO> places, int total_day){
 
         double sumOfX = 0;
@@ -42,6 +41,8 @@ public class PlanDetailService {
 
         double avgX = sumOfX / total_count;         //중심 x좌표 (전체)
         double avgY = sumOfY / total_count;         //중심 y좌표 (전체)
+        log.info("평균 x 값"+avgX);
+        log.info("평균 y 값"+avgY);
 
         List<PlaceComputeDTO> quadrantOne = new ArrayList<>();
         List<PlaceComputeDTO> quadrantTwo = new ArrayList<>();
@@ -125,10 +126,10 @@ public class PlanDetailService {
             System.out.println("[" + place.toString() + "]");
         }
 
-        while (places.get(total_count - 1).getDays() == total_day) {                                                               //마지막날이 days랑 다를 때
+        while (places.get(total_count - 1).getDays() == total_day) {     //마지막날이 days랑 다를 때
 
             System.out.println("마지막 날 이랑 days랑 같을 때 실행 됏음");
-            int sumStayDays[] = new int[places.get(total_count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
+            int sumStayDays[] = new int[places.get(total_count - 1).getDays()];    //각 데이들의 스테이 합을 구하기 위해
             int maxStay = sumStayDays[0];
             for (int i = 0; i < sumStayDays.length; i++) {
                 for (PlaceComputeDTO place : places) {
@@ -146,8 +147,8 @@ public class PlanDetailService {
                 }
             }
 
-            if (sumStayDays[total_day-1] >= avgStayOfDays/2) {                                                 //마지막 데이의 스테이 합이 평균 보다 1/2클 때
-                break;                                                                                 //반복문 종료
+            if (sumStayDays[total_day-1] >= avgStayOfDays/2) {        //마지막 데이의 스테이 합이 평균 보다 1/2클 때
+                break;                                       //반복문 종료
             }
 
 
@@ -176,7 +177,7 @@ public class PlanDetailService {
                 place.setSlope((place.getY() - avgY) / (place.getX() - avgX));
                 place.setWhere("right");
             }else if(place.getX() < avgX){
-                place.setSlope((place.getX() - avgX) / (place.getY() - avgY));
+                place.setSlope((place.getY() - avgY) / (place.getX() - avgX));
                 place.setWhere("left");
             }else if(place.getX() == avgX){
                 place.setSlope(999999);
@@ -195,12 +196,11 @@ public class PlanDetailService {
         double avgY=0;
 
         for (PlaceComputeDTO place : places){
-            avgX=+place.getX();
-            avgY=+place.getY();
+            avgX+=place.getX();
+            avgY+=place.getY();
         }
         avgX = avgX / places.size();
         avgY = avgY / places.size();
-
         places = setSlope(avgX,avgY,places);
 
         List<PlaceComputeDTO> rightList = new ArrayList<>();
@@ -215,9 +215,12 @@ public class PlanDetailService {
         }
         List<PlaceComputeDTO> result = new ArrayList<>();
 
+        log.info("정렬 전 오른쪽"+rightList);
+        log.info("정렬 전 왼쪽"+leftList);
         Collections.sort(rightList);
         Collections.sort(leftList);
-
+        log.info("정렬 후 오른쪽"+rightList);
+        log.info("정렬 후 왼쪽"+leftList);
         result.addAll(rightList);
         result.addAll(leftList);
 

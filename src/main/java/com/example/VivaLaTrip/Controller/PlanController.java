@@ -40,9 +40,7 @@ public class PlanController {
 
         Map<String, Object> map = new HashMap<>();
         //로그인 확인 결과를 담을 Map
-        log.info("컨트롤러 리퀘스트 이즈퍼블릭 값 : " + request.getsPublic());
-
-        log.info("컨트롤러에서 받자마자 공유 여부 확인 : "+ request.getsPublic());
+        log.info("컨트롤러에서 받자마자 공유 여부 확인 : "+ request.getIsPublic());
 
         if (!httpSession.getId().equals(JSESSIONID)||user==null) {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
@@ -140,7 +138,6 @@ public class PlanController {
         PlanDetailResponseDTO response = planService.getPlanDetail(planId);
         response.setLoginSuccess(true);
 
-        //Detail과 로그인 Success true로 리턴
         return ResponseEntity.ok(response);
     }
 
