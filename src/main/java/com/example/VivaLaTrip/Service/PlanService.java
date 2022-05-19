@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,9 +33,6 @@ public class PlanService {
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
         //로그인 한 user객체에서 userId(1,2,3,...)값 가져와서 리포지토리 아이디 찾는 메소드 호출
 
-        log.info("서비스 1 리퀘스트 이즈퍼블릭 값 : " + request.isPublic());
-        log.info("리퀘스트 타이틀 값 : " + request.getTitle());
-
         plan.setUserInfo(userInfo.get());
         plan.set_public(false);
         plan.setTotal_count(request.getCheckedPlace().size());
@@ -46,10 +42,7 @@ public class PlanService {
 
         planRepository.save(plan);//메소드 이용하여 저장
 
-        log.info("서비스 2 리퀘스트 이즈퍼블릭 값 : " + request.isPublic());
-        log.info("리퀘스트 타이틀 값 : " + request.getTitle());
-
-        if(request.isPublic()){
+        if(request.getsPublic()){
             log.info("request.이즈퍼블릭 작동 ?");
             publicPlanService.toPublic(plan.getPlanId(), request.getTitle(), user);
         }

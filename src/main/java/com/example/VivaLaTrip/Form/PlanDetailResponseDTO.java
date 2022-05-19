@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlanDetailResponseDTO {
+    private boolean loginSuccess;
     Long userId;
     String start_date;
     String end_date;
