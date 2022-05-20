@@ -46,13 +46,14 @@ public class PublicPlanController {
 
         log.info(planId + "번 plan 요청받음");
         PlanDetailResponseDTO response = planService.getPlanDetail(planId);
-//        response.setLoginSuccess(true);
+        response.setLoginSuccess(true);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/api/publicPlan/liked")
     public @ResponseBody
-    ResponseEntity<?> likePublicPlan(@AuthenticationPrincipal User user,
+    ResponseEntity<?> likePublicPlan(@RequestParam("planId") Long planId,
+                                     @AuthenticationPrincipal User user,
                                      @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
                                      HttpSession httpSession) {
 
@@ -63,22 +64,16 @@ public class PublicPlanController {
             //로그인 되어있지 않다면
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
             log.info("서버 세션 값: " + httpSession.getId());
-            map.put("result","login");
+//            map.put("result","login");
             //value = login 리턴
-            return ResponseEntity.ok(map);
+            return ResponseEntity.ok("login");
         }
 
-        if (true) {         //좋아요를 이미 눌렀다면
-            map.put("result", "overlap");
-            //value = overlap 리턴
-            return ResponseEntity.ok(map);
-        }
+        log.info("입력받은 일정 ID : "+planId.toString());
+        String key = publicPlanService.addLike(planId, user);
+        //일정번호를 입력 받아야함
 
-//        log.info("입력받은 일정 ID : "+plan_id.toString());
-//        publicPlanService.addLike(plan_id, like, user);
-        //일정번호랑 유저를 입력 받아야함
-
-        return ResponseEntity.ok(map);
+        return ResponseEntity.ok(key);
     }
 
     @GetMapping("/api/publicPlan/copy")
@@ -143,8 +138,8 @@ public class PublicPlanController {
             @RequestParam("like") String like,
             @AuthenticationPrincipal User user){
 
-        log.info("입력받은 일정 ID : "+plan_id.toString());
-        publicPlanService.addLike(plan_id, like, user);
+//        log.info("입력받은 일정 ID : "+plan_id.toString());
+//        publicPlanService.addLike(plan_id, like, user);
         return "";
     }
 }
