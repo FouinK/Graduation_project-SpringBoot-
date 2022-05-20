@@ -20,7 +20,8 @@ import java.util.Map;
 @Slf4j
 @RestController
 public class PublicPlanController {
-
+    Long planId;
+    //플랜 아이디 담을 전역 변수
     PublicPlanService publicPlanService;
     PlanService planService;
 
@@ -42,18 +43,17 @@ public class PublicPlanController {
 
     @GetMapping("/api/publicPlan")
     public @ResponseBody
-    ResponseEntity<?> responsePublicPlanDetail(@RequestParam("planId") Long planId) {
-
-        log.info(planId + "번 plan 요청받음");
-        PlanDetailResponseDTO response = planService.getPlanDetail(planId);
+    ResponseEntity<?> responsePublicPlanDetail(@RequestParam("planId") Long getPlanId) {
+        planId = getPlanId;
+        log.info(getPlanId + "번 plan 요청받음");
+        PlanDetailResponseDTO response = planService.getPlanDetail(getPlanId);
         response.setLoginSuccess(true);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/api/publicPlan/liked")
     public @ResponseBody
-    ResponseEntity<?> likePublicPlan(@RequestParam("planId") Long planId,
-                                     @AuthenticationPrincipal User user,
+    ResponseEntity<?> likePublicPlan(@AuthenticationPrincipal User user,
                                      @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
                                      HttpSession httpSession) {
 
@@ -65,7 +65,7 @@ public class PublicPlanController {
             return ResponseEntity.ok("login");
         }
 
-        log.info("입력받은 일정 ID : "+planId.toString());
+        log.info("입력받은 일정 ID : "+planId);
         String key = publicPlanService.addLike(planId, user);
         //문자열로 담아서 송신.
 
