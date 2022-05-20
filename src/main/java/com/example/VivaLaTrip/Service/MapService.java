@@ -87,7 +87,7 @@ public class MapService {
 
         List<Places> bodyJson = mapRepository.findByAddressNameContains(word, Sort.by(Sort.Order.desc("popularity")));
 
-        log.info("데베에서 뽑아온 Places값 :"+bodyJson.toString());
+//        log.info("데베에서 뽑아온 Places값 :"+bodyJson.toString());
 
 
         if (bodyJson.size() > 100) {

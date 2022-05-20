@@ -36,14 +36,18 @@ public class Plan extends BaseTimeEntity{
     @Column(name = "end_date",nullable = false)
     private String end_date;
 
+    @Column(name = "from_planId",nullable = false)
+    private Long fromPlanId;
+
     @Builder
-    public Plan(Long planId,boolean is_public, int total_count, String start_date, String end_date)
+    public Plan(Long planId,boolean is_public, int total_count, String start_date, String end_date,Long fromPlanId)
     {
         this.planId=planId;
         this.is_public = is_public;
         this.total_count = total_count;
         this.start_date = start_date;
         this.end_date = end_date;
+        this.fromPlanId = fromPlanId;
     }
 
     public Plan() {

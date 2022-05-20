@@ -1,15 +1,9 @@
 package com.example.VivaLaTrip.Service;
 
-import com.example.VivaLaTrip.Entity.Liked;
-import com.example.VivaLaTrip.Entity.Plan;
-import com.example.VivaLaTrip.Entity.PublicPlan;
-import com.example.VivaLaTrip.Entity.UserInfo;
+import com.example.VivaLaTrip.Entity.*;
 import com.example.VivaLaTrip.Form.PagePublicPlanListDTO;
 import com.example.VivaLaTrip.Form.PlanListDTO;
-import com.example.VivaLaTrip.Repository.LikedRepository;
-import com.example.VivaLaTrip.Repository.PlanRepository;
-import com.example.VivaLaTrip.Repository.PublicPlanRepository;
-import com.example.VivaLaTrip.Repository.UserRepository;
+import com.example.VivaLaTrip.Repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,6 +22,7 @@ public class PublicPlanService {
     private final PlanRepository planRepository;
     private final LikedRepository likedRepository;
     private final UserRepository userRepository;
+    private final PlanDetailRepository planDetailRepository;
 
     public List<PublicPlan> viewAllPublic() {
         return publicPlanRepository.findAll();
@@ -179,6 +174,56 @@ public class PublicPlanService {
             } else {
                 log.info("좋아요 안누름");
             }
+        }
+        return key;
+    }
+
+    public String toMyplan(Long plan_id, User user) {
+        String key;
+        //결과 자열을 담을 key
+        Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
+        Plan plan = planRepository.findByPlanId(plan_id);
+        //existsByPlanIdAndUserInfo_UserId으로 했다가 두번 참조해야해서 파인드바이로 사용
+        boolean plancheck = planRepository.existsByFromPlanIdAndUserInfo_UserId(plan_id,userInfo.get().getUserId());
+        //이미 가져온 일정인지 확인 하기 위해
+
+        if (plan.getUserInfo().getUserId() == userInfo.get().getUserId() || plancheck==true ) {
+            //해당 publicPlan이 myPlan인지  검사, 이미 가져온 일정인지 검사
+            key = "overlap";
+        } else {
+            Plan newMyplan = new Plan();
+            newMyplan.setUserInfo(userInfo.get());
+            newMyplan.setIs_public(false);
+            newMyplan.setTotal_count(plan.getTotal_count());
+            newMyplan.setStart_date(plan.getStart_date());
+            newMyplan.setEnd_date(plan.getEnd_date());
+            newMyplan.setFromPlanId(plan_id);
+            planRepository.save(newMyplan);
+            //plan저장
+
+            newMyplan = planRepository.findByPlanId(newMyplan.getPlanId());
+            //새롭게 저장된 plan가져오기
+            List<PlanDetail> planDetailList = planDetailRepository.findAllByPlan_PlanId(plan.getPlanId());
+            int size = planDetailList.size();
+            PlanDetail[] newplanDetailarray = new PlanDetail[size];
+            //어레이리스트 캐퍼시티 적용 되지 않아서 클래스 배열로 생성
+
+            for (int i = 0; i < newplanDetailarray.length; i++) {
+                //입력받은 planId의 디테일 가져오기 새로운 디테일을 만들기 위한 목적
+                newplanDetailarray[i] = new PlanDetail();
+                newplanDetailarray[i].setPlan(newMyplan);
+                newplanDetailarray[i].setDays(planDetailList.get(i).getDays());
+                newplanDetailarray[i].setPlace_id(planDetailList.get(i).getPlace_id());
+            }
+
+            List<PlanDetail> newplanDetailList = Arrays.asList(newplanDetailarray);
+            //어레이 리스트로 변환
+
+            for (int i = 0; i < size; i++) {
+                planDetailRepository.save(newplanDetailList.get(i));
+                //새로운 플랜 디테일 담기
+            }
+            key = "success";
         }
         return key;
     }
