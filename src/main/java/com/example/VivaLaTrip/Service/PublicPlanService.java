@@ -24,10 +24,6 @@ public class PublicPlanService {
     private final UserRepository userRepository;
     private final PlanDetailRepository planDetailRepository;
 
-    public List<PublicPlan> viewAllPublic() {
-        return publicPlanRepository.findAll();
-    }
-
     public Plan findPlan(Long plan_id) {
 
         Plan plan = planRepository.findByPlanId(plan_id);
@@ -62,7 +58,6 @@ public class PublicPlanService {
                     .build();
 
             listDTO.add(publicPlanListItem);
-
         }
 
         PagePublicPlanListDTO loginSuccessPlanListDTO = new PagePublicPlanListDTO();
@@ -74,7 +69,7 @@ public class PublicPlanService {
     }
 
     public void toPublic(Long plan_id, String comment) {
-        log.info("ssd");
+
         Plan plan = findPlan(plan_id);
         PublicPlan publicPlan = new PublicPlan();
 
@@ -142,7 +137,7 @@ public class PublicPlanService {
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
 
         boolean pushed = likedRepository.existsByPlan_PlanIdAndUserInfo_UserId(plan_id, userInfo.get().getUserId());
-        boolean cancleLike = false;
+        boolean cancelLike = false;
         //좋아요 취소 기능이 생기면 동작할 변수
 
         if (pushed) {
@@ -161,7 +156,7 @@ public class PublicPlanService {
             key = "success";
         }
 
-        if (cancleLike) {
+        if (cancelLike) {
             if (pushed) {
                 //Public에서 liked -1 하고 저장
                 publicPlan.setLike_count(publicPlan.getLike_count() - 1);
@@ -178,33 +173,49 @@ public class PublicPlanService {
         return key;
     }
 
-    public String toMyplan(Long plan_id, User user) {
+    public String toMyPlan(Long plan_id, User user) {
+
         String key;
         //결과 자열을 담을 key
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
         Plan plan = planRepository.findByPlanId(plan_id);
         //existsByPlanIdAndUserInfo_UserId으로 했다가 두번 참조해야해서 파인드바이로 사용
-        boolean plancheck = planRepository.existsByFromPlanIdAndUserInfo_UserId(plan_id,userInfo.get().getUserId());
+        boolean alreadyCopied = planRepository.existsByFromPlanIdAndUserInfo_UserId(plan_id,userInfo.get().getUserId());
         //이미 가져온 일정인지 확인 하기 위해
 
-        if (plan.getUserInfo().getUserId() == userInfo.get().getUserId() || plancheck==true ) {
+        if (plan.getUserInfo().getUserId() == userInfo.get().getUserId() || alreadyCopied) {
             //해당 publicPlan이 myPlan인지  검사, 이미 가져온 일정인지 검사
             key = "overlap";
         } else {
-            Plan newMyplan = new Plan();
-            newMyplan.setUserInfo(userInfo.get());
-            newMyplan.setIs_public(false);
-            newMyplan.setTotal_count(plan.getTotal_count());
-            newMyplan.setStart_date(plan.getStart_date());
-            newMyplan.setEnd_date(plan.getEnd_date());
-            newMyplan.setFromPlanId(plan_id);
-            planRepository.save(newMyplan);
+
+            Plan newMyPlan = new Plan();
+            newMyPlan.setUserInfo(userInfo.get());
+            newMyPlan.setIs_public(false);
+            newMyPlan.setTotal_count(plan.getTotal_count());
+            newMyPlan.setStart_date(plan.getStart_date());
+            newMyPlan.setEnd_date(plan.getEnd_date());
+            newMyPlan.setFromPlanId(plan_id);
+            planRepository.save(newMyPlan);
             //새로운 plan저장
 
-            newMyplan = planRepository.findByPlanId(newMyplan.getPlanId());
-            //새롭게 저장된 plan가져오기
+            newMyPlan = planRepository.findByPlanId(newMyPlan.getPlanId());
+            //새롭게 저장된 plan가져오기(왜 저장한걸 다시 가져와? by 태욱)
+
             List<PlanDetail> planDetailList = planDetailRepository.findAllByPlan_PlanId(plan.getPlanId());
             int size = planDetailList.size();
+            List<PlanDetail> newPlanDetailList = new ArrayList<>();
+
+            for (int i = 0; i<size; i++){
+                PlanDetail detailItem = new PlanDetail();
+                detailItem.setPlan(newMyPlan);
+                detailItem.setDays(planDetailList.get(i).getDays());
+                detailItem.setPlace_id(planDetailList.get(i).getPlace_id());
+
+                newPlanDetailList.add(detailItem);
+            }
+
+            planDetailRepository.saveAll(newPlanDetailList);
+            /*int size = planDetailList.size();
             PlanDetail[] newplanDetailarray = new PlanDetail[size];
             //새롭게 담을 PlanDetail
             //어레이리스트 캐퍼시티 적용 되지 않아서 클래스 배열로 생성
@@ -212,7 +223,7 @@ public class PublicPlanService {
             for (int i = 0; i < newplanDetailarray.length; i++) {
                 //입력받은 planId의 디테일 가져오기 새로운 디테일을 만들기 위한 목적
                 newplanDetailarray[i] = new PlanDetail();
-                newplanDetailarray[i].setPlan(newMyplan);
+                newplanDetailarray[i].setPlan(newMyPlan);
                 newplanDetailarray[i].setDays(planDetailList.get(i).getDays());
                 newplanDetailarray[i].setPlace_id(planDetailList.get(i).getPlace_id());
             }
@@ -223,7 +234,7 @@ public class PublicPlanService {
             for (int i = 0; i < size; i++) {
                 planDetailRepository.save(newplanDetailList.get(i));
                 //새로운 플랜 디테일 담기
-            }
+            }*/
             key = "success";
         }
         return key;

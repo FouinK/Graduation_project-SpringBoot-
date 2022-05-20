@@ -30,7 +30,7 @@ public class PlanService {
     @Autowired
     PublicPlanService publicPlanService;
 
-    public void setPlan_list(PlanSaveDTO request, User user, List<PlaceComputeDTO> computeDTO) {
+    public void savePlan(PlanSaveDTO request, User user, List<PlaceComputeDTO> computeDTO) {
 
         Plan plan = new Plan();
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
@@ -55,13 +55,10 @@ public class PlanService {
         savePlanDetail(computeDTO, user, plan);
     }
 
-    public LoginSuccessPlanListDTO mypage_planlist(User user, Pageable pageable) {
+    public LoginSuccessPlanListDTO getMyPlans(User user, Pageable pageable) {
+
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
-        //로그인 한 사람의 정보를 userInfo에 넣음
-
         List<PlanListDTO> listDTO = new ArrayList<>();
-        //결과를 담을 DTO list 선언(front로 보내줄 거)
-
         Page<Plan> user_plan = planRepository.findByUserInfo_UserId(userInfo.get().getUserId(),pageable);
         //userinfo에서 id값 가져온거 plan리포지토리 userId에서 찾음= plan이 있는 값 가져옴, Pageable로 페이지 형식 맞춰서 뽑아옴
 
@@ -69,34 +66,31 @@ public class PlanService {
         log.info("get().toString() 확인 : " + user_plan.get().toString());
         log.info("getTotalElements() 확인 : " + user_plan.getTotalElements());
 
-        for(Plan a: user_plan){//Plan이 있으면 반복
-            if(a.getIs_public())//공유여부 참일 때
-            {
-                //publicPlan.add(publicPlanRepository.findByPlanId(a.getPlanId()));
-                //plan이 있는 id값 가져와서 -> repository publicplan 객체에서 id 찾아와서 저장
-                PublicPlan publicPlan = publicPlanRepository.findByPlanId(a.getPlanId());
+        for(Plan plan: user_plan){
+            if(plan.getIs_public()) {
 
-                PlanListDTO planListItem = PlanListDTO.builder()//DTO객체에 저장
-                        .userId(a.getUserInfo().getUserId().toString())
-                        .start_date(a.getStart_date())
-                        .end_date(a.getEnd_date())
-                        .plan_id(a.getPlanId().toString())
+                PublicPlan publicPlan = publicPlanRepository.findByPlanId(plan.getPlanId());
+
+                PlanListDTO planListItem = PlanListDTO.builder()
+                        .userId(plan.getUserInfo().getUserId().toString())
+                        .start_date(plan.getStart_date())
+                        .end_date(plan.getEnd_date())
+                        .plan_id(plan.getPlanId().toString())
                         .title(publicPlan.getComment())
-                        .place_num(a.getTotal_count())
+                        .place_num(plan.getTotal_count())
                         .liked(publicPlan.getLike_count())
                         .build();
 
                 listDTO.add(planListItem);
             }
-            else
-            {//is public이 false일 때 title과 comment는 아무것도 없음          //title(전 comment)과 liked가 없음
+            else {
                 PlanListDTO planListItem = PlanListDTO.builder()
-                        .userId(a.getUserInfo().getUserId().toString())
-                        .start_date(a.getStart_date())
-                        .end_date(a.getEnd_date())
-                        .plan_id(a.getPlanId().toString())
+                        .userId(plan.getUserInfo().getUserId().toString())
+                        .start_date(plan.getStart_date())
+                        .end_date(plan.getEnd_date())
+                        .plan_id(plan.getPlanId().toString())
                         .title("")
-                        .place_num(a.getTotal_count())
+                        .place_num(plan.getTotal_count())
                         .liked(0)
                         .build();
 
@@ -112,23 +106,6 @@ public class PlanService {
     }
 
     public void savePlanDetail(List<PlaceComputeDTO> placeComputeDTOList, User user, Plan plan){
-
-//        List<PlanDetailDTO> map = new ArrayList<>();
-
-
-        Places places = new Places();
-        //플레이스의 popularity를 +1담기위한 객체
-
-/*
-        for (PlaceComputeDTO computeDTO : placeComputeDTOList){
-            //단순히 복사하는 부분이라 필요 없을 것
-            PlanDetailDTO planDetailItem = PlanDetailDTO.builder()
-                    .id(computeDTO.getId())
-                    .day(computeDTO.getDays())
-                    .build();
-            planDetailDTO.add(planDetailItem);
-        }
-*/
 
         int size = placeComputeDTOList.size();   //마지막 장소 저장을 위해 크기 구하기       //컴퓨트 디티오로 변경
         int dayIndex = 1;
@@ -146,7 +123,7 @@ public class PlanService {
                 dayIndex++;
             }
 
-            places = mapRepository.findById(placeComputeDTOList.get(i).getId());
+            Places places = mapRepository.findById(placeComputeDTOList.get(i).getId());
             //PlanDetailDTO에 담긴 places의 Id값을 검사해서 places객체 하나를 DB에서 뽑아옴
             places.setPopularity(places.getPopularity()+1);
             //해당 places의 popularity에 +1을 해주고
