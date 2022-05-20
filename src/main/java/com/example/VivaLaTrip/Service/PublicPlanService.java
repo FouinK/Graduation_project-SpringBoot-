@@ -141,8 +141,7 @@ public class PublicPlanService {
     public String addLike(Long plan_id, User user) {
 
         String key;
-        Map<String, Object> map = new HashMap<>();
-        //overlap또는 success결과를 담을 맵
+        //overlap또는 success결과를 담을 문자열
         Liked liked = new Liked();
         PublicPlan publicPlan = publicPlanRepository.findByPlanId(plan_id);
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
