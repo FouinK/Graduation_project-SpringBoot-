@@ -57,21 +57,17 @@ public class PublicPlanController {
                                      @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
                                      HttpSession httpSession) {
 
-        Map<String, Object> map = new HashMap<>();
-        //로그인 확인 결과를 담을 Map
-
         if (!httpSession.getId().equals(JSESSIONID) || user == null) {
             //로그인 되어있지 않다면
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
             log.info("서버 세션 값: " + httpSession.getId());
-//            map.put("result","login");
             //value = login 리턴
             return ResponseEntity.ok("login");
         }
 
         log.info("입력받은 일정 ID : "+planId.toString());
         String key = publicPlanService.addLike(planId, user);
-        //일정번호를 입력 받아야함
+        //문자열로 담아서 송신.
 
         return ResponseEntity.ok(key);
     }
