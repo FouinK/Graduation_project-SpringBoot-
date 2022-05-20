@@ -2,7 +2,6 @@ package com.example.VivaLaTrip.Form;
 
 import com.example.VivaLaTrip.Entity.Places;
 import lombok.*;
-
 import java.util.List;
 
 @Data

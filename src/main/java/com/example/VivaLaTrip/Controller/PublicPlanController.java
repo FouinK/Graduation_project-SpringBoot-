@@ -12,10 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpSession;
-import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -86,12 +83,12 @@ public class PublicPlanController {
             key = "login";
         }
 
-        key = publicPlanService.toMyplan(planId, user);
+        key = publicPlanService.toMyPlan(planId, user);
 
         return ResponseEntity.ok(key);
     }
 
-    @PostMapping("/get_plan")
+    /*@PostMapping("/get_plan")
     public String getPlanById(@RequestParam("id") Long plan_id) {
 
         log.info("입력받은 일정 ID : " + plan_id.toString());
@@ -129,5 +126,5 @@ public class PublicPlanController {
 //        log.info("입력받은 일정 ID : "+plan_id.toString());
 //        publicPlanService.addLike(plan_id, like, user);
         return "";
-    }
+    }*/
 }
