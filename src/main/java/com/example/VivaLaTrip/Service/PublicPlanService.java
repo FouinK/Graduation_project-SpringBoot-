@@ -199,13 +199,14 @@ public class PublicPlanService {
             newMyplan.setEnd_date(plan.getEnd_date());
             newMyplan.setFromPlanId(plan_id);
             planRepository.save(newMyplan);
-            //plan저장
+            //새로운 plan저장
 
             newMyplan = planRepository.findByPlanId(newMyplan.getPlanId());
             //새롭게 저장된 plan가져오기
             List<PlanDetail> planDetailList = planDetailRepository.findAllByPlan_PlanId(plan.getPlanId());
             int size = planDetailList.size();
             PlanDetail[] newplanDetailarray = new PlanDetail[size];
+            //새롭게 담을 PlanDetail
             //어레이리스트 캐퍼시티 적용 되지 않아서 클래스 배열로 생성
 
             for (int i = 0; i < newplanDetailarray.length; i++) {
