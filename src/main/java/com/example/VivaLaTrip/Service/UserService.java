@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -77,7 +78,44 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         Optional<UserInfo> userInfo = userRepository.findByID(id);
-//        log.info("loadsUserByUsername의 값 :" + new User(userInfo.get().getID(), userInfo.get().getPassword(), userInfo.get().getAuthorities()));
+        if (!userInfo.isPresent()) {
+            return new UserDetails() {
+                @Override
+                public Collection<? extends GrantedAuthority> getAuthorities() {
+                    return null;
+                }
+
+                @Override
+                public String getPassword() {
+                    return null;
+                }
+
+                @Override
+                public String getUsername() {
+                    return null;
+                }
+
+                @Override
+                public boolean isAccountNonExpired() {
+                    return false;
+                }
+
+                @Override
+                public boolean isAccountNonLocked() {
+                    return false;
+                }
+
+                @Override
+                public boolean isCredentialsNonExpired() {
+                    return false;
+                }
+
+                @Override
+                public boolean isEnabled() {
+                    return false;
+                }
+            };
+        }
         return new User(userInfo.get().getID(), userInfo.get().getPassword(), userInfo.get().getAuthorities());
     }
 
