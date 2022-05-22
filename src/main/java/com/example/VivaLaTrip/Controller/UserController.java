@@ -33,6 +33,13 @@ public class UserController {
 
     UserInfo userInfo = new UserInfo();
 
+    @PostMapping("/loginFail")
+    public ResponseEntity<?> LgoinFail() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("loginSuccess", false);
+        return ResponseEntity.ok(map);
+    }
+
 
     @PostMapping("/loginSuccess")
     public ResponseEntity<?> LoginSuccess(@AuthenticationPrincipal User user) {
