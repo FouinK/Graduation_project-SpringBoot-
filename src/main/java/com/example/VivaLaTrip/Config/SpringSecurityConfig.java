@@ -53,11 +53,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/api/login")                   //폼으로 받는 URL
                 .usernameParameter("id")                            //아이디 파라미터 받기
                 .passwordParameter("pw")                           //비밀번호 파라미터 받기
+                .successForwardUrl("/loginSuccess")                 //로그인 성공시 이동할 페이지
                 .failureForwardUrl("/loginFail")                  // 로그인 실패시 이동할 페이지
-                .successForwardUrl("/loginSuccess")
-//                .defaultSuccessUrl("/",true)                       //로그인 성공시 이동할 페이지
-//                         .failureUrl("/users/login")
-////                         .permitAll()
                 .and()
                 .logout()
                 .logoutUrl("/api/logout")
