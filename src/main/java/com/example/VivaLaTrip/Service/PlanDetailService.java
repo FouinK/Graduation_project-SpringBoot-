@@ -1,6 +1,5 @@
 package com.example.VivaLaTrip.Service;
 
-
 import com.example.VivaLaTrip.Form.PlaceComputeDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,8 @@ public class PlanDetailService {
         }
 
         double avgStayOfDays = sumOfStay / total_day;
+        double avgX = sumOfX / total_count;         //중심 x좌표 (전체)
+        double avgY = sumOfY / total_count;         //중심 y좌표 (전체)
 
         if (avgStayOfDays > 8) {
             System.out.println("일평균 시간 : " + avgStayOfDays);
@@ -38,11 +39,6 @@ public class PlanDetailService {
             System.out.println("1시간 이하로 구할 수 없음");
             throw new IllegalStateException("너무 장소 적음");
         }
-
-        double avgX = sumOfX / total_count;         //중심 x좌표 (전체)
-        double avgY = sumOfY / total_count;         //중심 y좌표 (전체)
-        log.info("평균 x 값"+avgX);
-        log.info("평균 y 값"+avgY);
 
         List<PlaceComputeDTO> quadrantOne = new ArrayList<>();
         List<PlaceComputeDTO> quadrantTwo = new ArrayList<>();

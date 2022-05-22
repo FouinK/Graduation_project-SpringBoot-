@@ -1,5 +1,6 @@
 package com.example.VivaLaTrip.Controller;
 
+import com.example.VivaLaTrip.Service.MapService;
 import com.example.VivaLaTrip.Service.PubTransService;
 import com.example.VivaLaTrip.Service.PublicPlanService;
 import com.example.VivaLaTrip.Service.UserService;
@@ -15,12 +16,14 @@ public class MainController {
     private final UserService userService;
     private final PublicPlanService publicPlanService;
     private final PubTransService pubTransService;
+    private final MapService mapService;
 
     @Autowired
-    public MainController(UserService userService, PublicPlanService publicPlanService, PubTransService pubTransService) {
+    public MainController(UserService userService, PublicPlanService publicPlanService, PubTransService pubTransService, MapService mapService) {
         this.userService = userService;
         this.publicPlanService = publicPlanService;
         this.pubTransService = pubTransService;
+        this.mapService = mapService;
     }
 
 /*    @GetMapping("/public_plan")
@@ -31,7 +34,8 @@ public class MainController {
     @GetMapping("/")
     public String toIndex() throws UnirestException {
     // publicPlanService.view_all_public();
-        pubTransService.getPubTransPath();
+        //pubTransService.getPubTransPath();
+        mapService.placeAdd();
     return "index";
 }
 
