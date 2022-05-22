@@ -33,13 +33,14 @@ public class PlanController {
 
     @ResponseBody
     @PostMapping("/api/makeSchedule")
-    public ResponseEntity<?> plan_save(@RequestBody PlanSaveDTO request,
-                                       @AuthenticationPrincipal User user,
-                                       @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
-                                       HttpSession httpSession) throws ParseException {
+    public ResponseEntity<?> responseMakePlan(@RequestBody PlanSaveDTO request,
+                                              @AuthenticationPrincipal User user,
+                                              @CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
+                                              HttpSession httpSession) throws ParseException {
 
         Map<String, Object> map = new HashMap<>();
         //로그인 확인 결과를 담을 Map
+        //여기서만 map을 쓴 이유는?
         log.info("컨트롤러에서 받자마자 공유 여부 확인 : "+ request.getIsPublic());
 
         if (!httpSession.getId().equals(JSESSIONID)||user==null) {
@@ -49,7 +50,6 @@ public class PlanController {
             //로그인 되어있지 않거나 세션값 만료 시 success에 false리턴
             return ResponseEntity.ok(map);
         }
-
 
         String start_date;
         start_date = request.getStart_date().substring(0,4);
@@ -83,7 +83,7 @@ public class PlanController {
             placeComputeDTO.add(placeItem);
         }
         placeComputeDTO = planDetailService.routeCompute(placeComputeDTO, (int) total_day);
-        planService.setPlan_list(request,user, placeComputeDTO);
+        planService.savePlan(request,user, placeComputeDTO);
 
         map.put("success", true);
         //로그인 되어있을 때 true리턴
@@ -93,10 +93,10 @@ public class PlanController {
 
     @GetMapping("/api/myPageList")
     public @ResponseBody
-    ResponseEntity<?> plan_view(@CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
-                                @PageableDefault(size = 10) Pageable pageable,
-                                @AuthenticationPrincipal User user,
-                                HttpSession httpSession) {
+    ResponseEntity<?> responseMyPage(@CookieValue(name = "JSESSIONID", required = false) String JSESSIONID,
+                                     @PageableDefault(size = 10) Pageable pageable,
+                                     @AuthenticationPrincipal User user,
+                                     HttpSession httpSession) {
 
         LoginSuccessPlanListDTO loginSuccessPlanListDTO = new LoginSuccessPlanListDTO();
         //로그인 확인 결과를 담을 SuccessPlanListDTO
@@ -111,7 +111,7 @@ public class PlanController {
             return ResponseEntity.ok(loginSuccessPlanListDTO);
         }
 
-        loginSuccessPlanListDTO = planService.mypage_planlist(user,pageable);
+        loginSuccessPlanListDTO = planService.getMyPlans(user,pageable);
         //로그인 되어있을 시 PlanList와 success값 트루 리턴 (석세스가 한겹 더 위에 있음)
         return ResponseEntity.ok(loginSuccessPlanListDTO);
     }

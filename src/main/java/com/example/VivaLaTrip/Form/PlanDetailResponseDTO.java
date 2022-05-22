@@ -1,11 +1,9 @@
 package com.example.VivaLaTrip.Form;
 
-import com.example.VivaLaTrip.Entity.Places;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 
 @Data
