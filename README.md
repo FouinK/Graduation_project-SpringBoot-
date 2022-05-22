@@ -1,5 +1,5 @@
 ## graduation_project-SpringBoot-
 
-###Participants🐥
-Back - 윤성현 이태욱 박소은
+###Participants🐥<br/>
+Back - 윤성현 이태욱 박소은<br/>
 Front - 강지원
