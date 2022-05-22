@@ -1,3 +1,13 @@
-# graduation_project-SpringBoot-
+## graduation_project-SpringBoot-
 
-윤성현 이태욱 박소은 졸업작품 백엔드 제작
+### Participants🐥<br/>
+Back - 윤성현 이태욱 박소은<br/>
+Front - 강지원
+
+### Stacks💻<br/>
+Back - SrpingBoot <img alt="Java" src ="https://img.shields.io/badge/Java-007396.svg?&style=for-the-badge&logo=Java&logoColor=white"/>
+<img alt="Spring" src ="https://img.shields.io/badge/SpringBoot-6DB33F.svg?&style=for-the-badge&logo=Spring&logoColor=white"/>
+<br/>
+Front - React <img alt="React" src ="https://img.shields.io/badge/JQuery-0769AD.svg?&style=for-the-badge&logo=React&logoColor=white"/>
+<br/>
+

@@ -77,7 +77,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         Optional<UserInfo> userInfo = userRepository.findByID(id);
-        log.info("loadsUserByUsername의 값 :" + new User(userInfo.get().getID(), userInfo.get().getPassword(), userInfo.get().getAuthorities()));
+//        log.info("loadsUserByUsername의 값 :" + new User(userInfo.get().getID(), userInfo.get().getPassword(), userInfo.get().getAuthorities()));
         return new User(userInfo.get().getID(), userInfo.get().getPassword(), userInfo.get().getAuthorities());
     }
 

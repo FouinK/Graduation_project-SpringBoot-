@@ -137,7 +137,7 @@ public class PublicPlanService {
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
 
         boolean pushed = likedRepository.existsByPlan_PlanIdAndUserInfo_UserId(plan_id, userInfo.get().getUserId());
-        boolean cancelLike = false;
+        boolean cancleLike = false;
         //좋아요 취소 기능이 생기면 동작할 변수
 
         if (pushed) {
@@ -156,7 +156,7 @@ public class PublicPlanService {
             key = "success";
         }
 
-        if (cancelLike) {
+        if (cancleLike) {
             if (pushed) {
                 //Public에서 liked -1 하고 저장
                 publicPlan.setLike_count(publicPlan.getLike_count() - 1);
