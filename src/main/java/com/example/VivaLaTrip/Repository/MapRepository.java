@@ -3,14 +3,18 @@ package com.example.VivaLaTrip.Repository;
 import com.example.VivaLaTrip.Entity.Places;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface MapRepository extends JpaRepository<Places, Long> {
 
     List<Places> findAll();
 
     List<Places> findByAddressNameContains(String word, Sort sort);
+
+    List<Places> findByXBetweenAndYBetween(String x_min, String x_max, String Y_min, String Y_max);
 
     Places findById(String id);
 

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.*;
 
@@ -122,7 +123,29 @@ public class MapService {
         return result;
     }
 
+    public void placeAdd() {
+        //테스트용 경복궁 좌표 : 37.5776087830657 126.976896737645
+        String x = "126.976896737645";  //매개변수로 받을거
+        String y = "37.5776087830657";  //매개변수로 받을거
+        x = x.substring(0,7);
+        y = y.substring(0,6);
+        BigDecimal dx = new BigDecimal(x);
+        BigDecimal dy = new BigDecimal(y);
+        BigDecimal distance = new BigDecimal(String.valueOf(0.01));
 
+        String x_max = String.valueOf(dx.add(distance));
+        String x_min = String.valueOf(dx.subtract(distance));
+        String y_max = String.valueOf(dy.add(distance));
+        String y_min = String.valueOf(dy.subtract(distance));
+        log.info(x_max+" "+x_min+" "+y_max+" "+y_min);
+        List<Places> places = mapRepository.findByXBetweenAndYBetween(x_min,x_max,y_min,y_max);
+        //List<Places> places = mapRepository.findByXBetween(x_min,x_max);
+        log.info("경복궁 중심으로 한변이 "+distance.multiply(BigDecimal.valueOf(200)) +
+                "km인 정사각형 범위로 불러온 장소 갯수 : " + places.size());
+        for (Places p : places){
+            log.info(String.valueOf(p));
+        }
+    }
 
 /*    public void Save_Places(KakaoGeoRes bodyJson[]) {
 //        log.info("세이브 메소드에서 받은 bodyJson id값 : " + bodyJson[0].getDocuments().get(0).getId());
