@@ -27,7 +27,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     /* 로그인 실패 핸들러 의존성 주입 */
     @Autowired
     HttpSession httpSession;
-    private final AuthenticationFailureHandler customFailurHandler;
+
+    @Autowired
+    private final CustomAuthFailureHandler customFailurHandler;
 
     @Override
     @ResponseBody
@@ -51,9 +53,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/api/login")                   //폼으로 받는 URL
                 .usernameParameter("id")                            //아이디 파라미터 받기
                 .passwordParameter("pw")                           //비밀번호 파라미터 받기
-                .failureHandler(customFailurHandler) // 로그인 실패 핸들러
+                .failureForwardUrl("/loginFail")                  // 로그인 실패시 이동할 페이지
                 .successForwardUrl("/loginSuccess")
-//                .defaultSuccessUrl("/",true)        //로그인 성공시 이동할 페이지
+//                .defaultSuccessUrl("/",true)                       //로그인 성공시 이동할 페이지
 //                         .failureUrl("/users/login")
 ////                         .permitAll()
                 .and()
@@ -61,6 +63,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/api/logout")
                 .logoutSuccessUrl("/logoutSuccess")
                 .invalidateHttpSession(true);
+
     //세션 날리기(?)
 //                .logoutRequestMatcher(new AntPathRequestMatcher("/logoutpro"));     //로그아웃
     }
