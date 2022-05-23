@@ -14,7 +14,7 @@ public interface MapRepository extends JpaRepository<Places, Long> {
 
     List<Places> findByAddressNameContains(String word, Sort sort);
 
-    List<Places> findByXBetweenAndYBetween(double x_min, double x_max, double Y_min, double Y_max);
+    List<Places> findByXBetweenAndYBetween(double x_min, double x_max, double Y_min, double Y_max, Sort sort);
 
     Places findById(String id);
 

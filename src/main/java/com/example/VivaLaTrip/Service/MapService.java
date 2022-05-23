@@ -124,7 +124,7 @@ public class MapService {
     }
 
     public List<Places> placeAdd(List<Places> places, double minPlace) {
-        //테스트용 경복궁 좌표 : 37.5776087830657 126.976896737645
+
         for (Places p : places){
             log.info(String.valueOf(p));
         }
@@ -153,12 +153,17 @@ public class MapService {
                     (x_min - distance * index),
                     (x_max + distance * index),
                     (y_min - distance * index),
-                    (y_max + distance * index));
+                    (y_max + distance * index),
+                    Sort.by(Sort.Order.desc("popularity")));
 
-            for (Places p : extraPlaces){
-                log.info(String.valueOf(p));
-                if (!places.contains(p)){
-                    places.add(p);
+            for (Places place : extraPlaces){
+                log.info(String.valueOf(place));
+                if (!places.contains(place)){
+                    places.add(place);
+                    log.info("중복아님 삽입됨");
+                }else {
+                    log.info("중복임");
+
                 }
             }
 
