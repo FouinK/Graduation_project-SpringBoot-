@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Slf4j
@@ -43,7 +44,7 @@ public class MapService {
         HashMap<String, Object> map1 = new HashMap<>();
         HashMap<String, Object> map2 = new HashMap<>();
         String apiURL ="https://dapi.kakao.com/v2/local/search/keyword.json?page=1&query="
-                + URLEncoder.encode(word, "UTF-8");
+                + URLEncoder.encode(word, StandardCharsets.UTF_8);
 
         HttpResponse<JsonNode>[] response= new HttpResponse[3];
 
@@ -92,8 +93,7 @@ public class MapService {
 
 
         if (bodyJson.size() > 100) {
-            List<Places> cutbodyJson = bodyJson.subList(0, 100);
-            return cutbodyJson;
+            return bodyJson.subList(0, 100);
         }
         return bodyJson;
     }
@@ -123,14 +123,50 @@ public class MapService {
         return result;
     }
 
-    public void placeAdd() {
+    public List<Places> placeAdd(List<Places> places, int number) {
         //테스트용 경복궁 좌표 : 37.5776087830657 126.976896737645
-        String x = "126.976896737645";  //매개변수로 받을거
-        String y = "37.5776087830657";  //매개변수로 받을거
-        x = x.substring(0,7);
-        y = y.substring(0,6);
-        BigDecimal dx = new BigDecimal(x);
-        BigDecimal dy = new BigDecimal(y);
+/*
+        List<Places> places = mapRepository.findByAddressNameContains("금천구", Sort.by(Sort.Order.desc("popularity")));
+        //매개변수로 받아온 Places로 가정
+        //좌표만 받을지 List를 다 받을지 회의 필요?*/
+        for (Places p : places){
+            log.info(String.valueOf(p));
+        }
+        /*String x1 = "126.976896737645";  //매개변수로 받을거
+        String y1 = "37.5776087830657";  //매개변수로 받을거(제일 위쪽 좌표)
+        String x2 = "126.976896737645";  //매개변수로 받을거
+        String y2 = "37.5776087830657";  //매개변수로 받을거(제일 아래쪽 좌표)
+        String x3 = "126.976896737645";  //매개변수로 받을거
+        String y3 = "37.5776087830657";  //매개변수로 받을거(제일 왼쪽 좌표)
+        String x4 = "126.976896737645";  //매개변수로 받을거
+        String y4 = "37.5776087830657";  //매개변수로 받을거(제일 오른쪽 좌표)*/
+        double x_max = Double.parseDouble(places.get(0).getX());
+        double x_min = Double.parseDouble(places.get(0).getX());
+        double y_max = Double.parseDouble(places.get(0).getY());
+        double y_min = Double.parseDouble(places.get(0).getY());
+        for (Places p : places){
+            if (x_max < Double.parseDouble(p.getX())){
+                x_max = Double.parseDouble(p.getX());
+            }if (x_min > Double.parseDouble(p.getX())){
+                x_min = Double.parseDouble(p.getX());
+            }if (y_max < Double.parseDouble(p.getY())){
+                y_max = Double.parseDouble(p.getY());
+            }if (y_min > Double.parseDouble(p.getY())){
+                y_min = Double.parseDouble(p.getY());
+            }
+        }
+
+        String x_min_s = String.valueOf(x_min).substring(0,7);
+        String x_max_s = String.valueOf(x_max).substring(0,7);
+        String y_min_s = String.valueOf(y_min).substring(0,6);
+        String y_max_s = String.valueOf(y_max).substring(0,6);
+
+        /*x3 = x3.substring(0,7);  //최소 x   중심을 기준으로 검색할때,,
+        x4 = x4.substring(0,7);  //최대 x
+        y1 = y1.substring(0,6);  //최대 y
+        y2 = y2.substring(0,6);  //최소 y
+        BigDecimal dx = new BigDecimal(x1);
+        BigDecimal dy = new BigDecimal(y1);
         BigDecimal distance = new BigDecimal(String.valueOf(0.01));
 
         String x_max = String.valueOf(dx.add(distance));
@@ -141,10 +177,19 @@ public class MapService {
         List<Places> places = mapRepository.findByXBetweenAndYBetween(x_min,x_max,y_min,y_max);
         //List<Places> places = mapRepository.findByXBetween(x_min,x_max);
         log.info("경복궁 중심으로 한변이 "+distance.multiply(BigDecimal.valueOf(200)) +
-                "km인 정사각형 범위로 불러온 장소 갯수 : " + places.size());
-        for (Places p : places){
+                "km인 정사각형 범위로 불러온 장소 갯수 : " + places.size());*/
+        //List<Places> extraPlaces = mapRepository.findByXBetweenAndYBetween(x3,x4,y2,y1);
+        List<Places> extraPlaces = mapRepository.findByXBetweenAndYBetween(x_min_s,x_max_s,y_min_s,y_max_s);
+        for (Places p : extraPlaces){
             log.info(String.valueOf(p));
+            if (!places.contains(p)){
+                places.add(p);
+            }
         }
+
+        places.addAll(extraPlaces);
+
+        return places;
     }
 
 /*    public void Save_Places(KakaoGeoRes bodyJson[]) {
