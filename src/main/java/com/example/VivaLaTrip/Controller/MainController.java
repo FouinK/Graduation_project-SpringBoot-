@@ -35,7 +35,7 @@ public class MainController {
     public String toIndex() throws UnirestException {
     // publicPlanService.view_all_public();
         //pubTransService.getPubTransPath();
-        mapService.placeAdd();
+        //mapService.placeAdd();
     return "index";
 }
 
