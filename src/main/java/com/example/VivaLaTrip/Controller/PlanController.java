@@ -2,6 +2,7 @@ package com.example.VivaLaTrip.Controller;
 
 import com.example.VivaLaTrip.Entity.Places;
 import com.example.VivaLaTrip.Form.*;
+import com.example.VivaLaTrip.Service.MapService;
 import com.example.VivaLaTrip.Service.PlanDetailService;
 import com.example.VivaLaTrip.Service.PlanService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +26,13 @@ public class PlanController {
     PlanDetailService planDetailService;
     PlanService planService;
 
+    MapService mapService;
+
     @Autowired
-    public PlanController(PlanDetailService planDetailService, PlanService planService) {
+    public PlanController(PlanDetailService planDetailService, PlanService planService, MapService mapService) {
         this.planDetailService = planDetailService;
         this.planService = planService;
+        this.mapService = mapService;
     }
 
     @ResponseBody
@@ -40,7 +44,6 @@ public class PlanController {
 
         Map<String, Object> map = new HashMap<>();
         //로그인 확인 결과를 담을 Map
-        //여기서만 map을 쓴 이유는?
         log.info("컨트롤러에서 받자마자 공유 여부 확인 : "+ request.getIsPublic());
 
         if (!httpSession.getId().equals(JSESSIONID)||user==null) {
@@ -68,13 +71,25 @@ public class PlanController {
         long diffSec = (format2.getTime()- format1.getTime()) / 1000;
         long total_day = diffSec / (24*60*60)+1;
 
+        //double avgPlacesOfDay = (double) request.getCheckedPlace().size() / total_day;
+
+        if (total_day*1.5 > request.getCheckedPlace().size()){
+            request.setCheckedPlace(mapService.placeAdd(request.getCheckedPlace(), total_day*1.5 ));
+
+        }
+
+        /*if (avgPlacesOfDay > 4){
+            log.info("많음");
+        }else if(avgPlacesOfDay < 1.5){
+            request.setCheckedPlace(mapService.placeAdd(request.getCheckedPlace()));
+        }*/
         List<PlaceComputeDTO> placeComputeDTO = new ArrayList<>();
 
         for (Places place : request.getCheckedPlace()){
             PlaceComputeDTO placeItem = PlaceComputeDTO.builder()
                     .id(place.getId())
-                    .x(Double.parseDouble(place.getX()))
-                    .y(Double.parseDouble(place.getY()))
+                    .x(place.getX())
+                    .y(place.getY())
                     .stay(place.getStay())
                     .days(0)
                     .slope(0)

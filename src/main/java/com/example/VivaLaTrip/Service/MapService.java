@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Slf4j
@@ -43,7 +44,7 @@ public class MapService {
         HashMap<String, Object> map1 = new HashMap<>();
         HashMap<String, Object> map2 = new HashMap<>();
         String apiURL ="https://dapi.kakao.com/v2/local/search/keyword.json?page=1&query="
-                + URLEncoder.encode(word, "UTF-8");
+                + URLEncoder.encode(word, StandardCharsets.UTF_8);
 
         HttpResponse<JsonNode>[] response= new HttpResponse[3];
 
@@ -92,8 +93,7 @@ public class MapService {
 
 
         if (bodyJson.size() > 100) {
-            List<Places> cutbodyJson = bodyJson.subList(0, 100);
-            return cutbodyJson;
+            return bodyJson.subList(0, 100);
         }
         return bodyJson;
     }
@@ -123,28 +123,55 @@ public class MapService {
         return result;
     }
 
-    public void placeAdd() {
-        //테스트용 경복궁 좌표 : 37.5776087830657 126.976896737645
-        String x = "126.976896737645";  //매개변수로 받을거
-        String y = "37.5776087830657";  //매개변수로 받을거
-        x = x.substring(0,7);
-        y = y.substring(0,6);
-        BigDecimal dx = new BigDecimal(x);
-        BigDecimal dy = new BigDecimal(y);
-        BigDecimal distance = new BigDecimal(String.valueOf(0.01));
+    public List<Places> placeAdd(List<Places> places, double minPlace) {
 
-        String x_max = String.valueOf(dx.add(distance));
-        String x_min = String.valueOf(dx.subtract(distance));
-        String y_max = String.valueOf(dy.add(distance));
-        String y_min = String.valueOf(dy.subtract(distance));
-        log.info(x_max+" "+x_min+" "+y_max+" "+y_min);
-        List<Places> places = mapRepository.findByXBetweenAndYBetween(x_min,x_max,y_min,y_max);
-        //List<Places> places = mapRepository.findByXBetween(x_min,x_max);
-        log.info("경복궁 중심으로 한변이 "+distance.multiply(BigDecimal.valueOf(200)) +
-                "km인 정사각형 범위로 불러온 장소 갯수 : " + places.size());
         for (Places p : places){
             log.info(String.valueOf(p));
         }
+
+        double x_max = places.get(0).getX();
+        double x_min = places.get(0).getX();
+        double y_max = places.get(0).getY();
+        double y_min = places.get(0).getY();
+        for (Places p : places){
+            if (x_max < p.getX()){
+                x_max = p.getX();
+            }if (x_min > p.getX()){
+                x_min = p.getX();
+            }if (y_max < p.getY()){
+                y_max = p.getY();
+            }if (y_min > p.getY()){
+                y_min = p.getY();
+            }
+        }
+        double distance = 0.005;  //500m
+        int index = 0;
+        while (minPlace > places.size()){
+            log.info("x범위 : "+ (x_min - distance * index) + "~" + (x_max + distance * index));
+            log.info("y범위 : "+ (y_min - distance * index) + "~" + (y_max + distance * index));
+            List<Places> extraPlaces = mapRepository.findByXBetweenAndYBetween(
+                    (x_min - distance * index),
+                    (x_max + distance * index),
+                    (y_min - distance * index),
+                    (y_max + distance * index),
+                    Sort.by(Sort.Order.desc("popularity")));
+
+            for (Places place : extraPlaces){
+                log.info(String.valueOf(place));
+                if (!places.contains(place)){
+                    places.add(place);
+                    log.info("중복아님 삽입됨");
+                }else {
+                    log.info("중복임");
+
+                }
+            }
+
+            places.addAll(extraPlaces);
+            index++;
+        }
+
+        return places;
     }
 
 /*    public void Save_Places(KakaoGeoRes bodyJson[]) {

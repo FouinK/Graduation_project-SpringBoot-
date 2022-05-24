@@ -26,10 +26,10 @@ public class Places {
     private String category_name;
 
     @Column(name = "y", nullable = false)
-    private String y;
+    private double y;
 
     @Column(name = "x", nullable = false)
-    private String x;
+    private double x;
 
     @Column(name = "phone")
     private String phone;
