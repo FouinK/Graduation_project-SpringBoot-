@@ -72,11 +72,10 @@ public class PlanController {
         long total_day = diffSec / (24*60*60)+1;
 
         //double avgPlacesOfDay = (double) request.getCheckedPlace().size() / total_day;
-        int number=0;
 
-        while (total_day*1.5 > request.getCheckedPlace().size()){
-            request.setCheckedPlace(mapService.placeAdd(request.getCheckedPlace(), number));
-            number++;
+        if (total_day*1.5 > request.getCheckedPlace().size()){
+            request.setCheckedPlace(mapService.placeAdd(request.getCheckedPlace(), total_day*1.5 ));
+
         }
 
         /*if (avgPlacesOfDay > 4){
@@ -89,8 +88,8 @@ public class PlanController {
         for (Places place : request.getCheckedPlace()){
             PlaceComputeDTO placeItem = PlaceComputeDTO.builder()
                     .id(place.getId())
-                    .x(Double.parseDouble(place.getX()))
-                    .y(Double.parseDouble(place.getY()))
+                    .x(place.getX())
+                    .y(place.getY())
                     .stay(place.getStay())
                     .days(0)
                     .slope(0)
