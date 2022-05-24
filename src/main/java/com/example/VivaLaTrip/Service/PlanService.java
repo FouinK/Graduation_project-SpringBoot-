@@ -181,8 +181,8 @@ public class PlanService {
             Places p = mapRepository.findById(place.getId());
 
             place.setPlace_name(p.getPlace_name());
-            place.setX(Double.parseDouble(p.getX()));
-            place.setY(Double.parseDouble(p.getY()));
+            place.setX(p.getX());
+            place.setY(p.getY());
             place.setChecked(true);
         }
 
