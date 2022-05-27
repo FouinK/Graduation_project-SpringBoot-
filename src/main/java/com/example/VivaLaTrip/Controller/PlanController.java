@@ -44,7 +44,6 @@ public class PlanController {
 
         Map<String, Object> map = new HashMap<>();
         //로그인 확인 결과를 담을 Map
-        log.info("컨트롤러에서 받자마자 공유 여부 확인 : "+ request.getIsPublic());
 
         if (!httpSession.getId().equals(JSESSIONID)||user==null) {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
@@ -71,18 +70,10 @@ public class PlanController {
         long diffSec = (format2.getTime()- format1.getTime()) / 1000;
         long total_day = diffSec / (24*60*60)+1;
 
-        //double avgPlacesOfDay = (double) request.getCheckedPlace().size() / total_day;
-
         if (total_day*1.5 > request.getCheckedPlace().size()){
             request.setCheckedPlace(mapService.placeAdd(request.getCheckedPlace(), total_day*1.5 ));
-
         }
 
-        /*if (avgPlacesOfDay > 4){
-            log.info("많음");
-        }else if(avgPlacesOfDay < 1.5){
-            request.setCheckedPlace(mapService.placeAdd(request.getCheckedPlace()));
-        }*/
         List<PlaceComputeDTO> placeComputeDTO = new ArrayList<>();
 
         for (Places place : request.getCheckedPlace()){
@@ -155,9 +146,4 @@ public class PlanController {
 
         return ResponseEntity.ok(response);
     }
-
-    /*@GetMapping("/api/myplan/{plan.planId}")
-    public void completeRoute() {
-        planDetailService.routeCompute();
-    }*/
 }

@@ -3,6 +3,8 @@ package com.example.VivaLaTrip.Service;
 import com.example.VivaLaTrip.Entity.*;
 import com.example.VivaLaTrip.Form.*;
 import com.example.VivaLaTrip.Repository.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +31,8 @@ public class PlanService {
 
     @Autowired
     PublicPlanService publicPlanService;
-
+    @Autowired
+    MapService mapService;
     public void savePlan(PlanSaveDTO request, User user, List<PlaceComputeDTO> computeDTO) {
 
         Plan plan = new Plan();
@@ -141,7 +144,7 @@ public class PlanService {
         }
     }
 
-    public PlanDetailResponseDTO getPlanDetail(Long planId){
+    public PlanDetailResponseDTO getPlanDetail(Long planId) {
 
         Long before = System.currentTimeMillis();
 
@@ -169,22 +172,51 @@ public class PlanService {
         for (PlanDetail planDetailDay : planDetail){
 
             String[] placeIdList = planDetailDay.getPlace_id().split(",");
-            for (String aaa : placeIdList){
+            for (String placeId : placeIdList){
                 PlanDetailDTO place = new PlanDetailDTO();
-                place.setId(aaa);
+                place.setId(placeId);
                 place.setDay(planDetailDay.getDays());
                 places.add(place);
             }
+            PlanDetailDTO place = new PlanDetailDTO();  //호텔용 빈자리 , 배열 맨 마지막에도 들어감 주의@@
+            place.setDay(0);
+            //places.add(place);
         }
-
+        places.remove(places.size()-1); //마지막 호텔 지움
         for (PlanDetailDTO place : places){
-            Places p = mapRepository.findById(place.getId());
+            if (place.getDay() != 0){
+                Places p = mapRepository.findById(place.getId());
 
-            place.setPlace_name(p.getPlace_name());
-            place.setX(p.getX());
-            place.setY(p.getY());
-            place.setChecked(true);
+                place.setPlace_name(p.getPlace_name());
+                place.setX(p.getX());
+                place.setY(p.getY());
+                place.setChecked(true);
+            }
+
         }
+        double avgX = 0;
+        double avgY = 0;
+        for (PlanDetailDTO p : places){
+            if (p.getDay() != 0){
+                avgX += p.getX();
+                avgY += p.getY();
+            }
+        }
+
+        avgX = avgX / plan.getTotal_count();
+        avgY = avgY / plan.getTotal_count();
+
+        /*PlanDetailDTO hotel = mapService.getHotel(avgX, avgY);
+
+        for (PlanDetailDTO place : places) {
+            if (place.getDay() == 0) {  //호텔 자리
+                place.setPlace_name(hotel.getPlace_name());
+                place.setId(hotel.getId());
+                place.setX(hotel.getX());
+                place.setY(hotel.getY());
+                place.setChecked(true);
+            }
+        }*/
 
         planDetailResponseDTO.setPlaces(places);
 

@@ -3,6 +3,7 @@ package com.example.VivaLaTrip.Service;
 import com.example.VivaLaTrip.Entity.Documents;
 import com.example.VivaLaTrip.Entity.KakaoGeoRes;
 import com.example.VivaLaTrip.Entity.Places;
+import com.example.VivaLaTrip.Form.PlanDetailDTO;
 import com.example.VivaLaTrip.Repository.MapRepository;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -101,10 +102,11 @@ public class MapService {
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @ResponseBody
-    public List<Documents> HotelPasrsingTest() throws UnirestException, JsonProcessingException {
+    public PlanDetailDTO getHotel(double x, double y) throws UnirestException, JsonProcessingException {
 
         String APIKey = "KakaoAK 00996a550c5152989e6ad63d03958d4f";
-        String apiURL ="https://dapi.kakao.com/v2/local/search/category.json?page=1&category_group_code=AD5&x=126.97679&y=37.57740&radius=20000";
+        String apiURL ="https://dapi.kakao.com/v2/local/search/category.json?" +
+                "page=1&category_group_code=AD5&x="+x+"&y="+y+"&radius=20000&sort=distance";
 
         HttpResponse<JsonNode> response = Unirest.get(apiURL)
                 .header("Authorization", APIKey)
@@ -115,19 +117,23 @@ public class MapService {
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 
         KakaoGeoRes bodyJson = objectMapper.readValue(response.getBody().toString(), KakaoGeoRes.class);        //카카오 매핑
-        List<Documents> result = new ArrayList<>();     //어레이 리스트로 도큐먼츠만 파싱
-        result.addAll(bodyJson.getDocuments());
+        //어레이 리스트로 도큐먼츠만 파싱
+        log.info(bodyJson.toString());
+        List<Documents> result = new ArrayList<>(bodyJson.getDocuments());
 
-        log.info("중심좌표 호텔 20키로 값 : "+result.toString());
+        PlanDetailDTO hotel = PlanDetailDTO.builder()
+                .id(result.get(0).getId())
+                .place_name(result.get(0).getPlace_name())
+                .x(Double.parseDouble(result.get(0).getX()))
+                .y(Double.parseDouble(result.get(0).getY()))
+                .build();
 
-        return result;
+        return hotel;
     }
 
     public List<Places> placeAdd(List<Places> places, double minPlace) {
 
-        for (Places p : places){
-            log.info(String.valueOf(p));
-        }
+        int avgPopularity = 0;
 
         double x_max = places.get(0).getX();
         double x_min = places.get(0).getX();
@@ -143,7 +149,9 @@ public class MapService {
             }if (y_min > p.getY()){
                 y_min = p.getY();
             }
+            avgPopularity += p.getPopularity();
         }
+        avgPopularity = avgPopularity / places.size();
         double distance = 0.005;  //500m
         int index = 0;
         while (minPlace > places.size()){
@@ -156,18 +164,11 @@ public class MapService {
                     (y_max + distance * index),
                     Sort.by(Sort.Order.desc("popularity")));
 
-            for (Places place : extraPlaces){
-                log.info(String.valueOf(place));
-                if (!places.contains(place)){
-                    places.add(place);
-                    log.info("중복아님 삽입됨");
-                }else {
-                    log.info("중복임");
-
+            for (Places extraPlace : extraPlaces){
+                if (!places.contains(extraPlace) && extraPlace.getPopularity() > avgPopularity){
+                    places.add(extraPlace);
                 }
             }
-
-            places.addAll(extraPlaces);
             index++;
         }
 
