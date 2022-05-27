@@ -211,12 +211,8 @@ public class PlanDetailService {
         }
         List<PlaceComputeDTO> result = new ArrayList<>();
 
-        log.info("정렬 전 오른쪽"+rightList);
-        log.info("정렬 전 왼쪽"+leftList);
         Collections.sort(rightList);
         Collections.sort(leftList);
-        log.info("정렬 후 오른쪽"+rightList);
-        log.info("정렬 후 왼쪽"+leftList);
         result.addAll(rightList);
         result.addAll(leftList);
 
