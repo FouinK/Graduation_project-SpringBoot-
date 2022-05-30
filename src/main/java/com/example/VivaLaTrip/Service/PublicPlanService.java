@@ -39,10 +39,10 @@ public class PublicPlanService {
 
     public PagePublicPlanListDTO matchPlans(Pageable pageable) {
 
-        List<PlanListDTO> listDTO = new ArrayList<>();
         //전체 페이지 개수 안에 플랜 리스트 담기 위해
-        Page<PublicPlan> publicPlan = publicPlanRepository.findAll(pageable);
+        List<PlanListDTO> listDTO = new ArrayList<>();
         //페이지 담기 위해
+        Page<PublicPlan> publicPlan = publicPlanRepository.findAll(pageable);
 
         for (PublicPlan pp : publicPlan) {
             Plan plan = planRepository.findByPlanId(pp.getPlanId());
@@ -61,10 +61,10 @@ public class PublicPlanService {
         }
 
         PagePublicPlanListDTO loginSuccessPlanListDTO = new PagePublicPlanListDTO();
-        loginSuccessPlanListDTO.setTotalPage(publicPlan.getTotalPages());
         //총 페이지 개수 담음
-        loginSuccessPlanListDTO.setOthersPlans(listDTO);
+        loginSuccessPlanListDTO.setTotalPage(publicPlan.getTotalPages());
         //플랜리스트 담음
+        loginSuccessPlanListDTO.setOthersPlans(listDTO);
         return loginSuccessPlanListDTO;
     }
 
@@ -83,7 +83,7 @@ public class PublicPlanService {
         planRepository.save(plan);
         log.info(plan_id + "번 일정 공유");
 
-        /*if (user.getUsername().equals(plan.getUserInfo().getUsername())){  //해당일정이 자신것인지 확인
+/*        if (user.getUsername().equals(plan.getUserInfo().getUsername())){  //해당일정이 자신것인지 확인
             if (!plan.getIs_public()){  //공유되어있지 않음
                 publicPlan.setPlan(plan);
                 publicPlan.setPlanId(plan_id);
@@ -130,15 +130,15 @@ public class PublicPlanService {
 
     public String addLike(Long plan_id, User user) {
 
-        String key;
         //overlap또는 success결과를 담을 문자열
+        String key;
         Liked liked = new Liked();
         PublicPlan publicPlan = publicPlanRepository.findByPlanId(plan_id);
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
 
         boolean pushed = likedRepository.existsByPlan_PlanIdAndUserInfo_UserId(plan_id, userInfo.get().getUserId());
-        boolean cancleLike = false;
         //좋아요 취소 기능이 생기면 동작할 변수
+        boolean cancleLike = false;
 
         if (pushed) {
             log.info("이미 '좋아요'를 누른 일정입니다.");
@@ -175,16 +175,16 @@ public class PublicPlanService {
 
     public String toMyPlan(Long plan_id, User user) {
 
-        String key;
         //결과 자열을 담을 key
+        String key;
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
-        Plan plan = planRepository.findByPlanId(plan_id);
         //existsByPlanIdAndUserInfo_UserId으로 했다가 두번 참조해야해서 파인드바이로 사용
-        boolean alreadyCopied = planRepository.existsByFromPlanIdAndUserInfo_UserId(plan_id,userInfo.get().getUserId());
+        Plan plan = planRepository.findByPlanId(plan_id);
         //이미 가져온 일정인지 확인 하기 위해
+        boolean alreadyCopied = planRepository.existsByFromPlanIdAndUserInfo_UserId(plan_id,userInfo.get().getUserId());
 
+        //해당 publicPlan이 myPlan인지  검사, 이미 가져온 일정인지 검사
         if (plan.getUserInfo().getUserId() == userInfo.get().getUserId() || alreadyCopied) {
-            //해당 publicPlan이 myPlan인지  검사, 이미 가져온 일정인지 검사
             key = "overlap";
         } else {
 
@@ -195,11 +195,11 @@ public class PublicPlanService {
             newMyPlan.setStart_date(plan.getStart_date());
             newMyPlan.setEnd_date(plan.getEnd_date());
             newMyPlan.setFromPlanId(plan_id);
-            planRepository.save(newMyPlan);
             //새로운 plan저장
+            planRepository.save(newMyPlan);
 
-            newMyPlan = planRepository.findByPlanId(newMyPlan.getPlanId());
             //새롭게 저장된 plan가져오기
+//            newMyPlan = planRepository.findByPlanId(newMyPlan.getPlanId());
 
             List<PlanDetail> planDetailList = planDetailRepository.findAllByPlan_PlanId(plan.getPlanId());
             int size = planDetailList.size();
