@@ -17,9 +17,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -90,9 +88,6 @@ public class MapService {
 
         List<Places> bodyJson = mapRepository.findByAddressNameContains(word, Sort.by(Sort.Order.desc("popularity")));
 
-//        log.info("데베에서 뽑아온 Places값 :"+bodyJson.toString());
-
-
         if (bodyJson.size() > 100) {
             return bodyJson.subList(0, 100);
         }
@@ -109,16 +104,12 @@ public class MapService {
                 "page=1&category_group_code=AD5&x="+x+"&y="+y+"&radius=20000&sort=distance";
 
         HttpResponse<JsonNode> response = Unirest.get(apiURL)
-                .header("Authorization", APIKey)
-                .asJson();
-
+                .header("Authorization", APIKey).asJson();
 
         ObjectMapper objectMapper =new ObjectMapper();
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 
-        KakaoGeoRes bodyJson = objectMapper.readValue(response.getBody().toString(), KakaoGeoRes.class);        //카카오 매핑
-        //어레이 리스트로 도큐먼츠만 파싱
-        log.info(bodyJson.toString());
+        KakaoGeoRes bodyJson = objectMapper.readValue(response.getBody().toString(), KakaoGeoRes.class);
         List<Documents> result = new ArrayList<>(bodyJson.getDocuments());
 
         PlanDetailDTO hotel = PlanDetailDTO.builder()
@@ -134,11 +125,11 @@ public class MapService {
     public List<Places> placeAdd(List<Places> places, double minPlace) {
 
         int avgPopularity = 0;
-
         double x_max = places.get(0).getX();
         double x_min = places.get(0).getX();
         double y_max = places.get(0).getY();
         double y_min = places.get(0).getY();
+
         for (Places p : places){
             if (x_max < p.getX()){
                 x_max = p.getX();
@@ -151,9 +142,11 @@ public class MapService {
             }
             avgPopularity += p.getPopularity();
         }
+
         avgPopularity = avgPopularity / places.size();
         double distance = 0.005;  //500m
-        int index = 0;
+        int index = 0;  //반복 횟수 - 범위를 점차 늘리기 위해
+
         while (minPlace > places.size()){
             log.info("x범위 : "+ (x_min - distance * index) + "~" + (x_max + distance * index));
             log.info("y범위 : "+ (y_min - distance * index) + "~" + (y_max + distance * index));
