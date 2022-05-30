@@ -105,9 +105,9 @@ public class UserService implements UserDetailsService {
         simpleMailMessage.setSubject("Viva La Trip 인증 메일입니다.");
         simpleMailMessage.setText("인증번호 "+send_code+"를 입력해주세요.");
 
-        Optional<UserInfo> userInfo = Get_UserInfo(email);          //
-        userInfo.get().setCheck_Email(send_code);                   //
-        Update_Userinfo_Check_Email(userInfo);                                  //Userinfo테이블 업데이트
+        Optional<UserInfo> userInfo = Get_UserInfo(email);
+        userInfo.get().setCheck_Email(send_code);
+        Update_Userinfo_Check_Email(userInfo);        //Userinfo 테이블 업데이트
 
         javaMailSender.send(simpleMailMessage);
         log.info("UserService에서 받은 Email 값 : " + email);

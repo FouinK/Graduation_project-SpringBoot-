@@ -199,7 +199,7 @@ public class PublicPlanService {
             //새로운 plan저장
 
             newMyPlan = planRepository.findByPlanId(newMyPlan.getPlanId());
-            //새롭게 저장된 plan가져오기(왜 저장한걸 다시 가져와? by 태욱)
+            //새롭게 저장된 plan가져오기
 
             List<PlanDetail> planDetailList = planDetailRepository.findAllByPlan_PlanId(plan.getPlanId());
             int size = planDetailList.size();
@@ -215,26 +215,7 @@ public class PublicPlanService {
             }
 
             planDetailRepository.saveAll(newPlanDetailList);
-            /*int size = planDetailList.size();
-            PlanDetail[] newplanDetailarray = new PlanDetail[size];
-            //새롭게 담을 PlanDetail
-            //어레이리스트 캐퍼시티 적용 되지 않아서 클래스 배열로 생성
 
-            for (int i = 0; i < newplanDetailarray.length; i++) {
-                //입력받은 planId의 디테일 가져오기 새로운 디테일을 만들기 위한 목적
-                newplanDetailarray[i] = new PlanDetail();
-                newplanDetailarray[i].setPlan(newMyPlan);
-                newplanDetailarray[i].setDays(planDetailList.get(i).getDays());
-                newplanDetailarray[i].setPlace_id(planDetailList.get(i).getPlace_id());
-            }
-
-            List<PlanDetail> newplanDetailList = Arrays.asList(newplanDetailarray);
-            //어레이 리스트로 변환
-
-            for (int i = 0; i < size; i++) {
-                planDetailRepository.save(newplanDetailList.get(i));
-                //새로운 플랜 디테일 담기
-            }*/
             key = "success";
         }
         return key;
