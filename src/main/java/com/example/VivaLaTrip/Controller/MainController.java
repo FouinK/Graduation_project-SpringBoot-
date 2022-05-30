@@ -26,17 +26,8 @@ public class MainController {
         this.mapService = mapService;
     }
 
-/*    @GetMapping("/public_plan")
-    public String public_plan() {
-       // publicPlanService.view_all_public();
-        return "public_plan";
-    }*/
     @GetMapping("/")
     public String toIndex() throws UnirestException {
-    // publicPlanService.view_all_public();
-        //pubTransService.getPubTransPath();
-        //mapService.placeAdd();
-    return "index";
-}
-
+        return "index";
+    }
 }
