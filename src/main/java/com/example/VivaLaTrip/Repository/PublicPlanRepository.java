@@ -15,6 +15,4 @@ public interface PublicPlanRepository extends JpaRepository<PublicPlan, Long> {
 
     boolean existsByPlanId(Long plan_id);
 
-    void deleteByPlanPlanId(Long plan_id);
-
 }

@@ -70,6 +70,10 @@ public class PublicPlanService {
 
     public void toPublic(Long plan_id, String comment) {
 
+        if (comment == null) {
+            comment = "";
+        }
+
         Plan plan = findPlan(plan_id);
         PublicPlan publicPlan = new PublicPlan();
 

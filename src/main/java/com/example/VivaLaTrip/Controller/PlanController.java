@@ -153,12 +153,11 @@ public class PlanController {
 
     @GetMapping("/editPlan")
     public @ResponseBody
-    ResponseEntity<?> responseBeforeEditPlanDetail(@RequestParam("planId") Long planId,
-                                             @AuthenticationPrincipal User user) {
-        log.info(planId + "번 plan 요청받음");
+    ResponseEntity<?> responseBeforeEditPlanDetail() {
+ /*       log.info(planId + "번 plan 요청받음");
         PlanDetailResponseDTO response = planService.getPlanDetail(planId, user);
-        response.setLoginSuccess(true);
-        return ResponseEntity.ok(response);
+        response.setLoginSuccess(true);*/
+        return ResponseEntity.ok("success");
     }
 
     @PostMapping("/api/edit")
