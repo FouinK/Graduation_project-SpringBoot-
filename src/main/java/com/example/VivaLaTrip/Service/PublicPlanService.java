@@ -114,7 +114,6 @@ public class PublicPlanService {
 
         if (user.getUsername().equals(plan.getUserInfo().getUsername())) {
             if (plan.getIs_public()) {
-                plan.setIs_public(false);
                 PublicPlan publicPlan = publicPlanRepository.findByPlanId(plan_id);
                 publicPlan.setPlan(null);   //참조키 관계 파괴-안하면 plan도 같이 삭제됨
                 publicPlanRepository.delete(publicPlan);
