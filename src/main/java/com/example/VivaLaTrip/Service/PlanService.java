@@ -37,7 +37,6 @@ public class PlanService {
 
         Plan plan = new Plan();
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
-        //로그인 한 user객체에서 userId(1,2,3,...)값 가져와서 리포지토리 아이디 찾는 메소드 호출
 
         plan.setUserInfo(userInfo.get());
         plan.setIs_public(false);
@@ -126,12 +125,12 @@ public class PlanService {
                 dayIndex++;
             }
 
-            Places places = mapRepository.findById(placeComputeDTOList.get(i).getId());
             //PlanDetailDTO에 담긴 places의 Id값을 검사해서 places객체 하나를 DB에서 뽑아옴
-            places.setPopularity(places.getPopularity()+1);
+            Places places = mapRepository.findById(placeComputeDTOList.get(i).getId());
             //해당 places의 popularity에 +1을 해주고
-            mapRepository.save(places);
+            places.setPopularity(places.getPopularity()+1);
             //places업데이트
+            mapRepository.save(places);
 
             placeIdsOfDay+=placeComputeDTOList.get(i).getId()+",";
 
@@ -144,13 +143,18 @@ public class PlanService {
         }
     }
 
-    public PlanDetailResponseDTO getPlanDetail(Long planId) {
+    public PlanDetailResponseDTO getPlanDetail(Long planId,User user) {
 
         Long before = System.currentTimeMillis();
 
         Plan plan = planRepository.findByPlanId(planId);
         PublicPlan publicPlan = publicPlanRepository.findByPlanId(planId);
         List<PlanDetail> planDetail = planDetailRepository.findAllByPlan_PlanId(planId);
+
+        //일정이 자기 일정인지 확인하기
+        if (!user.getUsername().equals(plan.getUserInfo().getUsername())) {
+            throw new IllegalStateException("해당 일정은 니것이 아님");
+        }
 
         PlanDetailResponseDTO planDetailResponseDTO = new PlanDetailResponseDTO();
         List<PlanDetailDTO> places = new ArrayList<>();
@@ -182,7 +186,7 @@ public class PlanService {
             place.setDay(0);
             //places.add(place);
         }
-        places.remove(places.size()-1); //마지막 호텔 지움
+//        places.remove(places.size()-1); //마지막 호텔 지움
         for (PlanDetailDTO place : places){
             if (place.getDay() != 0){
                 Places p = mapRepository.findById(place.getId());
@@ -224,5 +228,96 @@ public class PlanService {
         System.out.println("getPlanDetail : "+(after - before) +"ms 소요");
 
         return planDetailResponseDTO;
+    }
+
+    public void updateMyPlan(UpdatePlanDTO updatePlanDTO,Long planId,User user) {
+
+        Plan plan = planRepository.findByPlanId(planId);
+        List<PlanDetail> planDetailList = planDetailRepository.findAllByPlan_PlanId(planId);
+
+        log.info("전달 받은 값 확인" + updatePlanDTO.toString());
+
+        //날짜 작업
+        String start_date;
+        start_date = updatePlanDTO.getStart_date().substring(0, 4);
+        start_date += updatePlanDTO.getStart_date().substring(5, 7);
+        start_date += updatePlanDTO.getStart_date().substring(8, 10);
+        String end_date;
+        end_date = updatePlanDTO.getEnd_date().substring(0, 4);
+        end_date += updatePlanDTO.getEnd_date().substring(5, 7);
+        end_date += updatePlanDTO.getEnd_date().substring(8, 10);
+
+
+        //최대 데이값 담을 변수
+        int findMaxDay = 0;
+
+        //최대 데이값 확인
+        for (int i = 0; i < updatePlanDTO.getPlaces().size(); i++) {
+            if (findMaxDay < updatePlanDTO.getPlaces().get(i).getDay()) {
+                findMaxDay = updatePlanDTO.getPlaces().get(i).getDay();
+            }
+        }
+
+        //day당 개수 담는 그릇
+        int countOfDays[] = new int[findMaxDay];
+        for (int i = 0; i < updatePlanDTO.getPlaces().size(); i++) {
+            countOfDays[updatePlanDTO.getPlaces().get(i).getDay() - 1]++;
+        }
+
+        for (int i = 0; i < countOfDays.length; i++) {
+            log.info((i+1)+"데이당 개수 확인" + countOfDays[i]);
+        }
+
+        int startDay = 1;
+        int equalcountOfDays = 0;
+        //day(N)의 개수만큼 순서대로 담음
+        for (int i = 0; i < updatePlanDTO.getPlaces().size(); i++) {
+            updatePlanDTO.getPlaces().get(i).setDay(startDay);
+            equalcountOfDays++;
+            if (equalcountOfDays == countOfDays[startDay-1]) {
+                //데이 개수값과 일치하는순간 초기화
+                equalcountOfDays = 0;
+                //데이값 +1
+                startDay++;
+            }
+        }
+
+        log.info("수정된 데이 값 확인" + updatePlanDTO.toString());
+
+        plan = Plan.builder()
+                .planId(plan.getPlanId())
+                .is_public(updatePlanDTO.getIsPublic())
+                .total_count(plan.getTotal_count())
+                .start_date(start_date)
+                .end_date(end_date)
+                .fromPlanId(plan.getFromPlanId())
+                .build();
+        plan.setUserInfo(userRepository.findByID(user.getUsername()).get());
+        log.info(plan.toString());
+
+
+        //PublicPlan이였던 것이 isPulic이 false로 PublicPlan테이블에서 삭제
+        if (updatePlanDTO.getIsPublic()==false && publicPlanRepository.existsByPlanId(planId)) {
+            log.info("일정 취소 실행 되는지 ?");
+            publicPlanService.toPrivate(planId, user);
+        } else if (updatePlanDTO.getIsPublic() && publicPlanRepository.existsByPlanId(planId) == false) {
+            log.info("일정 공유 실행되는지 ?");
+            publicPlanService.toPublic(planId, updatePlanDTO.getTitle());
+        }
+
+        //plan업데이트
+        planRepository.save(plan);
+
+        int dayIndex = 1;
+        for (int i = 0; i < planDetailList.size(); i++) {
+            String placeIdsOfDay = "";
+            for (int j = 0; j < updatePlanDTO.getPlaces().size(); j++) {
+                if (planDetailList.get(i).getDays() == updatePlanDTO.getPlaces().get(j).getDay()) {
+                    placeIdsOfDay+=updatePlanDTO.getPlaces().get(j).getId()+",";
+                }
+                planDetailList.get(i).setPlace_id(placeIdsOfDay);
+            }
+            planDetailRepository.save(planDetailList.get(i));
+        }
     }
 }
