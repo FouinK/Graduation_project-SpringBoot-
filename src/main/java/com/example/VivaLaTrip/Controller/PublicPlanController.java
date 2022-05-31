@@ -40,10 +40,10 @@ public class PublicPlanController {
 
     @GetMapping("/api/publicPlan")
     public @ResponseBody
-    ResponseEntity<?> responsePublicPlanDetail(@RequestParam("planId") Long getPlanId) {
+    ResponseEntity<?> responsePublicPlanDetail(@RequestParam("planId") Long getPlanId,@AuthenticationPrincipal User user) {
         planId = getPlanId;
         log.info(getPlanId + "번 plan 요청받음");
-        PlanDetailResponseDTO response = planService.getPlanDetail(getPlanId);
+        PlanDetailResponseDTO response = planService.getPlanDetail(getPlanId,user);     //user파라미터 추가는 myplan의 내일정인지 조회하기 위해 보내야함 (같은 메소드 사용해서)
         response.setLoginSuccess(true);
         return ResponseEntity.ok(response);
     }
