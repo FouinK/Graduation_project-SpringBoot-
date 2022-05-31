@@ -295,15 +295,18 @@ public class PlanService {
         plan.setUserInfo(userRepository.findByID(user.getUsername()).get());
         log.info(plan.toString());
 
-        //plan업데이트
-        planRepository.save(plan);
 
         //PublicPlan이였던 것이 isPulic이 false로 PublicPlan테이블에서 삭제
-/*
-        if (!updatePlanDTO.getIsPublic() && publicPlanRepository.existsByPlanId(planId)) {
-            publicPlanRepository.deleteByPlanPlanId(planId);
+        if (updatePlanDTO.getIsPublic()==false && publicPlanRepository.existsByPlanId(planId)) {
+            log.info("일정 취소 실행 되는지 ?");
+            publicPlanService.toPrivate(planId, user);
+        } else if (updatePlanDTO.getIsPublic() && publicPlanRepository.existsByPlanId(planId) == false) {
+            log.info("일정 공유 실행되는지 ?");
+            publicPlanService.toPublic(planId, updatePlanDTO.getTitle());
         }
-*/
+
+        //plan업데이트
+        planRepository.save(plan);
 
         int dayIndex = 1;
         for (int i = 0; i < planDetailList.size(); i++) {
