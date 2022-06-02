@@ -43,7 +43,10 @@ public class PublicPlanController {
     ResponseEntity<?> responsePublicPlanDetail(@RequestParam("planId") Long getPlanId,@AuthenticationPrincipal User user) {
         planId = getPlanId;
         log.info(getPlanId + "번 plan 요청받음(public_plan)");
-        PlanDetailResponseDTO response = planService.getPlanDetail(getPlanId,user,"public_plan");     //user파라미터 추가는 myplan의 내일정인지 조회하기 위해 보내야함 (같은 메소드 사용해서)
+        PlanDetailResponseDTO response = planService.getPlanDetail(getPlanId, user, "public_plan");     //user파라미터 추가는 myplan의 내일정인지 조회하기 위해 보내야함 (같은 메소드 사용해서)
+        int total_days = Integer.parseInt(response.getEnd_date()) - Integer.parseInt(response.getStart_date());     //total_days 계산
+        response.setTotal_days(total_days + 1);                                                                       //total_days 리턴추가 데이 형식이므로 +1
+        log.info("퍼블릭 플랜 디테일 리스폰스 값 확인"+response.toString());
         response.setLoginSuccess(true);
         return ResponseEntity.ok(response);
     }
