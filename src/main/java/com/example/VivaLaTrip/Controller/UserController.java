@@ -25,13 +25,14 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
 
+    //이메일 검사를 위한 유저 아이디 저장
+    String username;
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    UserInfo userInfo = new UserInfo();
 
     @PostMapping("/loginFail")
     public ResponseEntity<?> LgoinFail() {
@@ -61,6 +62,8 @@ public class UserController {
     @ResponseBody
     @PostMapping("/api/register")
     public ResponseEntity<?> SignUp(@RequestBody HashMap<String,Object> map) {
+        UserInfo userInfo = new UserInfo();
+        username = (String) map.get("id");
         boolean overlapEmail = userService.usernameOverlap((String) map.get("id"));     //중복 회원검사
         Map<String, Object> jsonMap = new HashMap<>();
         if (overlapEmail == true) {
@@ -82,7 +85,7 @@ public class UserController {
     @PostMapping("/api/register/email")
     public ResponseEntity<?> ConfirmationEmail(@RequestBody HashMap<String,Object> map) {
         Map<String, Object> jsonMap = new HashMap<>();
-        Optional<UserInfo> userinfo1 = userService.Get_UserInfo(userInfo.getID());
+        Optional<UserInfo> userinfo1 = userService.Get_UserInfo(username);
         if (userinfo1.get().getCheck_Email().equals((String)map.get("authNum"))) {
 //            userService.Update_Userinfo_ROLE_USER(Optional.ofNullable(userInfo));
             jsonMap.put("success",true);
