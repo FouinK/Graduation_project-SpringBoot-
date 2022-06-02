@@ -157,9 +157,12 @@ public class PlanService {
         List<PlanDetail> planDetail = planDetailRepository.findAllByPlan_PlanId(planId);
 
         //일정이 자기 일정인지 확인하기 whereRequest가 true면 일반일정에서 요청 함 자기 일정만 조회 가능
-        if (!user.getUsername().equals(plan.getUserInfo().getUsername()) && whereRequest.equals("plan")) {
-            throw new IllegalStateException("해당 일정은 니것이 아님");
+        if (whereRequest.equals("plan")) {      //이중 포문인 이유는 로그인 하지 않아도 public_plan은 조회가능 안그러면 user is null에러 뜸
+            if (!user.getUsername().equals(plan.getUserInfo().getUsername())) {
+                throw new IllegalStateException("해당 일정은 니것이 아님");
+            }
         }
+
 
         PlanDetailResponseDTO planDetailResponseDTO = new PlanDetailResponseDTO();
         List<PlanDetailDTO> places = new ArrayList<>();
