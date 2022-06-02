@@ -19,5 +19,6 @@ public class PlanDetailResponseDTO {
     String title;
     int place_num;
     int liked;
+    int total_days;
     List<PlanDetailDTO> places;
 }

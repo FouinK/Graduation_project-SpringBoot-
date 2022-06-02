@@ -148,7 +148,7 @@ public class PlanService {
         }
     }
 
-    public PlanDetailResponseDTO getPlanDetail(Long planId,User user) {
+    public PlanDetailResponseDTO getPlanDetail(Long planId,User user,String whereRequest) {
 
         Long before = System.currentTimeMillis();
 
@@ -156,8 +156,8 @@ public class PlanService {
         PublicPlan publicPlan = publicPlanRepository.findByPlanId(planId);
         List<PlanDetail> planDetail = planDetailRepository.findAllByPlan_PlanId(planId);
 
-        //일정이 자기 일정인지 확인하기
-        if (!user.getUsername().equals(plan.getUserInfo().getUsername())) {
+        //일정이 자기 일정인지 확인하기 whereRequest가 true면 일반일정에서 요청 함 자기 일정만 조회 가능
+        if (!user.getUsername().equals(plan.getUserInfo().getUsername()) && whereRequest.equals("plan")) {
             throw new IllegalStateException("해당 일정은 니것이 아님");
         }
 
