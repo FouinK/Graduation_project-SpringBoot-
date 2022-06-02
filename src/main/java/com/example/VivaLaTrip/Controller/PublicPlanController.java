@@ -44,8 +44,9 @@ public class PublicPlanController {
         planId = getPlanId;
         log.info(getPlanId + "번 plan 요청받음(public_plan)");
         PlanDetailResponseDTO response = planService.getPlanDetail(getPlanId, user, "public_plan");     //user파라미터 추가는 myplan의 내일정인지 조회하기 위해 보내야함 (같은 메소드 사용해서)
-        int total_days = Integer.parseInt(response.getEnd_date()) - Integer.parseInt(response.getStart_date());     //total_days 계산
-        response.setTotal_days(total_days + 1);                                                                       //total_days 리턴추가 데이 형식이므로 +1
+
+        response.setTotal_days(response.getPlaces().get(response.getPlace_num()-1).getDay());
+
         log.info("퍼블릭 플랜 디테일 리스폰스 값 확인"+response.toString());
         response.setLoginSuccess(true);
         return ResponseEntity.ok(response);
@@ -90,44 +91,4 @@ public class PublicPlanController {
 
         return ResponseEntity.ok(key);
     }
-
-    /*@PostMapping("/get_plan")
-    public String getPlanById(@RequestParam("id") Long plan_id) {
-
-        log.info("입력받은 일정 ID : " + plan_id.toString());
-        publicPlanService.findPlan(plan_id);
-        return "";
-    }
-
-    @PostMapping("/to_public_plan")
-    public String makePublicPlanById(
-            @RequestParam("id") Long plan_id,
-            @RequestParam("comment") String comment,
-            @AuthenticationPrincipal User user){
-
-        log.info("입력받은 일정 ID : "+plan_id.toString());
-        //publicPlanService.toPublic(plan_id, comment, user);
-        return "";
-    }
-
-    @PostMapping("/delete_public_plan")
-    public String deletePublicPlanById(
-            @RequestParam("id") Long plan_id,
-            @AuthenticationPrincipal User user){
-
-        log.info("입력받은 일정 ID : "+plan_id.toString());
-        publicPlanService.toPrivate(plan_id, user);
-        return "";
-    }
-
-    @PostMapping("/like")
-    public String likePublicPlanById(
-            @RequestParam("id") Long plan_id,
-            @RequestParam("like") String like,
-            @AuthenticationPrincipal User user){
-
-//        log.info("입력받은 일정 ID : "+plan_id.toString());
-//        publicPlanService.addLike(plan_id, like, user);
-        return "";
-    }*/
 }
