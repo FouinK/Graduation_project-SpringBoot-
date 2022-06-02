@@ -1,10 +1,15 @@
 package com.example.VivaLaTrip.Entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Entity //Plan 클래스가 MYSQL 테이블이 생성
 public class Plan extends BaseTimeEntity{
@@ -41,20 +46,4 @@ public class Plan extends BaseTimeEntity{
 
     @Column(name = "comment",nullable = false)
     private String comment;
-
-    @Builder
-    public Plan(Long planId,boolean is_public, int total_count, String start_date, String end_date,Long fromPlanId,String comment)
-    {
-        this.planId=planId;
-        this.is_public = is_public;
-        this.total_count = total_count;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.fromPlanId = fromPlanId;
-        this.comment = comment;
-    }
-
-    public Plan() {
-
-    }
 }
