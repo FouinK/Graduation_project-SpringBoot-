@@ -48,6 +48,7 @@ public class PlanService {
         plan.setTotal_count(request.getCheckedPlace().size());
         plan.setStart_date(request.getStart_date());
         plan.setEnd_date(request.getEnd_date());
+        plan.setFromPlanId(Long.valueOf(0));
         plan.setComment(request.getTitle());        //타이틀 추가
         //plan 객체에 필요한 값들 설정
 
@@ -175,9 +176,15 @@ public class PlanService {
             planDetailResponseDTO.setLiked(0);
         }
 
+        //날자 형식 작업 ex) 2020-05-31
+        String start_date = plan.getStart_date();
+        String end_date = plan.getEnd_date();
+        start_date = start_date.substring(0, 4) + "-" + start_date.substring(4, 6) + "-" + start_date.substring(6, 8);
+        end_date = end_date.substring(0, 4) + "-" + end_date.substring(4, 6) + "-" + end_date.substring(6, 8);
+
         planDetailResponseDTO.setUserId(plan.getUserInfo().getUserId());
-        planDetailResponseDTO.setStart_date(plan.getStart_date());
-        planDetailResponseDTO.setEnd_date(plan.getEnd_date());
+        planDetailResponseDTO.setStart_date(start_date);                //날짜 형식 삽입
+        planDetailResponseDTO.setEnd_date(end_date);                    //날짜 형식 삽입
         planDetailResponseDTO.setPlan_id(plan.getPlanId());
         planDetailResponseDTO.setPlace_num(plan.getTotal_count());
 
@@ -290,7 +297,7 @@ public class PlanService {
             }
         }
 
-        log.info("수정된 데이 값 확인" + updatePlanDTO.toString());
+//        log.info("수정된 데이 값 확인" + updatePlanDTO.toString());
 
         plan = Plan.builder()
                 .planId(plan.getPlanId())
@@ -299,7 +306,9 @@ public class PlanService {
                 .start_date(start_date)
                 .end_date(end_date)
                 .fromPlanId(plan.getFromPlanId())
+                .comment(updatePlanDTO.getTitle())
                 .build();
+
         plan.setUserInfo(userRepository.findByID(user.getUsername()).get());
         log.info(plan.toString());
 
