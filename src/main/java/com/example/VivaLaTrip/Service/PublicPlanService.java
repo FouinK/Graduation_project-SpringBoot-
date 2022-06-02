@@ -111,17 +111,21 @@ public class PublicPlanService {
         if (user.getUsername().equals(plan.getUserInfo().getUsername())) {
             if (plan.getIs_public()) {
                 plan.setIs_public(false);
+                planRepository.save(plan);
+
                 PublicPlan publicPlan = publicPlanRepository.findByPlanId(plan_id);
                 publicPlan.setPlan(null);   //참조키 관계 파괴-안하면 plan도 같이 삭제됨
                 publicPlanRepository.delete(publicPlan);
+
                 log.info(plan_id + "번 일정 공유 취소");
+
                 if (isLiked) {   //좋아요 테이블 비우기
                     List<Liked> liked = likedRepository.findLikedsByPlan_PlanId(plan_id);
                     likedRepository.deleteAll(liked);
                     log.info(plan_id + "번 일정 좋아요 모두 삭제");
                 }
             } else {
-                log.info("해당 일정을 찾을 수 없음");
+                log.info("해당 일정은 비공개");
             }
         } else {
             log.info("해당 일정은 니꺼 아님");

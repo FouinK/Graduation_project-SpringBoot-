@@ -166,8 +166,8 @@ public class PlanController {
     @PostMapping("/api/edit")
     public @ResponseBody
     ResponseEntity<?> responseCompleteEditPlanDetail(@RequestBody UpdatePlanDTO updatePlanDTO,
-                                                     @AuthenticationPrincipal User user) {
-        planService.updateMyPlan(updatePlanDTO,planId,user);
+                                                     @AuthenticationPrincipal User user) throws ParseException {
+        planService.updatePlan(updatePlanDTO,planId,user);
 
         return ResponseEntity.ok("Ok");
     }

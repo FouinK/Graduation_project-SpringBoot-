@@ -3,8 +3,6 @@ package com.example.VivaLaTrip.Service;
 import com.example.VivaLaTrip.Entity.*;
 import com.example.VivaLaTrip.Form.*;
 import com.example.VivaLaTrip.Repository.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +32,8 @@ public class PlanService {
 
     @Autowired
     PublicPlanService publicPlanService;
+    @Autowired
+    PlanDetailService planDetailService;
     @Autowired
     MapService mapService;
     public void savePlan(PlanSaveDTO request, User user, List<PlaceComputeDTO> computeDTO) {
@@ -164,7 +167,6 @@ public class PlanService {
             }
         }
 
-
         PlanDetailResponseDTO planDetailResponseDTO = new PlanDetailResponseDTO();
         List<PlanDetailDTO> places = new ArrayList<>();
 
@@ -245,14 +247,11 @@ public class PlanService {
         return planDetailResponseDTO;
     }
 
-    public void updateMyPlan(UpdatePlanDTO updatePlanDTO,Long planId,User user) {
+    public void updatePlan(UpdatePlanDTO updatePlanDTO, Long planId, User user) throws ParseException {
 
         Plan plan = planRepository.findByPlanId(planId);
         List<PlanDetail> planDetailList = planDetailRepository.findAllByPlan_PlanId(planId);
 
-        log.info("전달 받은 값 확인" + updatePlanDTO.toString());
-
-        //날짜 작업
         String start_date;
         start_date = updatePlanDTO.getStart_date().substring(0, 4);
         start_date += updatePlanDTO.getStart_date().substring(5, 7);
@@ -262,79 +261,47 @@ public class PlanService {
         end_date += updatePlanDTO.getEnd_date().substring(5, 7);
         end_date += updatePlanDTO.getEnd_date().substring(8, 10);
 
+        Date format1 = new SimpleDateFormat("yyyyMMdd").parse(start_date);
+        Date format2 = new SimpleDateFormat("yyyyMMdd").parse(end_date);
+        long diffSec = (format2.getTime() - format1.getTime()) / 1000;
+        long total_day = diffSec / (24 * 60 * 60) + 1;
 
-        //최대 데이값 담을 변수
-        int findMaxDay = 0;
+        plan.setTotal_count(updatePlanDTO.getPlaces().size());
+        plan.setStart_date(start_date);
+        plan.setEnd_date(end_date);
+        plan.setComment(updatePlanDTO.getTitle());
+        planRepository.save(plan);
 
-        //최대 데이값 확인
-        for (int i = 0; i < updatePlanDTO.getPlaces().size(); i++) {
-            if (findMaxDay < updatePlanDTO.getPlaces().get(i).getDay()) {
-                findMaxDay = updatePlanDTO.getPlaces().get(i).getDay();
-            }
-        }
-
-        //day당 개수 담는 그릇
-        int countOfDays[] = new int[findMaxDay];
-        for (int i = 0; i < updatePlanDTO.getPlaces().size(); i++) {
-            countOfDays[updatePlanDTO.getPlaces().get(i).getDay() - 1]++;
-        }
-
-        for (int i = 0; i < countOfDays.length; i++) {
-            log.info((i+1)+"데이당 개수 확인" + countOfDays[i]);
-        }
-
-        int startDay = 1;
-        int equalcountOfDays = 0;
-        //day(N)의 개수만큼 순서대로 담음
-        for (int i = 0; i < updatePlanDTO.getPlaces().size(); i++) {
-            updatePlanDTO.getPlaces().get(i).setDay(startDay);
-            equalcountOfDays++;
-            if (equalcountOfDays == countOfDays[startDay-1]) {
-                //데이 개수값과 일치하는순간 초기화
-                equalcountOfDays = 0;
-                //데이값 +1
-                startDay++;
-            }
-        }
-
-//        log.info("수정된 데이 값 확인" + updatePlanDTO.toString());
-
-        plan = Plan.builder()
-                .planId(plan.getPlanId())
-                .is_public(updatePlanDTO.getIsPublic())
-                .total_count(plan.getTotal_count())
-                .start_date(start_date)
-                .end_date(end_date)
-                .fromPlanId(plan.getFromPlanId())
-                .comment(updatePlanDTO.getTitle())
-                .build();
-
-        plan.setUserInfo(userRepository.findByID(user.getUsername()).get());
-        log.info(plan.toString());
-
-
-        //PublicPlan이였던 것이 isPulic이 false로 PublicPlan테이블에서 삭제
-        if (updatePlanDTO.getIsPublic()==false && publicPlanRepository.existsByPlanId(planId)) {
-            log.info("일정 취소 실행 되는지 ?");
+        if (!updatePlanDTO.getIsPublic() && publicPlanRepository.existsByPlanId(planId)) {
             publicPlanService.toPrivate(planId, user);
-        } else if (updatePlanDTO.getIsPublic() && publicPlanRepository.existsByPlanId(planId) == false) {
-            log.info("일정 공유 실행되는지 ?");
+        } else if (updatePlanDTO.getIsPublic() && !publicPlanRepository.existsByPlanId(planId)) {
             publicPlanService.toPublic(planId);     //코멘트는 일반 Plan 테이블에 저장
         }
 
-        //plan업데이트
-        planRepository.save(plan);
+        List<PlaceComputeDTO> placeComputeDTO = new ArrayList<>();
 
-        int dayIndex = 1;
-        for (int i = 0; i < planDetailList.size(); i++) {
-            String placeIdsOfDay = "";
-            for (int j = 0; j < updatePlanDTO.getPlaces().size(); j++) {
-                if (planDetailList.get(i).getDays() == updatePlanDTO.getPlaces().get(j).getDay()) {
-                    placeIdsOfDay+=updatePlanDTO.getPlaces().get(j).getId()+",";
-                }
-                planDetailList.get(i).setPlace_id(placeIdsOfDay);
-            }
-            planDetailRepository.save(planDetailList.get(i));
+        for (Places place : updatePlanDTO.getPlaces()) {
+            PlaceComputeDTO placeItem = PlaceComputeDTO.builder()
+                    .id(place.getId())
+                    .x(place.getX())
+                    .y(place.getY())
+                    .stay(2)
+                    .days(0)
+                    .slope(0)
+                    .where("")
+                    .build();
+            placeComputeDTO.add(placeItem);
         }
+        double sumOfStay = 0;
+        for (PlaceComputeDTO place : placeComputeDTO){
+            sumOfStay += place.getStay();
+        }
+        double avgStayOfDays = sumOfStay / total_day;
+        placeComputeDTO = planDetailService.divideDays(placeComputeDTO, avgStayOfDays);
+        placeComputeDTO = planDetailService.pushDays(placeComputeDTO, updatePlanDTO.getPlaces().size(), (int) total_day, avgStayOfDays);
+
+        planDetailRepository.deleteAll(planDetailList);
+
+        savePlanDetail(placeComputeDTO, user, plan);
     }
 }

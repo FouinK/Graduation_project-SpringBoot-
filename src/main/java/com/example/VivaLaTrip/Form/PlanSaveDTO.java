@@ -13,5 +13,4 @@ public class PlanSaveDTO {
     private List<Places> checkedPlace;
     private String start_date;
     private String end_date;
-
 }

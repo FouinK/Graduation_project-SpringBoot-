@@ -99,12 +99,10 @@ public class UserController {
     @PostMapping("/sign_uppro")
     public String sign_uppro(@Valid UserForm userForm, Errors errors, Model model) {
         if (errors.hasErrors()) {
-            */
-    /* 회원가입 실패시 입력 데이터 값을 유지 *//*
+            회원가입 실패시 입력 데이터 값을 유지
 
             model.addAttribute("userDto", userForm);
-            */
-    /* 유효성 통과 못한 필드와 메시지를 핸들링 *//*
+            유효성 통과 못한 필드와 메시지를 핸들링
 
             Map<String, String> validatorResult = userService.validateHandling(errors);
             for (String key : validatorResult.keySet()) {
@@ -115,8 +113,7 @@ public class UserController {
             log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getPassword());
             log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getUserName_());
             log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getLiked());
-            */
-    /* 회원가입 페이지로 다시 리턴 *//*
+            회원가입 페이지로 다시 리턴
 
             return "/sign_up";
         }
@@ -130,10 +127,8 @@ public class UserController {
         userService.join(userInfo);
         return "login";
     }
-*/
 
     //회원가입시 아이디 중복체크
-/*
     @GetMapping("/api/overlap/usernameRegister")
     public ResponseEntity<?> mapReturn(String username) {
 
