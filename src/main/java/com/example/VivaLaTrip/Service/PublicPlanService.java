@@ -110,6 +110,7 @@ public class PublicPlanService {
 
         if (user.getUsername().equals(plan.getUserInfo().getUsername())) {
             if (plan.getIs_public()) {
+                plan.setIs_public(false);
                 PublicPlan publicPlan = publicPlanRepository.findByPlanId(plan_id);
                 publicPlan.setPlan(null);   //참조키 관계 파괴-안하면 plan도 같이 삭제됨
                 publicPlanRepository.delete(publicPlan);
@@ -194,11 +195,9 @@ public class PublicPlanService {
             newMyPlan.setStart_date(plan.getStart_date());
             newMyPlan.setEnd_date(plan.getEnd_date());
             newMyPlan.setFromPlanId(plan_id);
+            newMyPlan.setComment(plan.getComment()+"("+plan_id+"번 일정 복사)");
             //새로운 plan저장
             planRepository.save(newMyPlan);
-
-            //새롭게 저장된 plan가져오기
-//            newMyPlan = planRepository.findByPlanId(newMyPlan.getPlanId());
 
             List<PlanDetail> planDetailList = planDetailRepository.findAllByPlan_PlanId(plan.getPlanId());
             int size = planDetailList.size();
