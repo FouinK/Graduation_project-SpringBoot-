@@ -35,6 +35,11 @@ public class PlanService {
     MapService mapService;
     public void savePlan(PlanSaveDTO request, User user, List<PlaceComputeDTO> computeDTO) {
 
+        //코멘트 값 입력받지 않았다면 No title 저장
+        if (request.getTitle() == null) {
+            request.setTitle("No title");
+        }
+
         Plan plan = new Plan();
         Optional<UserInfo> userInfo = userRepository.findByID(user.getUsername());
 
@@ -43,6 +48,7 @@ public class PlanService {
         plan.setTotal_count(request.getCheckedPlace().size());
         plan.setStart_date(request.getStart_date());
         plan.setEnd_date(request.getEnd_date());
+        plan.setComment(request.getTitle());        //타이틀 추가
         //plan 객체에 필요한 값들 설정
 
         planRepository.save(plan);
@@ -51,7 +57,7 @@ public class PlanService {
             log.info(plan.getPlanId().toString());
             log.info(request.getTitle());
             log.info(user.getUsername());
-            publicPlanService.toPublic(plan.getPlanId(), request.getTitle());
+            publicPlanService.toPublic(plan.getPlanId());
         }
 
         savePlanDetail(computeDTO, user, plan);
@@ -65,7 +71,6 @@ public class PlanService {
         //userinfo에서 id값 가져온거 plan리포지토리 userId에서 찾음= plan이 있는 값 가져옴, Pageable로 페이지 형식 맞춰서 뽑아옴
 
         log.info("전체 페이지 수 확인 : " + user_plan.getTotalPages());
-        log.info("get().toString() 확인 : " + user_plan.get().toString());
         log.info("getTotalElements() 확인 : " + user_plan.getTotalElements());
 
         for(Plan plan: user_plan){
@@ -78,7 +83,7 @@ public class PlanService {
                         .start_date(plan.getStart_date())
                         .end_date(plan.getEnd_date())
                         .plan_id(plan.getPlanId().toString())
-                        .title(publicPlan.getComment())
+                        .title(plan.getComment())
                         .place_num(plan.getTotal_count())
                         .liked(publicPlan.getLike_count())
                         .build();
@@ -91,7 +96,7 @@ public class PlanService {
                         .start_date(plan.getStart_date())
                         .end_date(plan.getEnd_date())
                         .plan_id(plan.getPlanId().toString())
-                        .title("")
+                        .title(plan.getComment())       //isPublic이 false여도 코멘트 추가
                         .place_num(plan.getTotal_count())
                         .liked(0)
                         .build();
@@ -160,7 +165,7 @@ public class PlanService {
         List<PlanDetailDTO> places = new ArrayList<>();
 
         if (plan.getIs_public()){
-            planDetailResponseDTO.setTitle(publicPlan.getComment());
+            planDetailResponseDTO.setTitle(plan.getComment());
             planDetailResponseDTO.setLiked(publicPlan.getLike_count());
         }else {
             planDetailResponseDTO.setTitle("");
@@ -302,7 +307,7 @@ public class PlanService {
             publicPlanService.toPrivate(planId, user);
         } else if (updatePlanDTO.getIsPublic() && publicPlanRepository.existsByPlanId(planId) == false) {
             log.info("일정 공유 실행되는지 ?");
-            publicPlanService.toPublic(planId, updatePlanDTO.getTitle());
+            publicPlanService.toPublic(planId);     //코멘트는 일반 Plan 테이블에 저장
         }
 
         //plan업데이트

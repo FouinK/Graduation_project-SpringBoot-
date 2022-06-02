@@ -52,7 +52,7 @@ public class PublicPlanService {
                     .start_date(plan.getStart_date())
                     .end_date(plan.getEnd_date())
                     .plan_id(plan.getPlanId().toString())
-                    .title(pp.getComment())
+                    .title(plan.getComment())
                     .place_num(plan.getTotal_count())
                     .liked(pp.getLike_count())
                     .build();
@@ -68,18 +68,14 @@ public class PublicPlanService {
         return loginSuccessPlanListDTO;
     }
 
-    public void toPublic(Long plan_id, String comment) {
+    public void toPublic(Long plan_id) {
 
-        if (comment == null) {
-            comment = "";
-        }
 
         Plan plan = findPlan(plan_id);
         PublicPlan publicPlan = new PublicPlan();
 
         publicPlan.setPlan(plan);
         publicPlan.setPlanId(plan_id);
-        publicPlan.setComment(comment);
         publicPlan.setLike_count(0);
         publicPlanRepository.save(publicPlan);
 
@@ -141,7 +137,7 @@ public class PublicPlanService {
 
         boolean pushed = likedRepository.existsByPlan_PlanIdAndUserInfo_UserId(plan_id, userInfo.get().getUserId());
         //좋아요 취소 기능이 생기면 동작할 변수
-        boolean cancleLike = false;
+        boolean cancelLike = false;
 
         if (pushed) {
             log.info("이미 '좋아요'를 누른 일정입니다.");
@@ -159,7 +155,7 @@ public class PublicPlanService {
             key = "success";
         }
 
-        if (cancleLike) {
+        if (cancelLike) {
             if (pushed) {
                 //Public에서 liked -1 하고 저장
                 publicPlan.setLike_count(publicPlan.getLike_count() - 1);
