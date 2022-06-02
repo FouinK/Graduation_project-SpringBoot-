@@ -17,8 +17,6 @@ public class PublicPlan implements Serializable {
     @JoinColumn(name = "plan_id")
     private Plan plan;
 
-    @Column(name = "comment",nullable = false)
-    private String comment;
 
     @Column(name = "like_count")
     private int like_count;
