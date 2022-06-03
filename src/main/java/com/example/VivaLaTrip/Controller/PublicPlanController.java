@@ -85,6 +85,7 @@ public class PublicPlanController {
             log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
             log.info("서버 세션 값: " + httpSession.getId());
             key = "login";
+            return ResponseEntity.ok(key);
         }
 
         key = publicPlanService.toMyPlan(planId, user);
