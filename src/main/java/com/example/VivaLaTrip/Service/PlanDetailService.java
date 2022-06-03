@@ -71,6 +71,12 @@ public class PlanDetailService {
 
         places = divideDays(sortedPlaces, avgStayOfDays);
 
+        places = pushDays(places, total_count, total_day, avgStayOfDays);
+
+        return places;
+    }
+
+    public List<PlaceComputeDTO> pushDays(List<PlaceComputeDTO> places, int total_count, int total_day, double avgStayOfDays){
         int maxid = 0;
         while (places.get(total_count - 1).getDays() != total_day) {                                                               //마지막날이 days랑 다를 때
 
@@ -163,7 +169,6 @@ public class PlanDetailService {
                 }
             }
         }
-
         return places;
     }
 

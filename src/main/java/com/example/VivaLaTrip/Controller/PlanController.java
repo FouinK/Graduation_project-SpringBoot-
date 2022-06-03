@@ -145,9 +145,10 @@ public class PlanController {
         //전역변수에 담기
         planId = getplanId;
         log.info(planId + "번 plan 요청받음(일반 Plan)");
-        PlanDetailResponseDTO response = planService.getPlanDetail(planId, user,"plan");
-        int total_days = Integer.parseInt(response.getEnd_date()) - Integer.parseInt(response.getStart_date());     //total_days 계산
-        response.setTotal_days(total_days+1);                                                                       //total_days 리턴추가 데이 형식이므로 +1
+        PlanDetailResponseDTO response = planService.getPlanDetail(planId, user, "plan");
+
+        response.setTotal_days(response.getPlaces().get(response.getPlace_num() - 1).getDay());
+
         response.setLoginSuccess(true);
 
         return ResponseEntity.ok(response);
@@ -165,8 +166,8 @@ public class PlanController {
     @PostMapping("/api/edit")
     public @ResponseBody
     ResponseEntity<?> responseCompleteEditPlanDetail(@RequestBody UpdatePlanDTO updatePlanDTO,
-                                                     @AuthenticationPrincipal User user) {
-        planService.updateMyPlan(updatePlanDTO,planId,user);
+                                                     @AuthenticationPrincipal User user) throws ParseException {
+        planService.updatePlan(updatePlanDTO,planId,user);
 
         return ResponseEntity.ok("Ok");
     }
