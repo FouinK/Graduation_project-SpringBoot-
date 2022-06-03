@@ -150,7 +150,7 @@ public class PlanController {
         response.setTotal_days(response.getPlaces().get(response.getPlace_num() - 1).getDay());
 
         response.setLoginSuccess(true);
-
+        log.info("리스폰스 값 확인 (겟마이플랜)" + response.toString());
         return ResponseEntity.ok(response);
     }
 

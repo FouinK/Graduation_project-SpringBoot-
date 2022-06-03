@@ -24,10 +24,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserService userService;
-    /* 로그인 실패 핸들러 의존성 주입 */
+
     @Autowired
     HttpSession httpSession;
 
+    /* 로그인 실패 핸들러 의존성 주입 */
     @Autowired
     private final CustomAuthFailureHandler customFailurHandler;
 
