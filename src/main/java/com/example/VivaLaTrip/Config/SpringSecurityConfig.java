@@ -28,42 +28,29 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     HttpSession httpSession;
 
-    /* 로그인 실패 핸들러 의존성 주입 */
-    @Autowired
-    private final CustomAuthFailureHandler customFailurHandler;
-
+    //로그인 동작이 실제로 일어나는 함수(시큐리티 클래스)
     @Override
     @ResponseBody
     public void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()           //포스트 매핑 오류 제거
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll()
                 .antMatchers("/**","/users/**").permitAll()
                 .antMatchers("/admin").hasAuthority("ROLE_ADMIN");    //역할에 따라 접근 통제 가능
-//                .antMatchers("/users").hasAuthority("ROLE_USER");
-
-//                .anyRequest().authenticated()                           //어떠한 URL로 접근하던지 인증이 필요함
-//        http
-//                .authorizeRequests()
-//                .anyRequest().authenticated();
         http
                 .formLogin()
-//                .loginPage("/api/login")                          //로그인 페이지 호출
                 .permitAll()
-                .loginProcessingUrl("/api/login")                   //폼으로 받는 URL
-                .usernameParameter("id")                            //아이디 파라미터 받기
-                .passwordParameter("pw")                           //비밀번호 파라미터 받기
-                .successForwardUrl("/loginSuccess")                 //로그인 성공시 이동할 페이지
-                .failureForwardUrl("/loginFail")                  // 로그인 실패시 이동할 페이지
+                .loginProcessingUrl("/api/login")                  //로그인 요청을 받는 url
+                .usernameParameter("id")                           //url내부 body값에 저장 된(프론트에서 입력 된) id값과 일치여부 확인
+                .passwordParameter("pw")                           //url내부 body값에 저장 된(프론트에서 입력 된) pw값과 일치여부 확인
+                .successForwardUrl("/loginSuccess")                //로그인 성공시 이동할 Mapping url
+                .failureForwardUrl("/loginFail")                   // 로그인 실패시 이동할 Mapping url
                 .and()
-                .logout()
-                .logoutUrl("/api/logout")
-                .logoutSuccessUrl("/logoutSuccess")
-                .invalidateHttpSession(true);
-
-    //세션 날리기(?)
-//                .logoutRequestMatcher(new AntPathRequestMatcher("/logoutpro"));     //로그아웃
+                .logout()               //실제 로그인이 처리되는 로그아웃 함수
+                .logoutUrl("/api/logout")                           //로그아웃 요청을 받는 url
+                .logoutSuccessUrl("/logoutSuccess")                 //로그아웃 성공시 이동할 Mapping url
+                .invalidateHttpSession(true);                       //로그아웃 시 로그인 시 부여됐던 Session값 삭제
     }
 
     @Override
@@ -76,6 +63,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(userService);
     }
 
+    //패스워드 암호화 함수
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

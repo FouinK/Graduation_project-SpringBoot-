@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+//로그인 실패시 반환하는 User객체에 모두 Null이 담기도록 해주는 UserInfo 클래스(User Null에러 방지)
 public class FailureUserInfo implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

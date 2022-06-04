@@ -6,6 +6,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+//Cors에러를 우회하며 프론트서버와 백서버 간의 송수신이 일어날 수 있도록 도와주는 CorsConfig 클래스
 @Component
 public class CorsConfig {
     @Bean

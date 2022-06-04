@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+//의존성 부여를 위한 VivaLaTripConfig
 @Slf4j
 @Configuration
 public class VivaLaTripConfig {

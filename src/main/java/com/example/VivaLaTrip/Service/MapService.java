@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+//Places요청에 의한 실질적인 내부 동작 로직을 처리하는 MapService클래스
 @Slf4j
 public class MapService {
 
@@ -31,15 +32,17 @@ public class MapService {
         this.mapRepository = mapRepository;
     }
 
+    //자체 데이터 베이스 저장 전 Places 값들을 호출하기 위해 사용 됐던 KAKAO MAP의 명소 호출 함수(45개)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @ResponseBody
     public List<Documents> MapParsing(String word) throws UnsupportedEncodingException, UnirestException, JsonProcessingException {
 
-//        log.info("서비스  word값 : "+word);
+        String APIKey = "KakaoAK ";                         //kakao에서 제공하는 API KEY를 담는 변수
 
-        String APIKey = "KakaoAK ";
-
+        /*주요코드*/
+        //카카오에서 제공하는 API호출을 위한 Url로 KAKAO가 가지고 있는 명소 값을을 뽑아옴(키워드를 입력 받아야 가능 ..ex)서울 명소
+        //한 번 요청에 최대 15개가 최대이므로 총 3번 요청함
         HashMap<String, Object> map1 = new HashMap<>();
         HashMap<String, Object> map2 = new HashMap<>();
         String apiURL ="https://dapi.kakao.com/v2/local/search/keyword.json?page=1&query="
@@ -47,59 +50,66 @@ public class MapService {
 
         HttpResponse<JsonNode>[] response= new HttpResponse[3];
 
-        response[0] = Unirest.get(apiURL)
+        response[0] = Unirest.get(apiURL)                   //Page1에 담긴 15개의 장소를 담음
                 .header("Authorization", APIKey)
                 .asJson();
 
         apiURL ="https://dapi.kakao.com/v2/local/search/keyword.json?page=2&query="
                 + URLEncoder.encode(word, "UTF-8");
 
-        response[1] = Unirest.get(apiURL)
+        response[1] = Unirest.get(apiURL)                   //Page2에 담긴 15개의 장소를 담음
                 .header("Authorization", APIKey)
                 .asJson();
 
         apiURL ="https://dapi.kakao.com/v2/local/search/keyword.json?page=3&query="
                 + URLEncoder.encode(word, "UTF-8");
 
-        response[2] = Unirest.get(apiURL)
+        response[2] = Unirest.get(apiURL)                   //Page3에 담긴 15개의 장소를 담음
                 .header("Authorization", APIKey)
                 .asJson();
 
         ObjectMapper objectMapper =new ObjectMapper();
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 
+        KakaoGeoRes bodyJson[] = new KakaoGeoRes[3];        //원하는 key값만 뽑아내기 위해 자체적으로 만든 객체 호출
 
-        KakaoGeoRes bodyJson[] = new KakaoGeoRes[3];
-
+        //Places 15개씩 객체배열에 담음
         bodyJson[0] = objectMapper.readValue(response[0].getBody().toString(), KakaoGeoRes.class);
         bodyJson[1] = objectMapper.readValue(response[1].getBody().toString(), KakaoGeoRes.class);
         bodyJson[2] = objectMapper.readValue(response[2].getBody().toString(), KakaoGeoRes.class);
 
-        List<Documents> result = new ArrayList<>();
+        List<Documents> result = new ArrayList<>();         //Places에 담긴 x,y값 및 주소, 장소 이름 등이 실제적으로 담기는 객체 호출(KAKAO에서 제공하는 key값들에 맞추어 자체 제작)
 
+        //45개 Places에 대한 모든 정보를 ArrayList에 합침.
         result.addAll(bodyJson[0].getDocuments());
         result.addAll(bodyJson[1].getDocuments());
         result.addAll(bodyJson[2].getDocuments());
 
-        return result;
+        return result;  //45개에 대한 장소정보 리턴
     }
 
+    //14만개의 places데이터를 담고있는 데이터베이스를 참조하여 원하는 Places값을 뽑아오는 함수
     public List<Places> MapParsingDB(String word) {
 
+        //사용자가 원하는 키워드가 포함된 모든 Places의 데이터를 뽑아옴(인기순으로 정렬)
         List<Places> bodyJson = mapRepository.findByAddressNameContains(word, Sort.by(Sort.Order.desc("popularity")));
 
+        //Places의 개수를 100개 이하로 잘라서 리턴.
         if (bodyJson.size() > 100) {
             return bodyJson.subList(0, 100);
         }
         return bodyJson;
     }
 
+    //경로 계산 알고리즘시 동작 되는 함수(중심 좌표 2키로 반경 숙소 값 파싱)
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @ResponseBody
     public PlanDetailDTO getHotel(double x, double y) throws UnirestException, JsonProcessingException {
 
-        String APIKey = "KakaoAK 00996a550c5152989e6ad63d03958d4f";
+        /*주요코드*/
+        //카카오에서 제공하는 API호출을 위한 Url로 KAKAO가 가지고 있는 숙소 값을을 뽑아옴 중심 x,y좌표 기준 2키로 반경
+        String APIKey = "KakaoAK ";
         String apiURL ="https://dapi.kakao.com/v2/local/search/category.json?" +
                 "page=1&category_group_code=AD5&x="+x+"&y="+y+"&radius=20000&sort=distance";
 
@@ -109,6 +119,7 @@ public class MapService {
         ObjectMapper objectMapper =new ObjectMapper();
         objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 
+        //숙소들에 담긴 x,y값 및 주소, 장소 이름 등이 실제적으로 담기는 객체 호출(KAKAO에서 제공하는 key값들에 맞추어 자체 제작)
         KakaoGeoRes bodyJson = objectMapper.readValue(response.getBody().toString(), KakaoGeoRes.class);
         List<Documents> result = new ArrayList<>(bodyJson.getDocuments());
 
@@ -119,9 +130,10 @@ public class MapService {
                 .y(Double.parseDouble(result.get(0).getY()))
                 .build();
 
-        return hotel;
+        return hotel;   //15개의 숙소 값 리턴
     }
 
+    //사용자가 Plan을 만들 때 장소 개수에 비해 일정이 지나치게 짧아 의도한 대로 알고리즘이 생성되지 않을 때 자체적으로 장소를 추천하여 일정에 장소들을 추가해주는 함수
     public List<Places> placeAdd(List<Places> places, double minPlace) {
 
         int avgPopularity = 0;
@@ -147,16 +159,15 @@ public class MapService {
         double distance = 0.005;  //500m
         int index = 0;  //반복 횟수 - 범위를 점차 늘리기 위해
 
+        //사용자가 입력한 장소들의 500미터 범위에 있는 모든 Places를 뽑아옴 그래도 개수가 부족하다면 반경을 점점 500미터 씩 늘려서 장소를 뽑아옴
         while (minPlace > places.size()){
-            log.info("x범위 : "+ (x_min - distance * index) + "~" + (x_max + distance * index));
-            log.info("y범위 : "+ (y_min - distance * index) + "~" + (y_max + distance * index));
             List<Places> extraPlaces = mapRepository.findByXBetweenAndYBetween(
                     (x_min - distance * index),
                     (x_max + distance * index),
                     (y_min - distance * index),
                     (y_max + distance * index),
                     Sort.by(Sort.Order.desc("popularity")));
-
+            //사용자로부터 입력받은 모든 Places들의 인기도 평균을 계산하여 인기도가 그 이상인 Places들만 솎아냄
             for (Places extraPlace : extraPlaces){
                 if (!places.contains(extraPlace) && extraPlace.getPopularity() > avgPopularity){
                     places.add(extraPlace);
@@ -165,7 +176,7 @@ public class MapService {
             index++;
         }
 
-        return places;
+        return places;      //추천된 장소들을 리턴
     }
 
 /*    public void Save_Places(KakaoGeoRes bodyJson[]) {
