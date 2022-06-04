@@ -5,6 +5,8 @@ import com.example.VivaLaTrip.Form.UserForm;
 import com.example.VivaLaTrip.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -16,13 +18,18 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/*로그인 실패, 로그인 성공, 로그아웃 성공, 회원가입의 동작들이 작동 할 수 있게 도와주는 다양한 Mapping 존재
+UserController -> 모든 Mapping은 프론트와 직접적인 송수신이 일어남*/
 @Slf4j
 @RestController
 public class UserController {
+
     private final UserService userService;
 
     //이메일 검사를 위한 유저 아이디 저장
@@ -33,7 +40,7 @@ public class UserController {
         this.userService = userService;
     }
 
-
+    //SpringSecurity에서 로그인 실패를 반환했을 때 매핑 되는 함수이며
     @PostMapping("/loginFail")
     public ResponseEntity<?> LgoinFail() {
         Map<String, Object> map = new HashMap<>();
@@ -41,7 +48,7 @@ public class UserController {
         return ResponseEntity.ok(map);
     }
 
-
+    //SpringSecurity에서 로그인 성공을 반환했을 때 매핑 되는 함수
     @PostMapping("/loginSuccess")
     public ResponseEntity<?> LoginSuccess(@AuthenticationPrincipal User user) {
         Map<String, Object> map = new HashMap<>();
@@ -50,15 +57,18 @@ public class UserController {
         return ResponseEntity.ok(map);
     }
 
+    //SpringSecurity에서 로그아웃 성공을 반환했을 때 매핑 되는 함수
     @ResponseBody
+    @ResponseStatus
     @GetMapping("/logoutSuccess")
-    public ResponseEntity<?> LogoutSuccess() {
+    public ResponseEntity<Object> LogoutSuccess() throws URISyntaxException {
         log.info("로그아웃 성공");
         Map<String, Object> map = new HashMap<>();
         map.put("loginSuccess", true);
         return ResponseEntity.ok(map);
     }
 
+    //회원가입 로직을 처리하는 매핑 함수
     @ResponseBody
     @PostMapping("/api/register")
     public ResponseEntity<?> SignUp(@RequestBody HashMap<String,Object> map) {
@@ -67,102 +77,31 @@ public class UserController {
         boolean overlapEmail = userService.usernameOverlap((String) map.get("id"));     //중복 회원검사
         Map<String, Object> jsonMap = new HashMap<>();
         if (overlapEmail == true) {
-            jsonMap.put("success",(String) map.get("id"));                               //제이슨에 중복 아이디 담기
+            jsonMap.put("success","emailErr");                               //Json의 success key에 emailErr Value담기, 현재 입력된 아이디 값이 중복된 것을 알려줄 수 잇음
         } else if (overlapEmail == false) {
-            jsonMap.put("success","success");                                           //제이슨에 성공 담기
+            jsonMap.put("success","success");                                           //Json의 success key에 success Value담기
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             userInfo.setID((String) map.get("id"));
-            userInfo.setPW(bCryptPasswordEncoder.encode((String) map.get("pw")));
-            userInfo.setNickName("이름모를 누군가"/*(String) map.get("username")*/);       //닉네임 값 입력 필요함
+            userInfo.setPW(bCryptPasswordEncoder.encode((String) map.get("pw")));        //패스워드 암호화
+            userInfo.setNickName("이름모를 누군가"/*(String) map.get("username")*/);
             userInfo.setAuthority("ROLE_USER");
             userService.join(userInfo);
-            userService.Send_Email(userInfo.getID());
+            userService.Send_Email(userInfo.getID());                                   //이메일 인증 함수 호출
         }
-        return ResponseEntity.ok(jsonMap);
+        return ResponseEntity.ok(jsonMap);                          //success여부 프론트에 송신
     }
 
+    //회원가입 후 이메일 인증이 성공했는지를 반환하는 매핑
     @ResponseBody
     @PostMapping("/api/register/email")
     public ResponseEntity<?> ConfirmationEmail(@RequestBody HashMap<String,Object> map) {
         Map<String, Object> jsonMap = new HashMap<>();
         Optional<UserInfo> userinfo1 = userService.Get_UserInfo(username);
         if (userinfo1.get().getCheck_Email().equals((String)map.get("authNum"))) {
-//            userService.Update_Userinfo_ROLE_USER(Optional.ofNullable(userInfo));
-            jsonMap.put("success",true);
+            jsonMap.put("success",true);            //인증번호가 동일하면 Json의 key에 true Value를 담음
         } else if (!userinfo1.get().getCheck_Email().equals((String)map.get("authNum"))) {
-            jsonMap.put("success", false);
+            jsonMap.put("success", false);          //인증번호가 동일하면 Json의 key에 true Value를 담음
         }
-        return ResponseEntity.ok(jsonMap);
-    }
-/*
-    //시큐리티 회원가입(해시 함수 적용된 PW암호화)        //리액트와 연동 시 삭제 필요
-    @PostMapping("/sign_uppro")
-    public String sign_uppro(@Valid UserForm userForm, Errors errors, Model model) {
-        if (errors.hasErrors()) {
-            회원가입 실패시 입력 데이터 값을 유지
-
-            model.addAttribute("userDto", userForm);
-            유효성 통과 못한 필드와 메시지를 핸들링
-
-            Map<String, String> validatorResult = userService.validateHandling(errors);
-            for (String key : validatorResult.keySet()) {
-                model.addAttribute(key, validatorResult.get(key));
-            }
-            log.info("--뭔가 문제가 있을 때 아래 출력문이 뜸--");
-            log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getUsername());
-            log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getPassword());
-            log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getUserName_());
-            log.info("컨트롤러에서 받은 유저폼의 아이디" + userForm.getLiked());
-            회원가입 페이지로 다시 리턴
-
-            return "/sign_up";
-        }
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        UserInfo userInfo = new UserInfo();
-        userInfo.setID(userForm.getUsername());
-        userInfo.setPW(bCryptPasswordEncoder.encode(userForm.getPassword()));
-        userInfo.setNickName(userForm.getUserName_());
-//        userInfo.setLiked(userForm.getLiked());
-        userInfo.setAuthority("ROLE_USER");
-        userService.join(userInfo);
-        return "login";
-    }
-
-    //회원가입시 아이디 중복체크
-    @GetMapping("/api/overlap/usernameRegister")
-    public ResponseEntity<?> mapReturn(String username) {
-
-        return ResponseEntity.ok(map);
-    }
-*/
-
-    @PostMapping("/Email_Check")
-    public String Email_Check(@AuthenticationPrincipal User user, Model model) {
-        if (user != null) {     //유저정보 보내기
-            Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
-            model.addAttribute("username", userInfo.get().getNickName());
-            userService.Send_Email(user.getUsername());
-            log.info("컨트롤러에서 받은 email값 : " + user.getUsername());
-        }
-        return "test";
-    }
-
-    @PostMapping("/Email_Checkpro")
-    public String Email_Checkpro(@AuthenticationPrincipal User user, Model model, String check_email) {
-        if (user != null) {     //유저정보 보내기
-            Optional<UserInfo> userInfo = userService.Get_UserInfo(user.getUsername());
-            model.addAttribute("username", userInfo.get().getNickName());
-            if (userInfo.get().getCheck_Email().equals(check_email)) {
-                userService.Update_Userinfo_ROLE_USER(userInfo);
-                log.info("컨트롤러에서 받은 이메일 :"+check_email);
-                log.info("컨트롤러에서 받은 유저인포의 이메일 :"+userInfo.get().getCheck_Email());
-                log.info("이메일 인증 성공");
-                return "index";
-            }
-//            log.info("컨트롤러에서 받은 이메일 :"+check_email);
-//            log.info("컨트롤러에서 받은 유저인포의 이메일 :"+userInfo.get().getCheck_Email());
-        }
-        log.info("이메일 인증 실패");
-        return "test";
+        return ResponseEntity.ok(jsonMap);          //성공여부를 프론트에 송신
     }
 }

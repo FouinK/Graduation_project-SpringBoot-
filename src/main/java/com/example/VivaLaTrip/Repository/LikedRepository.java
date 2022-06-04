@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+//Liked테이블을 직접적으로 CRUD를 처리할 수 있는 Repositoty
 public interface LikedRepository extends JpaRepository<Liked, Long> {
 
     Liked findByPlan_PlanIdAndUserInfo_UserId(Long planId, Long userId);

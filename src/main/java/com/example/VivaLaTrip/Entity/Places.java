@@ -5,8 +5,8 @@ import lombok.*;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.Comparator;
 
+//Places 테이블의 컬럼들을 가지고 있는 클래스
 @Entity
 @Data
 @Getter
@@ -42,11 +42,6 @@ public class Places {
 
     @Column(name = "indoor", nullable = false)
     private String indoor;
-
-/*
-    @Column(name = "checked", nullable = false)
-    private boolean checked;
-*/
 
     @Column(name = "stay")
     private int stay;

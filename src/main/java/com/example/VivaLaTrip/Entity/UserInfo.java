@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+//UserInfo 테이블의 컬럼들을 가지고 있는 클래스
 @Data
 @Getter
 @Setter
@@ -30,11 +31,6 @@ public class UserInfo implements UserDetails {
 
     @Column(name="NickName",length = 200,nullable = false)
     private String NickName;
-/*
-
-    @Column(name="liked",length = 800)
-    private String liked;
-*/
 
     @Column(name="Authority")
     private String Authority;

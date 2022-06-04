@@ -26,8 +26,9 @@ public class MainController {
         this.mapService = mapService;
     }
 
+    //인덱스 페이지 호출을 위한 Mapping
     @GetMapping("/")
-    public String toIndex() throws UnirestException {
+    public String toIndex() {
         return "index";
     }
 }

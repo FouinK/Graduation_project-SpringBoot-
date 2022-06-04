@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+//카카오 API에서 제공하는 key값에 맞추어 클래스 생성
 @Data
 @Getter
 @Setter
