@@ -1,5 +1,6 @@
 package com.example.VivaLaTrip.Service;
 
+import com.example.VivaLaTrip.Config.RestException;
 import com.example.VivaLaTrip.Entity.*;
 import com.example.VivaLaTrip.Form.*;
 import com.example.VivaLaTrip.Repository.*;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -163,8 +165,7 @@ public class PlanService {
         //일정이 자기 일정인지 확인하기 whereRequest가 true면 일반일정에서 요청 함 자기 일정만 조회 가능
         if (whereRequest.equals("plan")) {      //이중 포문인 이유는 로그인 하지 않아도 public_plan은 조회가능 안그러면 user is null에러 뜸
             if (!user.getUsername().equals(plan.getUserInfo().getUsername())) {
-                throw new IllegalStateException("해당 일정은 니것이 아님");
-            }
+                throw new RestException(HttpStatus.MOVED_PERMANENTLY, "해당일정은 니 것이 아님");            }
         }
 
         PlanDetailResponseDTO planDetailResponseDTO = new PlanDetailResponseDTO();
