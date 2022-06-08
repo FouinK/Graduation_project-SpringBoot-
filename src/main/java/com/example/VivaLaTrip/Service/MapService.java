@@ -169,7 +169,7 @@ public class MapService {
                     Sort.by(Sort.Order.desc("popularity")));
             //사용자로부터 입력받은 모든 Places들의 인기도 평균을 계산하여 인기도가 그 이상인 Places들만 솎아냄
             for (Places extraPlace : extraPlaces){
-                if (!places.contains(extraPlace) && extraPlace.getPopularity() > avgPopularity){
+                if (!places.contains(extraPlace) && extraPlace.getPopularity() > avgPopularity - (avgPopularity / 10) * index) {
                     places.add(extraPlace);
                 }
             }

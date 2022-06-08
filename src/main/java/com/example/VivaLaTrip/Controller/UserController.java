@@ -42,8 +42,9 @@ public class UserController {
 
     //SpringSecurity에서 로그인 실패를 반환했을 때 매핑 되는 함수이며
     @PostMapping("/loginFail")
-    public ResponseEntity<?> LgoinFail() {
+    public ResponseEntity<?> LoginFail() {
         Map<String, Object> map = new HashMap<>();
+        System.out.println("여기가 작동 ?");
         map.put("loginSuccess", false);
         return ResponseEntity.ok(map);
     }
