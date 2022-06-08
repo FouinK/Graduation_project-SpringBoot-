@@ -31,4 +31,9 @@ public class MainController {
     public String toIndex() {
         return "index";
     }
+
+    @GetMapping("*")
+    public String goIndex() {
+        return "index";
+    }
 }
