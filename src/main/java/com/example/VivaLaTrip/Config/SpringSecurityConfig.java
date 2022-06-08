@@ -33,14 +33,17 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @ResponseBody
     public void configure(HttpSecurity http) throws Exception {
         http
+                .httpBasic().disable()
+                .httpBasic().disable()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/h2-console/**").permitAll()
-                .antMatchers("/**","/users/**").permitAll()
+                .antMatchers("/**", "/users/**").permitAll()
                 .antMatchers("/admin").hasAuthority("ROLE_ADMIN");    //역할에 따라 접근 통제 가능
         http
                 .formLogin()
                 .permitAll()
+                .loginPage("/login")
                 .loginProcessingUrl("/api/login")                  //로그인 요청을 받는 url
                 .usernameParameter("id")                           //url내부 body값에 저장 된(프론트에서 입력 된) id값과 일치여부 확인
                 .passwordParameter("pw")                           //url내부 body값에 저장 된(프론트에서 입력 된) pw값과 일치여부 확인
