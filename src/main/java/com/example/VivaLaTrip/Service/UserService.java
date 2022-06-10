@@ -1,10 +1,12 @@
 package com.example.VivaLaTrip.Service;
 
+import com.example.VivaLaTrip.Config.RestException;
 import com.example.VivaLaTrip.Entity.UserInfo;
 import com.example.VivaLaTrip.Form.FailureUserInfo;
 import com.example.VivaLaTrip.Repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,9 +43,10 @@ public class UserService implements UserDetailsService {
     public void ValidateUser(UserInfo userInfo) {
         userRepository.findByID(userInfo.getID())
                 .ifPresent(m -> {
-                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                    throw new RestException(HttpStatus.FOUND,"이미 존재하는 회원입니다.");
                 });
     }
+
     /* 회원가입 시, 유효성 체크 */
     @Transactional
     public Map<String, String> validateHandling(Errors errors) {
