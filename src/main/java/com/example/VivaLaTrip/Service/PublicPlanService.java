@@ -145,7 +145,6 @@ public class PublicPlanService {
         boolean cancelLike = false;
 
         if (pushed) {
-            log.info("이미 '좋아요'를 누른 일정입니다.");
             key = "overlap";
         } else {
             //public에서 라이크 올리기
@@ -156,7 +155,6 @@ public class PublicPlanService {
             liked.setUserInfo(userInfo.get());
             liked.setPlan(publicPlan.getPlan());
             likedRepository.save(liked);
-            log.info(userInfo.get().getUserId() + "번 회원이 " + plan_id + "번 일정에 좋아요");
             key = "success";
         }
 
@@ -169,7 +167,6 @@ public class PublicPlanService {
                 //Liked 해당 row 삭제
                 Liked like1 = likedRepository.findByPlan_PlanIdAndUserInfo_UserId(plan_id, userInfo.get().getUserId());
                 likedRepository.deleteById(like1.getNum());
-                log.info(userInfo.get().getUserId() + "번 회원이 " + plan_id + "번 일정에 좋아요 취소");
             } else {
                 log.info("좋아요 안누름");
             }

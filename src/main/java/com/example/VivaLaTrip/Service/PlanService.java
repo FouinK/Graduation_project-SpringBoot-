@@ -76,8 +76,6 @@ public class PlanService {
         Page<Plan> user_plan = planRepository.findByUserInfo_UserId(userInfo.get().getUserId(),pageable);
         //userinfo에서 id값 가져온거 plan리포지토리 userId에서 찾음= plan이 있는 값 가져옴, Pageable로 페이지 형식 맞춰서 뽑아옴
 
-        log.info("전체 페이지 수 확인 : " + user_plan.getTotalPages());
-        log.info("getTotalElements() 확인 : " + user_plan.getTotalElements());
 
         for(Plan plan: user_plan){
             if(plan.getIs_public()) {

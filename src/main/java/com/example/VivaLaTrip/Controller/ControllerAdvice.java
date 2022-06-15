@@ -16,9 +16,6 @@ public class ControllerAdvice {
 
     @ExceptionHandler(RestException.class)
     public ResponseEntity<?> handler(RestException e) throws URISyntaxException {
-        System.out.println("컨트롤러 어드바이스 출력");
-        System.out.println("컨트롤러 어드바이스 상태 값 : " + e.getStatus());
-        System.out.println("컨트롤러 어드바이스 메세지 값 : " + e.getMessage());
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(URI.create("/"));
 

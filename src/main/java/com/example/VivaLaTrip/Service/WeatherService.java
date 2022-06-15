@@ -1,6 +1,7 @@
 package com.example.VivaLaTrip.Service;
 
 //import com.example.VivaLaTrip.OpenWeatherDto.OpenWeather;
+import com.example.VivaLaTrip.Config.RestException;
 import com.example.VivaLaTrip.OpenWeatherDto.ShortOpenWeatherDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,6 +13,7 @@ import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDate;
@@ -34,7 +36,7 @@ public class WeatherService {
         int Today = Integer.parseInt(formatedNow);
         int gap = date - Today;
         if (gap > 10) {
-            throw new IllegalStateException("날짜 차이가 너무 남");
+            throw new RestException(HttpStatus.FOUND,"날짜 차이가 너무 남");
         }
 
         return date;
@@ -113,8 +115,6 @@ public class WeatherService {
         HashMap<String, Object> map = objectMapper.convertValue(openWeather, HashMap.class);
 //        HashMap<String, Object> map1 = objectMapper.readValue(response.getBody().toString(), HashMap.class);
 
-        log.info("맵값 확인 : "+map.toString());
-//        log.info("맵값 확인 : "+map1.toString());
 
         return (Map<String,Object>) map;
     }

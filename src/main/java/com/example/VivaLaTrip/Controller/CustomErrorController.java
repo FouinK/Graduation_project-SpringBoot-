@@ -18,8 +18,6 @@ public class CustomErrorController implements ErrorController {
     @RequestMapping(value = "/error")
     public ResponseEntity<?> handleError(HttpServletRequest request) throws URISyntaxException {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        System.out.println("스테이터스 코드 : "+status.toString());
-        System.out.println("에러 상태 작동 확인");
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setLocation(URI.create("/"));
         if(status != null){

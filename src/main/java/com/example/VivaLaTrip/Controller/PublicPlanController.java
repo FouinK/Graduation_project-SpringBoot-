@@ -32,8 +32,6 @@ public class PublicPlanController {
     public @ResponseBody
     ResponseEntity<?> getAllPublic(@PageableDefault(size = 10) Pageable pageable){
         PagePublicPlanListDTO plans = publicPlanService.matchPlans(pageable);
-        log.info("public_plan값 확인 : " + plans.getTotalPage());
-        log.info("public_plan값 확인 : " + plans.getOthersPlans());
 
         return ResponseEntity.ok(plans);
     }
@@ -42,12 +40,10 @@ public class PublicPlanController {
     public @ResponseBody
     ResponseEntity<?> responsePublicPlanDetail(@RequestParam("planId") Long getPlanId,@AuthenticationPrincipal User user) {
         planId = getPlanId;
-        log.info(getPlanId + "번 plan 요청받음(public_plan)");
         PlanDetailResponseDTO response = planService.getPlanDetail(getPlanId, user, "public_plan");     //user파라미터 추가는 myplan의 내일정인지 조회하기 위해 보내야함 (같은 메소드 사용해서)
 
         response.setTotal_days(response.getPlaces().get(response.getPlace_num()-1).getDay());
 
-        log.info("퍼블릭 플랜 디테일 리스폰스 값 확인"+response.toString());
         response.setLoginSuccess(true);
         return ResponseEntity.ok(response);
     }
@@ -60,8 +56,6 @@ public class PublicPlanController {
 
         if (!httpSession.getId().equals(JSESSIONID) || user == null) {
             //로그인 되어있지 않다면
-            log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
-            log.info("서버 세션 값: " + httpSession.getId());
             //value = login 리턴
             return ResponseEntity.ok("login");
         }
@@ -82,8 +76,6 @@ public class PublicPlanController {
         //결과를 담을 key
         if (!httpSession.getId().equals(JSESSIONID) || user == null) {
             //로그인 되어있지 않다면
-            log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
-            log.info("서버 세션 값: " + httpSession.getId());
             key = "login";
             return ResponseEntity.ok(key);
         }

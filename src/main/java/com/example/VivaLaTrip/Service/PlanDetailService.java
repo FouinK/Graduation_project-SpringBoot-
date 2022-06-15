@@ -1,7 +1,9 @@
 package com.example.VivaLaTrip.Service;
 
+import com.example.VivaLaTrip.Config.RestException;
 import com.example.VivaLaTrip.Form.PlaceComputeDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -31,13 +33,9 @@ public class PlanDetailService {
         double avgY = sumOfY / total_count;         //중심 y좌표 (전체)
 
         if (avgStayOfDays > 8) {
-            System.out.println("일평균 시간 : " + avgStayOfDays);
-            System.out.println("8시간 초과로 구할 수 없음");
-            throw new IllegalStateException("너무 장소 많음");
+            throw new RestException(HttpStatus.MOVED_PERMANENTLY,"너무 장소 많음");
         } else if (avgStayOfDays < 3) {
-            System.out.println("일평균 시간 : " + avgStayOfDays);
-            System.out.println("1시간 이하로 구할 수 없음");
-            throw new IllegalStateException("너무 장소 적음");
+            throw new RestException(HttpStatus.MOVED_PERMANENTLY,"너무 장소 적음");
         }
 
         List<PlaceComputeDTO> quadrantOne = new ArrayList<>();
@@ -80,7 +78,6 @@ public class PlanDetailService {
         int maxid = 0;
         while (places.get(total_count - 1).getDays() != total_day) {                                                               //마지막날이 days랑 다를 때
 
-            System.out.println("마지막 날 이랑 days랑 다를 때 실행 됏음");
             int[] sumStayDays = new int[places.get(total_count - 1).getDays()];                                             //각 데이들의 스테이 합을 구하기 위해
             int maxStay = sumStayDays[0];
             for (int i = 0; i < sumStayDays.length; i++) {
@@ -89,13 +86,11 @@ public class PlanDetailService {
                         sumStayDays[i] += place.getStay();                 //days별로 스테이의 합을 구함 최대값을 구하기 위해
                     }
                 }
-                System.out.println("각 스테이의 합 : " + sumStayDays[i]);
             }
             for (int i = 0; i < sumStayDays.length; i++) {
                 if (maxStay < sumStayDays[i]) {
                     maxStay = sumStayDays[i];                                                 //데이즈에서 가장 큰 스테이 합
                     maxid = i + 1;                                                              //최대 스테이합의 데이즈 날짜
-                    System.out.println("데이즈가 가장 큰 스테이의 합 :" + maxStay + ", 데이즈에서 가장 큰 스테이의 합의 인덱스(day) : " + maxid);
                 }
             }
 
@@ -113,7 +108,6 @@ public class PlanDetailService {
                     startid = i;                                                            //데이 줄일 거 시작할 부분
                 }
             }
-            System.out.println("데이 줄이기 시작할 인덱스 부분 : " + startid);
             for (int i = startid; i < places.size(); i++) {
                 if (i == total_count - 1) {                                                        //제일 마지막일 경우 리턴
                     break;
@@ -123,14 +117,9 @@ public class PlanDetailService {
             }
         }
 
-        System.out.println("마지막 데이가 같을 때까지 넣은 후 : ");
-        for (PlaceComputeDTO place : places) {
-            System.out.println("[" + place.toString() + "]");
-        }
 
         while (places.get(total_count - 1).getDays() == total_day) {     //마지막날이 days랑 다를 때
 
-            System.out.println("마지막 날 이랑 days랑 같을 때 실행 됏음");
             int sumStayDays[] = new int[places.get(total_count - 1).getDays()];    //각 데이들의 스테이 합을 구하기 위해
             int maxStay = sumStayDays[0];
             for (int i = 0; i < sumStayDays.length; i++) {
@@ -139,13 +128,11 @@ public class PlanDetailService {
                         sumStayDays[i] += place.getStay();                 //days별로 스테이의 합을 구함 최대값을 구하기 위해
                     }
                 }
-                System.out.println("각 스테이의 합 : " + sumStayDays[i]);
             }
             for (int i = 0; i < sumStayDays.length; i++) {
                 if (maxStay < sumStayDays[i]) {
                     maxStay = sumStayDays[i];                                                 //데이즈에서 가장 큰 스테이 합
                     maxid = i + 1;                                                              //최대 스테이합의 데이즈 날짜
-                    System.out.println("데이즈가 가장 큰 스테이의 합 :" + maxStay + ", 데이즈에서 가장 큰 스테이의 합의 인덱스(day) : " + maxid);
                 }
             }
 
@@ -160,7 +147,6 @@ public class PlanDetailService {
                     startid = i;                                                            //데이 줄일 거 시작할 부분
                 }
             }
-            System.out.println("데이 줄이기 시작할 인덱스 부분 : " + startid);
             for (int i = startid; i < places.size(); i++) {
                 if (i == total_count - 1) {                                                        //제일 마지막일 경우 리턴
                     break;

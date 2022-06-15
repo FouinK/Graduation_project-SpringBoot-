@@ -48,8 +48,6 @@ public class PlanController {
         Map<String, Object> map = new HashMap<>();
 
         if (!httpSession.getId().equals(JSESSIONID) || user == null) {
-            log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
-            log.info("서버 세션 값: " + httpSession.getId());
             //로그인 되어있지 않거나 세션값 만료 시 success에 false리턴
             map.put("success", false);
             return ResponseEntity.ok(map);
@@ -112,8 +110,6 @@ public class PlanController {
         log.info("페이지에이블 값 확인" + pageable.toString());
 
         if (!httpSession.getId().equals(JSESSIONID) || user == null) {
-            log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
-            log.info("서버 세션 값: " + httpSession.getId());
             //로그인 되어있지 않거나 세션값 만료 시 success에 false리턴
             loginSuccessPlanListDTO.setLoginSuccess(false);
             return ResponseEntity.ok(loginSuccessPlanListDTO);
@@ -136,21 +132,17 @@ public class PlanController {
         //로그인 확인 결과를 담을 Map
 
         if (!httpSession.getId().equals(JSESSIONID) || user == null) {
-            log.info("프론트 부터 받아온 세션 값: " + JSESSIONID);
-            log.info("서버 세션 값: " + httpSession.getId());
             //로그인 되어있지 않거나 세션값 만료 시 success에 false리턴
             map.put("loginSuccess", false);
             return ResponseEntity.ok(map);
         }
         //전역변수에 담기
         planId = getplanId;
-        log.info(planId + "번 plan 요청받음(일반 Plan)");
         PlanDetailResponseDTO response = planService.getPlanDetail(planId, user, "plan");
 
         response.setTotal_days(response.getPlaces().get(response.getPlace_num() - 1).getDay());
 
         response.setLoginSuccess(true);
-        log.info("리스폰스 값 확인 (겟마이플랜)" + response.toString());
         return ResponseEntity.ok(response);
     }
 
