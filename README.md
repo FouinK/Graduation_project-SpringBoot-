@@ -13,7 +13,7 @@ Front - <img alt="React" src ="https://img.shields.io/badge/React-61DAFB.svg?&st
 <br/>
 
 ### Our website😊
-👉https://vivalatrip.herokuapp.com
-
+👉https://vivalatrip.herokuapp.com   -> 24 hours open!
+👉http://ec2-3-38-81-5.ap-northeast-2.compute.amazonaws.com/ -> just PM open!
 ### Video
 👉https://www.youtube.com/watch?v=J7DUUKDc3as
