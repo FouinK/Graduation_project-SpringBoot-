@@ -13,7 +13,7 @@ Front - <img alt="React" src ="https://img.shields.io/badge/React-61DAFB.svg?&st
 <br/>
 
 ### Our website😊
-👉https://vivalatrip.herokuapp.com   <br/>
+👉https://vivalatrip.herokuapp.com << 굉장히 느림 !!   <br/>
 👉http://ec2-3-38-81-5.ap-northeast-2.compute.amazonaws.com/
 ### Video
 👉https://www.youtube.com/watch?v=J7DUUKDc3as
